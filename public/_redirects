@@ -58,7 +58,6 @@
 # Legacy flat URLs from the pre-Shopify site
 /st-charbel-full-body-statue/       https://www.etsy.com/au/listing/4432941364/saint-charbel-sitting-under-tree-statue 301
 /st-michael-killing-beast-statue/   https://www.etsy.com/au/listing/1760361490/saint-michael-archangel-michael 301
-/jesus-christ-full-body-statue/     https://www.etsy.com/au/listing/1893943095/jesus-christ-sacred-heart-statue 301
 /virgin-mary-killing-snake-statue/  https://www.etsy.com/au/shop/iSculptures?search_query=virgin+mary 301
 
 # Discontinued on Etsy — search fallbacks keep the intent alive.
@@ -68,17 +67,20 @@
 /products/saint-dominic-de-guzman-statue                         https://www.etsy.com/au/shop/iSculptures?search_query=saint+statue 301
 /products/saint-paisios                                          https://www.etsy.com/au/shop/iSculptures?search_query=icon 301
 /products/saint-peter-keeper-of-keys                             https://www.etsy.com/au/shop/iSculptures?search_query=saint+statue 301
-/products/holy-family-statue-jesus-mary-and-joseph               https://www.etsy.com/au/shop/iSculptures?search_query=statue 301
 /products/jesus-bust                                             https://www.etsy.com/au/shop/iSculptures?search_query=jesus 301
-/products/jesus-christ-full-body-statue                          https://www.etsy.com/au/shop/iSculptures?search_query=jesus 301
-/products/rear-mirror-orthodox-cross                             https://www.etsy.com/au/shop/iSculptures?search_query=cross 301
-/products/personalised-rear-view-mirror-thorns-of-jesus-cross    https://www.etsy.com/au/shop/iSculptures?search_query=cross 301
 /products/christmas-twist-off-tree                               https://www.etsy.com/au/shop/iSculptures?search_query=christmas 301
 /products/valentines-chocolate-personalised-gift-box             https://www.etsy.com/au/shop/iSculptures?search_query=personalised 301
 
 # Collections -> closest Etsy view
 /collections/orthodox-icons     https://www.etsy.com/au/shop/iSculptures?search_query=icon 301
 /collections/catholic-maronite  https://www.etsy.com/au/shop/iSculptures?search_query=saint 301
+
+# --- Retired for good: served 410 by Pages Functions, not redirected. ---
+# Five URLs with no Etsy equivalent AND no photography to relist from are
+# handled in functions/ instead. They need no rule here, and could not have one:
+# `_redirects` supports 301/302/303/307/308 only, and redirects are not applied
+# to requests a Function serves — which is what lets them escape the
+# /products/* catch-all below. See docs/etsy-relisting.md.
 
 # Catch-alls last: anything not named above.
 /products/*     https://www.etsy.com/au/shop/iSculptures 301
