@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "build:model": "gltf-transform meshopt assets/homepage_print.glb public/models/homepage_print.glb --level high"
   },
   "dependencies": {
     "@react-three/drei": "latest",
@@ -20,6 +21,7 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/three": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "@gltf-transform/cli": "^4.2.1"
   }
 }
