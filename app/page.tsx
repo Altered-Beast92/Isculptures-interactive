@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { ContactShadows, Environment, Float, OrbitControls, Sparkles } from '@react-three/drei';
+import { ContactShadows, Environment, Float, OrbitControls, Sparkles, useGLTF } from '@react-three/drei';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
@@ -10,6 +10,10 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 type Decision = 'file' | 'design' | null;
 const materials = ['Matte nylon', 'Recycled PLA', 'Resin detail', 'Aluminium'];
 const colours = ['Bone', 'Graphite', 'Clay', 'Sage'];
+const PRINT_HEIGHT = 2.24;
+const NOZZLE_CLEARANCE = .14;
+const TOOLHEAD_SCALE = 1.25;
+const TOOLHEAD_TIP_DROP = .65;
 
 function Sculpture({ compact = false, colour = '#d8d4c9', quantity = 1 }: { compact?: boolean; colour?: string; quantity?: number }) {
   const group = useRef<THREE.Group>(null);
@@ -17,10 +21,74 @@ function Sculpture({ compact = false, colour = '#d8d4c9', quantity = 1 }: { comp
   return <group ref={group} rotation={[.2, -.3, 0]}>{Array.from({ length: quantity }, (_, i) => <mesh key={i} position={[(i - (quantity - 1) / 2) * .72, 0, (i % 2) * .18]} castShadow><icosahedronGeometry args={[compact ? .56 : 1.25, 3]} /><meshStandardMaterial color={colour} roughness={.28} metalness={.5} /></mesh>)}</group>;
 }
 
-function World() {
-  return <Canvas dpr={[1, 1.6]} camera={{ position: [0, .2, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }}>
-    <color attach="background" args={['#191b1a']} /><ambientLight intensity={.45} /><spotLight position={[4, 5, 4]} intensity={900} angle={.46} penumbra={1} color="#fff4df" castShadow />
-    <Suspense fallback={null}><Float speed={1.2} rotationIntensity={.12} floatIntensity={.35}><Sculpture /></Float><Sparkles count={40} scale={7} size={1.8} speed={.2} color="#d6bf91" /><Environment preset="studio" /><ContactShadows position={[0,-1.45,0]} opacity={.45} scale={8} blur={2.5} /></Suspense>
+function makeSectionCap(root: THREE.Object3D, level: number) {
+  const hits: THREE.Vector2[] = []; const a = new THREE.Vector3(); const b = new THREE.Vector3(); const c = new THREE.Vector3();
+  root.updateMatrixWorld(true);
+  root.traverse((node) => { if (!(node instanceof THREE.Mesh)) return; const pos = node.geometry.getAttribute('position'); if (!pos) return; const index = node.geometry.index; const triangles = index ? index.count / 3 : pos.count / 3;
+    for (let i = 0; i < triangles; i++) { const ids = [index ? index.getX(i * 3) : i * 3, index ? index.getX(i * 3 + 1) : i * 3 + 1, index ? index.getX(i * 3 + 2) : i * 3 + 2]; const v = [a.fromBufferAttribute(pos, ids[0]).applyMatrix4(node.matrixWorld), b.fromBufferAttribute(pos, ids[1]).applyMatrix4(node.matrixWorld), c.fromBufferAttribute(pos, ids[2]).applyMatrix4(node.matrixWorld)];
+      for (let edge = 0; edge < 3; edge++) { const p = v[edge], q = v[(edge + 1) % 3]; const dp = p.y - level, dq = q.y - level; if ((dp > 0 && dq > 0) || (dp < 0 && dq < 0) || Math.abs(dp - dq) < 1e-6) continue; const t = dp / (dp - dq); hits.push(new THREE.Vector2(p.x + (q.x - p.x) * t, p.z + (q.z - p.z) * t)); }
+    }
+  });
+  if (hits.length < 3) return null;
+  const centre = hits.reduce((sum, point) => sum.add(point), new THREE.Vector2()).multiplyScalar(1 / hits.length); const bins: (THREE.Vector2 | null)[] = Array(48).fill(null);
+  hits.forEach(point => { const angle = (Math.atan2(point.y - centre.y, point.x - centre.x) + Math.PI * 2) % (Math.PI * 2); const bin = Math.floor(angle / (Math.PI * 2) * bins.length); if (!bins[bin] || point.distanceToSquared(centre) > bins[bin]!.distanceToSquared(centre)) bins[bin] = point; });
+  const outline = bins.filter((point): point is THREE.Vector2 => point !== null); if (outline.length < 3) return null; const shape = new THREE.Shape(outline); const geometry = new THREE.ShapeGeometry(shape); geometry.rotateX(Math.PI / 2); const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: '#d6d1c6', roughness: .47, metalness: .04, side: THREE.DoubleSide })); mesh.position.y = level + .002; return mesh;
+}
+
+function PrintedGlb({ progress }: { progress: number }) {
+  const { scene } = useGLTF('/models/homepage_print.glb');
+  const clip = useMemo(() => new THREE.Plane(new THREE.Vector3(0, -1, 0), -.9), []);
+  const model = useMemo(() => {
+    const copy = scene.clone(true); const box = new THREE.Box3().setFromObject(copy); const size = box.getSize(new THREE.Vector3());
+    const scale = PRINT_HEIGHT / Math.max(size.y, .001); copy.scale.setScalar(scale); copy.position.set(-(box.min.x + size.x / 2) * scale, -.91 - box.min.y * scale, -(box.min.z + size.z / 2) * scale);
+    copy.traverse((node) => { if (node instanceof THREE.Mesh) { node.castShadow = true; node.receiveShadow = true; const mats = Array.isArray(node.material) ? node.material : [node.material]; mats.forEach(mat => { const next = mat.clone(); next.clippingPlanes = [clip]; next.clipShadows = true; next.side = THREE.DoubleSide; node.material = next; }); } }); return copy;
+  }, [scene, clip]);
+  useFrame(() => { clip.constant = -.91 + Math.max(.01, Math.min(1, progress)) * PRINT_HEIGHT; });
+  return <primitive object={model}/>;
+}
+
+function PrinterWorld({ progress, isScrolling }: { progress: number; isScrolling: boolean }) {
+  const rig = useRef<THREE.Group>(null); const head = useRef<THREE.Group>(null);
+  useFrame((state, delta) => {
+    const p = Math.min(1, Math.max(0, progress));
+    if (rig.current) rig.current.rotation.y = THREE.MathUtils.damp(rig.current.rotation.y, -.38 + p * .52 + state.pointer.x * .08, 4, delta);
+    if (head.current && isScrolling) {
+      const layer = Math.floor(p * 44); const xTarget = -.38 + (layer % 11) * .076; const zTarget = -.13 + Math.floor((layer % 33) / 11) * .105;
+      // The toolhead sits one hotend-length plus a visible clearance above
+      // the revealed layer, never intersecting the sculpture.
+      head.current.position.y = -.91 + TOOLHEAD_TIP_DROP + NOZZLE_CLEARANCE + p * PRINT_HEIGHT;
+      head.current.position.x = THREE.MathUtils.damp(head.current.position.x, xTarget, 22, delta);
+      if (Math.abs(head.current.position.x - xTarget) < .025) head.current.position.z = THREE.MathUtils.damp(head.current.position.z, zTarget, 16, delta);
+    }
+    const cameraTarget = new THREE.Vector3(3.9 - p * 2.15, .45 + p * .25, 5.8 - p * 1.8);
+    state.camera.position.lerp(cameraTarget, 1 - Math.exp(-delta * 2.1)); state.camera.lookAt(.15 + p * .28, -.1 + p * .3, 0);
+  });
+  return <group ref={rig} position={[1.35, -.15, 0]}>
+    <mesh position={[0,-1.12,0]} receiveShadow><boxGeometry args={[3.55,.22,2.7]}/><meshStandardMaterial color="#353632" roughness={.33} metalness={.82}/></mesh>
+    <mesh position={[0,-.96,0]}><boxGeometry args={[2.75,.08,2.08]}/><meshStandardMaterial color="#a99e89" roughness={.24} metalness={.92}/></mesh>
+    {[-1.36,1.36].map(x => <mesh key={x} position={[x,.55,-.7]}><boxGeometry args={[.13,2.95,.15]}/><meshStandardMaterial color="#585a54" metalness={.8} roughness={.25}/></mesh>)}
+    <mesh position={[0,1.86,-.7]}><boxGeometry args={[2.85,.16,.2]}/><meshStandardMaterial color="#4b4c47" metalness={.85} roughness={.23}/></mesh>
+    <mesh position={[0,.04 + progress * PRINT_HEIGHT,-.7]}><boxGeometry args={[2.72,.1,.13]}/><meshStandardMaterial color="#4b4c47" metalness={.86} roughness={.22}/></mesh>
+    <group ref={head} position={[0,-.12,-.05]} scale={TOOLHEAD_SCALE}>
+      <mesh position={[0,.18,-.29]}><boxGeometry args={[.18,.22,.42]}/><meshStandardMaterial color="#262722" metalness={.78} roughness={.28}/></mesh>
+      <mesh position={[0,.03,-.04]} castShadow><boxGeometry args={[.42,.58,.34]}/><meshStandardMaterial color="#30312e" metalness={.52} roughness={.34}/></mesh>
+      <mesh position={[0,.08,.16]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.13,.13,.025,28]}/><meshStandardMaterial color="#161714" roughness={.55} metalness={.3}/></mesh>
+      <mesh position={[0,.08,.18]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[.115,.012,8,32]}/><meshStandardMaterial color="#5c5c56" metalness={.67} roughness={.27}/></mesh>
+      <mesh position={[0,.08,.196]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.07,.07,.013,20]}/><meshStandardMaterial color="#2a2b27" roughness={.65}/></mesh>
+      <mesh position={[0,-.23,.06]}><boxGeometry args={[.28,.1,.23]}/><meshStandardMaterial color="#20211e" metalness={.35} roughness={.58}/></mesh>
+      {[0,1,2].map(i => <mesh key={i} position={[0,-.32-i*.027,-.06]}><boxGeometry args={[.15,.012,.14]}/><meshStandardMaterial color="#a5a59d" metalness={.75} roughness={.25}/></mesh>)}
+      <mesh position={[0,-.41,-.06]}><boxGeometry args={[.12,.08,.12]}/><meshStandardMaterial color="#a85f29" metalness={.42} roughness={.46}/></mesh>
+      <mesh position={[0,-.47,-.06]} rotation={[Math.PI,0,0]}><coneGeometry args={[.028,.075,14]}/><meshStandardMaterial color="#c17d38" metalness={.82} roughness={.18}/></mesh>
+      <mesh position={[0,.43,-.09]} rotation={[.08,0,0]}><cylinderGeometry args={[.026,.026,.22,10]}/><meshStandardMaterial color="#20211e" roughness={.78}/></mesh>
+    </group>
+    <PrintedGlb progress={progress}/>
+  </group>;
+}
+
+function World({ progress, isScrolling }: { progress: number; isScrolling: boolean }) {
+  return <Canvas dpr={[1, 1.6]} camera={{ position: [3.9, .45, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }} onCreated={({ gl }) => { gl.localClippingEnabled = true; }}>
+    <color attach="background" args={['#191b1a']} /><ambientLight intensity={.42} /><spotLight position={[3, 5, 4]} intensity={1000} angle={.44} penumbra={1} color="#fff4df" castShadow />
+    <Suspense fallback={null}><PrinterWorld progress={progress} isScrolling={isScrolling}/><Sparkles count={32} scale={7} size={1.4} speed={.15} color="#d6bf91" /><Environment preset="studio" /><ContactShadows position={[1.35,-1.26,0]} opacity={.5} scale={7} blur={2.5} /></Suspense>
   </Canvas>;
 }
 
@@ -52,4 +120,4 @@ function ProjectFlow({ onClose }: { onClose: () => void }) {
   </section>;
 }
 
-export default function Page() { const [planner, setPlanner] = useState(false); useEffect(() => { document.body.style.overflow = planner ? 'hidden' : ''; return () => { document.body.style.overflow = ''; }; }, [planner]); return <main><div className="world"><World/></div><nav><a className="logo" href="#top">i<span>sculptures</span></a><div className="navlinks"><a href="#printing">3D Printing</a><a href="#industrial">Industrial</a><a href="#events">Events</a><a href="#work">Our Work</a><a href="#about">About</a><a href="https://www.etsy.com/au/shop/iSculptures" target="_blank">Shop ↗</a></div><button className="nav-cta" onClick={() => setPlanner(true)}>Start a project</button></nav><section className="hero" id="top"><div className="eyebrow">SYDNEY · EST. 2008</div><h1>Ideas Made<br/><i>Tangible.</i></h1><p>Custom 3D printing, design and production in Sydney.</p><div className="actions"><button className="primary" onClick={() => setPlanner(true)}>Start Your Project <span>↗</span></button><a href="#printing" className="secondary">Explore What We Make <span>↓</span></a></div><div className="scroll-note">SCROLL TO INSPECT <b>↓</b></div></section><section className="case" id="printing"><p className="section-tag">01 / CAPABILITY</p><h2>From a single detail<br/>to a whole <i>system.</i></h2><div className="case-copy"><p>Industrial-grade thinking, delivered with the care of a small Sydney studio. We bridge design intent and physical reality.</p><a href="#industrial">See our production approach →</a></div></section><section className="case light" id="industrial"><p className="section-tag">02 / INDUSTRIAL</p><h2>Built for the<br/><i>real world.</i></h2><p>Functional prototypes, jigs, fixtures and small-batch parts engineered to be used, tested and repeated.</p></section><section className="case" id="events"><p className="section-tag">03 / EVENTS & SPATIAL</p><h2>Objects that make<br/>a room <i>pause.</i></h2><p>Large-format sculptures, branded environments and immersive moments that take the digital off-screen.</p></section><footer id="about"><span>MAKE SOMETHING REAL</span><h2>Have an idea?</h2><button className="primary" onClick={() => setPlanner(true)}>Start Your Project <span>↗</span></button><small>© 2026 iSculptures / Sydney, Australia</small></footer>{planner && <ProjectFlow onClose={() => setPlanner(false)}/>}</main>; }
+export default function Page() { const [planner, setPlanner] = useState(false); const [progress, setProgress] = useState(0); const [isScrolling, setIsScrolling] = useState(false); const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null); useEffect(() => { const update = () => { setProgress(window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight)); setIsScrolling(true); if (scrollTimer.current) clearTimeout(scrollTimer.current); scrollTimer.current = setTimeout(() => setIsScrolling(false), 110); }; update(); window.addEventListener('scroll', update, { passive: true }); return () => { window.removeEventListener('scroll', update); if (scrollTimer.current) clearTimeout(scrollTimer.current); }; }, []); useEffect(() => { document.body.style.overflow = planner ? 'hidden' : ''; return () => { document.body.style.overflow = ''; }; }, [planner]); return <main><div className="world"><World progress={progress} isScrolling={isScrolling}/></div><nav><a className="logo" href="#top">i<span>sculptures</span></a><div className="navlinks"><a href="#printing">3D Printing</a><a href="#industrial">Industrial</a><a href="#events">Events</a><a href="#work">Our Work</a><a href="#about">About</a><a href="https://www.etsy.com/au/shop/iSculptures" target="_blank">Shop ↗</a></div><button className="nav-cta" onClick={() => setPlanner(true)}>Start a project</button></nav><section className="hero" id="top"><div className="eyebrow">SYDNEY · EST. 2008</div><h1>Ideas Made<br/><i>Tangible.</i></h1><p>Custom 3D printing, design and production in Sydney.</p><div className="actions"><button className="primary" onClick={() => setPlanner(true)}>Start Your Project <span>↗</span></button><a href="#printing" className="secondary">Explore What We Make <span>↓</span></a></div><div className="scroll-note">SCROLL TO PRINT <b>↓</b></div></section><section className="case" id="printing"><p className="section-tag">01 / CAPABILITY</p><h2>From a single detail<br/>to a whole <i>system.</i></h2><div className="case-copy"><p>Industrial-grade thinking, delivered with the care of a small Sydney studio. We bridge design intent and physical reality.</p><a href="#industrial">See our production approach →</a></div></section><section className="case light" id="industrial"><p className="section-tag">02 / INDUSTRIAL</p><h2>Built for the<br/><i>real world.</i></h2><p>Functional prototypes, jigs, fixtures and small-batch parts engineered to be used, tested and repeated.</p></section><section className="case" id="events"><p className="section-tag">03 / EVENTS & SPATIAL</p><h2>Objects that make<br/>a room <i>pause.</i></h2><p>Large-format sculptures, branded environments and immersive moments that take the digital off-screen.</p></section><footer id="about"><span>MAKE SOMETHING REAL</span><h2>Have an idea?</h2><button className="primary" onClick={() => setPlanner(true)}>Start Your Project <span>↗</span></button><small>© 2026 iSculptures / Sydney, Australia</small></footer>{planner && <ProjectFlow onClose={() => setPlanner(false)}/>}</main>; }
