@@ -16,6 +16,9 @@ const TOOLHEAD_SCALE = 1.25;
 // the nozzle tip one visible clearance above the build plate at progress 0.
 const GANTRY_REST_Y = .04;
 const HEAD_DROP = -.275;
+// On narrow viewports the camera aims a little closer to the rig, which nudges
+// the printer toward the centre of frame instead of hanging off the right edge.
+const COMPACT_AIM = .46;
 const SPOOL_X = -1.78, SPOOL_Y = 1.05, SPOOL_Z = -.7, SPOOL_R = .4;
 // Filament guide rail, slung under the front edge of the top beam.
 const RAIL_Y = 1.72, RAIL_Z = -.55, RAIL_END = -1.31;
@@ -108,7 +111,7 @@ function Spool({ isScrolling }: { isScrolling: boolean }) {
   </group>;
 }
 
-function PrinterWorld({ progress, isScrolling }: { progress: number; isScrolling: boolean }) {
+function PrinterWorld({ progress, isScrolling, compact }: { progress: number; isScrolling: boolean; compact: boolean }) {
   const rig = useRef<THREE.Group>(null); const gantry = useRef<THREE.Group>(null); const head = useRef<THREE.Group>(null);
   useFrame((state, delta) => {
     const p = Math.min(1, Math.max(0, progress));
@@ -122,7 +125,7 @@ function PrinterWorld({ progress, isScrolling }: { progress: number; isScrolling
       head.current.position.x = THREE.MathUtils.damp(head.current.position.x, xTarget, 22, delta);
     }
     const cameraTarget = new THREE.Vector3(3.9 - p * 2.15, .45 + p * .25, 5.8 - p * 1.8);
-    state.camera.position.lerp(cameraTarget, 1 - Math.exp(-delta * 2.1)); state.camera.lookAt(.15 + p * .28, -.1 + p * .3, 0);
+    state.camera.position.lerp(cameraTarget, 1 - Math.exp(-delta * 2.1)); state.camera.lookAt(.15 + p * .28 + (compact ? COMPACT_AIM : 0), -.1 + p * .3, 0);
   });
   return <group ref={rig} position={[1.35, -.15, 0]}>
     <mesh position={[0,-1.12,0]} receiveShadow><boxGeometry args={[3.55,.22,2.7]}/><meshStandardMaterial color="#353632" roughness={.33} metalness={.82}/></mesh>
@@ -155,10 +158,22 @@ function PrinterWorld({ progress, isScrolling }: { progress: number; isScrolling
   </group>;
 }
 
+function useCompact() {
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia('(max-width:760px)');
+    const update = () => setCompact(query.matches);
+    update(); query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+  return compact;
+}
+
 function World({ progress, isScrolling }: { progress: number; isScrolling: boolean }) {
+  const compact = useCompact();
   return <Canvas dpr={[1, 1.6]} camera={{ position: [3.9, .45, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }} onCreated={({ gl }) => { gl.localClippingEnabled = true; }}>
     <color attach="background" args={['#191b1a']} /><ambientLight intensity={.42} /><spotLight position={[3, 5, 4]} intensity={1000} angle={.44} penumbra={1} color="#fff4df" castShadow />
-    <Suspense fallback={null}><PrinterWorld progress={progress} isScrolling={isScrolling}/><Sparkles count={32} scale={7} size={1.4} speed={.15} color="#d6bf91" /><Environment preset="studio" /><ContactShadows position={[1.35,-1.26,0]} opacity={.5} scale={7} blur={2.5} /></Suspense>
+    <Suspense fallback={null}><PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact}/><Sparkles count={32} scale={7} size={1.4} speed={.15} color="#d6bf91" /><Environment preset="studio" /><ContactShadows position={[1.35,-1.26,0]} opacity={.5} scale={7} blur={2.5} /></Suspense>
   </Canvas>;
 }
 
@@ -176,17 +191,75 @@ function Preview({ quantity, colour, modelUrl, kind }: { quantity: number; colou
   return <div className="model-preview"><Canvas dpr={[1, 1.5]} camera={{ position: [0, .4, 4], fov: 44 }}><ambientLight intensity={1.1}/><spotLight position={[3,4,3]} intensity={500}/><Suspense fallback={<Sculpture compact colour={c[colour]} quantity={Math.min(quantity, 4)} />}>{modelUrl && kind !== '3mf' ? <UploadedModel url={modelUrl} kind={kind || 'stl'} colour={c[colour]} quantity={quantity}/> : <Sculpture compact colour={c[colour]} quantity={Math.min(quantity, 4)} />}</Suspense><OrbitControls enablePan={false} minDistance={2.5} maxDistance={6}/><ContactShadows position={[0,-.7,0]} opacity={.35} scale={4}/></Canvas><span className="live-dot">LIVE PREVIEW</span></div>;
 }
 
+type SendState = 'idle' | 'sending' | 'error' | 'sent';
+// Read defensively: Turbopack only inlines NEXT_PUBLIC_* when the variable is
+// actually defined, and `process` does not exist in the browser bundle, so an
+// unset endpoint must degrade to undefined rather than throw on first click.
+const ENQUIRY_ENDPOINT = typeof process !== 'undefined' && process.env ? process.env.NEXT_PUBLIC_ENQUIRY_ENDPOINT : undefined;
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function ProjectFlow({ onClose }: { onClose: () => void }) {
-  const [choice, setChoice] = useState<Decision>(null); const [step, setStep] = useState(0); const [file, setFile] = useState<File | null>(null); const [modelUrl, setModelUrl] = useState<string>(); const [qty, setQty] = useState(1); const [material, setMaterial] = useState(materials[0]); const [colour, setColour] = useState(colours[0]); const [sent, setSent] = useState(false);
+  const [choice, setChoice] = useState<Decision>(null); const [step, setStep] = useState(0); const [file, setFile] = useState<File | null>(null); const [modelUrl, setModelUrl] = useState<string>(); const [qty, setQty] = useState(1); const [material, setMaterial] = useState(materials[0]); const [colour, setColour] = useState(colours[0]);
+  const [refs, setRefs] = useState<string[]>([]); const [brief, setBrief] = useState(''); const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [company, setCompany] = useState(''); const [due, setDue] = useState(''); const [notes, setNotes] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({}); const [state, setState] = useState<SendState>('idle'); const [failure, setFailure] = useState('');
+  const trap = useRef('');
   const upload = (f?: File) => { if (!f) return; setFile(f); setModelUrl(f.name === 'concept-model.stl' ? undefined : URL.createObjectURL(f)); setStep(1); };
+
+  const send = async () => {
+    const found: Record<string, string> = {};
+    if (!name.trim()) found.name = 'Please tell us your name.';
+    if (!email.trim()) found.email = 'We need an email address to reply to.';
+    else if (!EMAIL.test(email.trim())) found.email = 'That email address doesn’t look right.';
+    if (choice === 'design' && !brief.trim()) found.brief = 'A short description helps us give you a useful answer.';
+    setErrors(found);
+    if (Object.keys(found).length) return;
+    // A bot that fills every field trips the honeypot. Report success to it
+    // rather than an error, so it learns nothing, and send nothing onward.
+    if (trap.current.trim()) { setState('sent'); return; }
+    const endpoint = ENQUIRY_ENDPOINT;
+    if (!endpoint) { setState('error'); setFailure('The enquiry form isn’t connected yet. Please email us directly while we finish setting this up.'); return; }
+    setState('sending'); setFailure('');
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          route: choice, submittedAt: new Date().toISOString(), sourceUrl: window.location.href,
+          contact: { name: name.trim(), email: email.trim(), company: company.trim(), requiredBy: due },
+          brief: brief.trim(), notes: notes.trim(),
+          model: file ? { name: file.name, sizeBytes: file.size, type: file.type || file.name.split('.').pop() } : null,
+          references: refs,
+          spec: choice === 'file' ? { quantity: qty, material, colour } : null,
+        }),
+      });
+      if (!response.ok) throw new Error(`The studio inbox returned ${response.status}.`);
+      setState('sent');
+    } catch (problem) {
+      setState('error');
+      setFailure(problem instanceof Error ? problem.message : 'Something went wrong sending your enquiry.');
+    }
+  };
+
+  const sending = state === 'sending';
   return <section className="project" id="project" aria-label="Start your project"><button className="close" onClick={onClose} aria-label="Close project planner">×</button><div className="project-kicker">PROJECT PLANNER <span>0{step + 1} / 03</span></div>
     {!choice && <><h2>Let’s make the first move.</h2><p className="lede">Choose the route that feels closest. A real person reviews every project before production.</p><div className="decision-grid"><button onClick={() => setChoice('file')}><span>01</span><strong>Upload a 3D File</strong><em>STL · OBJ · 3MF</em></button><button onClick={() => setChoice('design')}><span>02</span><strong>I Need Help Designing It</strong><em>Sketches · photos · ideas</em></button></div></>}
     {choice === 'file' && step === 0 && <div className="upload-panel"><h2>Your model, in the studio.</h2><label className="drop"><input type="file" accept=".stl,.obj,.3mf" onChange={e => upload(e.target.files?.[0])}/><b>Drop your file here</b><span>or choose STL, OBJ or 3MF · max 250 MB</span></label><button className="text-btn" onClick={() => upload(new File([''], 'concept-model.stl'))}>Try with a sample model →</button></div>}
     {choice === 'file' && step === 1 && <div className="config-grid"><Preview quantity={qty} colour={colour} modelUrl={modelUrl} kind={file?.name.split('.').pop()?.toLowerCase()}/><div className="config"><div><small>MODEL</small><b>{file?.name}</b><p>{file?.name.endsWith('.3mf') ? '3MF received · visual inspection begins after upload' : 'Interactive 3D inspection enabled · orbit to examine'}</p></div><div className="specs"><span><b>Detected</b> geometry</span><span><b>Studio review</b> dimensions</span></div><label>Quantity <input aria-label="Quantity" type="number" min="1" max="20" value={qty} onChange={e => setQty(+e.target.value || 1)}/></label><div className="chips">{materials.map(x => <button className={material === x ? 'selected' : ''} onClick={() => setMaterial(x)} key={x}>{x}</button>)}</div><div className="chips colours">{colours.map(x => <button className={colour === x ? 'selected' : ''} onClick={() => setColour(x)} key={x}>{x}</button>)}</div><button className="primary" onClick={() => setStep(2)}>Continue with this model</button></div></div>}
-    {choice === 'design' && step === 0 && <div className="assist"><h2>Tell us what you’re imagining.</h2><p>Reference images, napkin sketches and technical drawings all help. We’ll turn the unknowns into a clear next step.</p><label className="drop"><input type="file" accept="image/*,.pdf" multiple onChange={() => setStep(1)}/><b>Add photos, sketches or PDFs</b><span>Drag and drop or browse your files</span></label><textarea placeholder="Describe the object, who it’s for, and what it needs to do."/><button className="primary" onClick={() => setStep(1)}>Continue</button></div>}
-    {step === 2 && !sent && <div className="details"><h2>Almost there.</h2><p>We’ll respond with thoughtful advice, a realistic production path and pricing.</p><div className="form-grid"><input placeholder="Your name"/><input placeholder="Email address" type="email"/><input placeholder="Company (optional)"/><input placeholder="Required by date" type="date"/></div><textarea placeholder="Any notes, tolerances or finishes we should know about?"/><button className="primary" onClick={() => setSent(true)}>Send project enquiry</button></div>}
-    {sent && <div className="success"><span>✦</span><h2>It’s on its way.</h2><p>Your brief has been prepared for the iSculptures studio. We’ll be in touch shortly.</p><button className="text-btn" onClick={onClose}>Back to the studio →</button></div>}
-    {choice && step === 1 && <button className="back" onClick={() => setStep(0)}>← Back</button>}
+    {choice === 'design' && step === 0 && <div className="assist"><h2>Tell us what you’re imagining.</h2><p>Reference images, napkin sketches and technical drawings all help. We’ll turn the unknowns into a clear next step.</p><label className="drop"><input type="file" accept="image/*,.pdf" multiple onChange={e => setRefs(Array.from(e.target.files || []).map(f => f.name))}/><b>Add photos, sketches or PDFs</b><span>{refs.length ? `${refs.length} file${refs.length > 1 ? 's' : ''} selected` : 'Drag and drop or browse your files'}</span></label><textarea value={brief} onChange={e => setBrief(e.target.value)} placeholder="Describe the object, who it’s for, and what it needs to do."/>{errors.brief && <p className="field-error">{errors.brief}</p>}<button className="primary" onClick={() => { if (!brief.trim()) { setErrors({ brief: 'A short description helps us give you a useful answer.' }); return; } setErrors({}); setStep(2); }}>Continue</button></div>}
+    {step === 2 && state !== 'sent' && <div className="details"><h2>Almost there.</h2><p>We’ll respond with thoughtful advice, a realistic production path and pricing.</p>
+      <div className="form-grid">
+        <div><input value={name} onChange={e => setName(e.target.value)} placeholder="Your name" aria-label="Your name" aria-invalid={!!errors.name}/>{errors.name && <p className="field-error">{errors.name}</p>}</div>
+        <div><input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" type="email" aria-label="Email address" aria-invalid={!!errors.email}/>{errors.email && <p className="field-error">{errors.email}</p>}</div>
+        <div><input value={company} onChange={e => setCompany(e.target.value)} placeholder="Company (optional)" aria-label="Company"/></div>
+        <div><input value={due} onChange={e => setDue(e.target.value)} placeholder="Required by date" type="date" aria-label="Required by date"/></div>
+      </div>
+      <input className="trap" tabIndex={-1} autoComplete="off" aria-hidden="true" onChange={e => { trap.current = e.target.value; }} placeholder="Leave this field empty"/>
+      <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Any notes, tolerances or finishes we should know about?"/>
+      {state === 'error' && <p className="form-error" role="alert">{failure} You can also reach us at <a href="mailto:info@isculptures.com.au">info@isculptures.com.au</a>.</p>}
+      <button className="primary" onClick={send} disabled={sending}>{sending ? 'Sending…' : 'Send project enquiry'}</button>
+      {file && <p className="fineprint">We’ll reply with a secure link to upload <b>{file.name}</b> — your model isn’t sent with this form.</p>}
+    </div>}
+    {state === 'sent' && <div className="success"><span>✦</span><h2>It’s on its way.</h2><p>Your brief is with the iSculptures studio and we’ll be in touch shortly{file ? ', including a link to send your model file' : ''}.</p><button className="text-btn" onClick={onClose}>Back to the studio →</button></div>}
+    {choice && step > 0 && state !== 'sent' && <button className="back" onClick={() => setStep(choice === 'design' ? 0 : step - 1)}>← Back</button>}
   </section>;
 }
 
