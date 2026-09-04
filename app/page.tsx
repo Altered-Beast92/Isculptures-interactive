@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { ContactShadows, Environment, Float, OrbitControls, Sparkles, useGLTF } from '@react-three/drei';
+import { ContactShadows, Environment, Float, Lightformer, OrbitControls, Sparkles, useGLTF } from '@react-three/drei';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
@@ -10,6 +10,10 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 type Decision = 'file' | 'design' | null;
 const materials = ['Matte nylon', 'Recycled PLA', 'Resin detail', 'Aluminium'];
 const colours = ['Bone', 'Graphite', 'Clay', 'Sage'];
+// Start the model fetch when the chunk evaluates, rather than waiting for React
+// to reach the Suspense boundary that needs it.
+const PRINT_MODEL = '/models/homepage_print.glb';
+useGLTF.preload(PRINT_MODEL);
 const PRINT_HEIGHT = 2.24;
 const TOOLHEAD_SCALE = 1.25;
 // Gantry rest height and the carriage drop below the beam centre together put
@@ -46,7 +50,7 @@ function makeSectionCap(root: THREE.Object3D, level: number) {
 }
 
 function PrintedGlb({ progress }: { progress: number }) {
-  const { scene } = useGLTF('/models/homepage_print.glb');
+  const { scene } = useGLTF(PRINT_MODEL);
   const clip = useMemo(() => new THREE.Plane(new THREE.Vector3(0, -1, 0), -.9), []);
   const model = useMemo(() => {
     const copy = scene.clone(true); const box = new THREE.Box3().setFromObject(copy); const size = box.getSize(new THREE.Vector3());
@@ -133,7 +137,7 @@ function PrinterWorld({ progress, isScrolling, compact }: { progress: number; is
     <group>
       <mesh position={[0,-1.035,0]} castShadow><boxGeometry args={[2.5,.07,1.7]}/><meshStandardMaterial color="#2b2c28" metalness={.45} roughness={.5}/></mesh>
       <mesh position={[0,-.96,0]} receiveShadow><boxGeometry args={[2.75,.08,1.9]}/><meshStandardMaterial color="#a99e89" roughness={.24} metalness={.92}/></mesh>
-      <PrintedGlb progress={progress}/>
+      <Suspense fallback={null}><PrintedGlb progress={progress}/></Suspense>
     </group>
     {[-1.36,1.36].map(x => <mesh key={x} position={[x,.55,-.7]}><boxGeometry args={[.13,2.95,.15]}/><meshStandardMaterial color="#585a54" metalness={.8} roughness={.25}/></mesh>)}
     <mesh position={[0,1.86,-.7]}><boxGeometry args={[2.85,.16,.2]}/><meshStandardMaterial color="#4b4c47" metalness={.85} roughness={.23}/></mesh>
@@ -173,7 +177,20 @@ function World({ progress, isScrolling }: { progress: number; isScrolling: boole
   const compact = useCompact();
   return <Canvas dpr={[1, 1.6]} camera={{ position: [3.9, .45, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }} onCreated={({ gl }) => { gl.localClippingEnabled = true; }}>
     <color attach="background" args={['#191b1a']} /><ambientLight intensity={.42} /><spotLight position={[3, 5, 4]} intensity={1000} angle={.44} penumbra={1} color="#fff4df" castShadow />
-    <Suspense fallback={null}><PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact}/><Sparkles count={32} scale={7} size={1.4} speed={.15} color="#d6bf91" /><Environment preset="studio" /><ContactShadows position={[1.35,-1.26,0]} opacity={.5} scale={7} blur={2.5} /></Suspense>
+    {/* The studio light is built in-scene rather than with drei's `preset`,
+        which downloads a multi-megabyte HDR from a third-party CDN before the
+        first frame can draw. One cube render (frames={1}) replaces it. */}
+    <Environment resolution={128} frames={1}>
+      <mesh scale={30}><sphereGeometry args={[1, 16, 16]}/><meshBasicMaterial color="#242623" side={THREE.BackSide}/></mesh>
+      <Lightformer intensity={2.6} position={[0, 4, -6]} scale={[10, 6, 1]} color="#fff4df" />
+      <Lightformer intensity={1.2} position={[-5, 1, 2]} scale={[6, 6, 1]} color="#cdd6e0" />
+      <Lightformer intensity={.9} position={[5, -1, 3]} scale={[6, 4, 1]} color="#c9b48a" />
+    </Environment>
+    <Sparkles count={32} scale={7} size={1.4} speed={.15} color="#d6bf91" />
+    <ContactShadows position={[1.35,-1.26,0]} opacity={.5} scale={7} blur={2.5} />
+    {/* The rig is all procedural geometry, so it paints on the first frame;
+        only the printed GLB inside it suspends. */}
+    <PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact}/>
   </Canvas>;
 }
 

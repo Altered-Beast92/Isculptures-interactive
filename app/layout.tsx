@@ -6,5 +6,7 @@ export const metadata: Metadata = {
   description: 'Custom 3D printing, design and production in Sydney.'
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  // Preloading from the document lets the model download in parallel with the
+  // JS bundle, instead of only starting once three.js has parsed and run.
+  return <html lang="en"><head><link rel="preload" href="/models/homepage_print.glb" as="fetch" type="model/gltf-binary" crossOrigin="anonymous"/></head><body>{children}</body></html>;
 }
