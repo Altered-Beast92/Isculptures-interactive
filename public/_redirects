@@ -1,0 +1,86 @@
+# Cloudflare Pages redirect map for the isculptures.com.au cutover.
+#
+# Built from the ten historical sitemaps in the Shopify files export, so every
+# URL that has ever been indexed is accounted for. First match wins, so the
+# specific rules must stay above the wildcards.
+#
+# The split is by SEARCH INTENT, not by URL shape. The old catalogue ranks for
+# retail queries ("saint charbel statue", "orthodox icon"). That traffic wants
+# to buy one thing, and now converts on Etsy — sending it to a B2B enquiry form
+# would just raise the bounce rate. Only the volume/enquiry URLs come across.
+
+# --- Bulk, events and wholesale: the pages that match the new positioning ---
+/pages/events-custom-gifts   /#events    301
+/pages/events-custom         /#events    301
+/pages/bonbonniere-custom    /#events    301
+/products/wholesale          /#project   301
+/products/bonbonniere-gifts  /#events    301
+/products/bonbonnieres-gifts /#events    301
+
+# --- Contact and company pages ---
+/pages/contact               /#project   301
+/contact-us/                 /#project   301
+/about-us/                   /#about     301
+/faq/                        /#project   301
+/blog/                       /           301
+
+# --- Policies: repoint once the new policy pages exist. ---
+# TODO: replace these with real /policies/* pages before cutover; sending legal
+# pages to the homepage is acceptable only as a stopgap.
+/policies/privacy-policy     /           302
+/policies/refund-policy      /           302
+/policies/shipping-policy    /           302
+/policies/terms-of-service   /           302
+/privacy-policy/             /           302
+/terms-and-conditions/       /           302
+
+# --- Retail catalogue: hand off to Etsy, listing by listing. ---
+# A shopper landing on the exact item converts far better than one dropped at
+# the shop front door, so these point at real listing IDs (verified against the
+# live shop, which currently carries 11 listings).
+#
+# Where the old Shopify product has NO Etsy equivalent, the fallback is a shop
+# search for the product's own terms rather than the shop root — a near miss
+# still beats an undifferentiated landing page.
+
+# Exact matches, old Shopify handle -> live Etsy listing
+/products/jesus-christ-sacred-heart                              https://www.etsy.com/au/listing/1893943095/jesus-christ-sacred-heart-statue 301
+/products/saint-charbel-statue                                   https://www.etsy.com/au/listing/1893943073/saint-charbel-revered-statue 301
+/products/saint-charbel                                          https://www.etsy.com/au/listing/4432941364/saint-charbel-sitting-under-tree-statue 301
+/products/saint-michael-statue                                   https://www.etsy.com/au/listing/1760361490/saint-michael-archangel-michael 301
+/products/saint-michael-full-body                                https://www.etsy.com/au/listing/1760361490/saint-michael-archangel-michael 301
+/products/saint-michael-the-archangel-defender-of-faith-icon     https://www.etsy.com/au/listing/1893949429/saint-michael-the-archangel-icon 301
+/products/saint-george-the-victorious                            https://www.etsy.com/au/listing/1879775206/saint-george-the-victorious-icon 301
+/products/divine-jesus-christ-icon                               https://www.etsy.com/au/listing/1879773522/divine-jesus-christ-icon 301
+/products/virgin-mary-and-jesus-icon                             https://www.etsy.com/au/listing/1879771208/virgin-mary-and-jesus-icon 301
+/products/saint-nicholas-the-wonderworker                        https://www.etsy.com/au/listing/1879769792/saint-nicholas-the-wonderworker-icon 301
+
+# Legacy flat URLs from the pre-Shopify site
+/st-charbel-full-body-statue/       https://www.etsy.com/au/listing/4432941364/saint-charbel-sitting-under-tree-statue 301
+/st-michael-killing-beast-statue/   https://www.etsy.com/au/listing/1760361490/saint-michael-archangel-michael 301
+/jesus-christ-full-body-statue/     https://www.etsy.com/au/listing/1893943095/jesus-christ-sacred-heart-statue 301
+/virgin-mary-killing-snake-statue/  https://www.etsy.com/au/shop/iSculptures?search_query=virgin+mary 301
+
+# Discontinued on Etsy — search fallbacks keep the intent alive.
+# TODO: relist these on Etsy and repoint, or let them 410 rather than redirect.
+/products/virgin-mary-statue                                     https://www.etsy.com/au/shop/iSculptures?search_query=virgin+mary 301
+/products/virgin-mary-full-body-statue                           https://www.etsy.com/au/shop/iSculptures?search_query=virgin+mary 301
+/products/saint-dominic-de-guzman-statue                         https://www.etsy.com/au/shop/iSculptures?search_query=saint+statue 301
+/products/saint-paisios                                          https://www.etsy.com/au/shop/iSculptures?search_query=icon 301
+/products/saint-peter-keeper-of-keys                             https://www.etsy.com/au/shop/iSculptures?search_query=saint+statue 301
+/products/holy-family-statue-jesus-mary-and-joseph               https://www.etsy.com/au/shop/iSculptures?search_query=statue 301
+/products/jesus-bust                                             https://www.etsy.com/au/shop/iSculptures?search_query=jesus 301
+/products/jesus-christ-full-body-statue                          https://www.etsy.com/au/shop/iSculptures?search_query=jesus 301
+/products/rear-mirror-orthodox-cross                             https://www.etsy.com/au/shop/iSculptures?search_query=cross 301
+/products/personalised-rear-view-mirror-thorns-of-jesus-cross    https://www.etsy.com/au/shop/iSculptures?search_query=cross 301
+/products/christmas-twist-off-tree                               https://www.etsy.com/au/shop/iSculptures?search_query=christmas 301
+/products/valentines-chocolate-personalised-gift-box             https://www.etsy.com/au/shop/iSculptures?search_query=personalised 301
+
+# Collections -> closest Etsy view
+/collections/orthodox-icons     https://www.etsy.com/au/shop/iSculptures?search_query=icon 301
+/collections/catholic-maronite  https://www.etsy.com/au/shop/iSculptures?search_query=saint 301
+
+# Catch-alls last: anything not named above.
+/products/*     https://www.etsy.com/au/shop/iSculptures 301
+/collections/*  https://www.etsy.com/au/shop/iSculptures 301
+/collections    https://www.etsy.com/au/shop/iSculptures 301
