@@ -11,9 +11,16 @@ type Decision = 'file' | 'design' | null;
 const materials = ['Matte nylon', 'Recycled PLA', 'Resin detail', 'Aluminium'];
 const colours = ['Bone', 'Graphite', 'Clay', 'Sage'];
 const PRINT_HEIGHT = 2.24;
-const NOZZLE_CLEARANCE = .14;
 const TOOLHEAD_SCALE = 1.25;
-const TOOLHEAD_TIP_DROP = .65;
+// Gantry rest height and the carriage drop below the beam centre together put
+// the nozzle tip one visible clearance above the build plate at progress 0.
+const GANTRY_REST_Y = .04;
+const HEAD_DROP = -.275;
+const SPOOL_X = -1.78, SPOOL_Y = 1.05, SPOOL_Z = -.7, SPOOL_R = .4;
+// Filament guide rail, slung under the front edge of the top beam.
+const RAIL_Y = 1.72, RAIL_Z = -.55, RAIL_END = -1.31;
+// Toolhead inlet: Y is measured from the carriage origin, Z is fixed in rig space.
+const INLET_Y = .4125, INLET_Z = 0;
 
 function Sculpture({ compact = false, colour = '#d8d4c9', quantity = 1 }: { compact?: boolean; colour?: string; quantity?: number }) {
   const group = useRef<THREE.Group>(null);
@@ -47,41 +54,104 @@ function PrintedGlb({ progress }: { progress: number }) {
   return <primitive object={model}/>;
 }
 
+// The feed is guided rather than free-hanging: filament leaves the spool, rises
+// into a rail slung under the top beam, runs along it to a carrier that tracks
+// the carriage, and only then drops into the toolhead.
+function FilamentFeed({ gantry, head }: { gantry: React.RefObject<THREE.Group | null>; head: React.RefObject<THREE.Group | null> }) {
+  const mesh = useRef<THREE.Mesh>(null); const carrier = useRef<THREE.Group>(null); const last = useRef(new THREE.Vector3(1e3, 1e3, 1e3));
+  const [geometry] = useState(() => new THREE.BufferGeometry());
+  const material = useMemo(() => new THREE.MeshStandardMaterial({ color: '#cfc7b2', roughness: .42, metalness: .04 }), []);
+  useFrame(() => {
+    if (!mesh.current || !gantry.current || !head.current) return;
+    const inlet = new THREE.Vector3(head.current.position.x, gantry.current.position.y + HEAD_DROP + INLET_Y, INLET_Z);
+    if (carrier.current) carrier.current.position.x = inlet.x;
+    if (inlet.distanceToSquared(last.current) < 4e-5) return;
+    last.current.copy(inlet);
+    const points = [
+      new THREE.Vector3(SPOOL_X, SPOOL_Y + SPOOL_R, SPOOL_Z),
+      new THREE.Vector3(SPOOL_X + .07, SPOOL_Y + SPOOL_R + .4, SPOOL_Z + .06),
+      new THREE.Vector3(RAIL_END, RAIL_Y + .04, RAIL_Z),
+      new THREE.Vector3(RAIL_END + .22, RAIL_Y, RAIL_Z),
+      new THREE.Vector3(inlet.x - .12, RAIL_Y, RAIL_Z),
+      new THREE.Vector3(inlet.x, RAIL_Y - .06, RAIL_Z + .03),
+      new THREE.Vector3(inlet.x, inlet.y + .34, inlet.z - .05),
+      inlet,
+    ];
+    const next = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), 46, .021, 6, false);
+    mesh.current.geometry.dispose(); mesh.current.geometry = next;
+  });
+  return <>
+    <mesh position={[0,RAIL_Y,RAIL_Z]}><boxGeometry args={[2.78,.05,.07]}/><meshStandardMaterial color="#6e706a" metalness={.86} roughness={.24}/></mesh>
+    <mesh position={[0,RAIL_Y+.05,RAIL_Z]}><boxGeometry args={[2.78,.05,.03]}/><meshStandardMaterial color="#42433e" metalness={.7} roughness={.34}/></mesh>
+    {[RAIL_END,-RAIL_END].map(x => <mesh key={x} position={[x,RAIL_Y+.09,RAIL_Z-.06]}><boxGeometry args={[.1,.22,.13]}/><meshStandardMaterial color="#4b4c47" metalness={.72} roughness={.32}/></mesh>)}
+    <group ref={carrier} position={[0,RAIL_Y,RAIL_Z]}>
+      <mesh position={[0,0,.04]} castShadow><boxGeometry args={[.16,.13,.12]}/><meshStandardMaterial color="#33342f" metalness={.6} roughness={.38}/></mesh>
+      <mesh position={[0,-.06,.06]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[.035,.012,6,16]}/><meshStandardMaterial color="#8d8f88" metalness={.82} roughness={.26}/></mesh>
+    </group>
+    <mesh ref={mesh} geometry={geometry} material={material}/>
+  </>;
+}
+
+function Spool({ isScrolling }: { isScrolling: boolean }) {
+  const reel = useRef<THREE.Group>(null);
+  useFrame((_, delta) => { if (reel.current && isScrolling) reel.current.rotation.x -= delta * .55; });
+  return <group position={[SPOOL_X, SPOOL_Y, SPOOL_Z]}>
+    <mesh position={[.21,0,0]} rotation={[0,0,Math.PI/2]}><cylinderGeometry args={[.05,.05,.42,14]}/><meshStandardMaterial color="#6f716a" metalness={.8} roughness={.3}/></mesh>
+    <mesh position={[.42,0,0]}><boxGeometry args={[.44,.13,.11]}/><meshStandardMaterial color="#4b4c47" metalness={.7} roughness={.35}/></mesh>
+    <mesh position={[.42,-.13,0]}><boxGeometry args={[.1,.26,.1]}/><meshStandardMaterial color="#4b4c47" metalness={.7} roughness={.35}/></mesh>
+    <mesh position={[.63,0,0]}><boxGeometry args={[.06,.34,.24]}/><meshStandardMaterial color="#3f403b" metalness={.66} roughness={.4}/></mesh>
+    <group ref={reel}>
+      <mesh rotation={[0,0,Math.PI/2]} castShadow><cylinderGeometry args={[SPOOL_R,SPOOL_R,.19,36]}/><meshStandardMaterial color="#cfc7b2" roughness={.62} metalness={.03}/></mesh>
+      {[-.11,.11].map(x => <mesh key={x} position={[x,0,0]} rotation={[0,0,Math.PI/2]}><cylinderGeometry args={[.45,.45,.014,36]}/><meshStandardMaterial color="#242522" roughness={.55} metalness={.12}/></mesh>)}
+      <mesh rotation={[0,0,Math.PI/2]}><cylinderGeometry args={[.17,.17,.23,20]}/><meshStandardMaterial color="#1c1d1a" roughness={.6} metalness={.1}/></mesh>
+    </group>
+  </group>;
+}
+
 function PrinterWorld({ progress, isScrolling }: { progress: number; isScrolling: boolean }) {
-  const rig = useRef<THREE.Group>(null); const head = useRef<THREE.Group>(null);
+  const rig = useRef<THREE.Group>(null); const gantry = useRef<THREE.Group>(null); const head = useRef<THREE.Group>(null);
   useFrame((state, delta) => {
     const p = Math.min(1, Math.max(0, progress));
     if (rig.current) rig.current.rotation.y = THREE.MathUtils.damp(rig.current.rotation.y, -.38 + p * .52 + state.pointer.x * .08, 4, delta);
-    if (head.current && isScrolling) {
-      const layer = Math.floor(p * 44); const xTarget = -.38 + (layer % 11) * .076; const zTarget = -.13 + Math.floor((layer % 33) / 11) * .105;
-      // The toolhead sits one hotend-length plus a visible clearance above
-      // the revealed layer, never intersecting the sculpture.
-      head.current.position.y = -.91 + TOOLHEAD_TIP_DROP + NOZZLE_CLEARANCE + p * PRINT_HEIGHT;
+    // The bed is fixed: the gantry owns height and the carriage owns X. The
+    // toolhead is a child of the gantry, so its height is structural rather
+    // than a second copy of the same maths.
+    if (gantry.current) gantry.current.position.y = GANTRY_REST_Y + p * PRINT_HEIGHT;
+    if (isScrolling && head.current) {
+      const layer = Math.floor(p * 44); const xTarget = -.38 + (layer % 11) * .076;
       head.current.position.x = THREE.MathUtils.damp(head.current.position.x, xTarget, 22, delta);
-      if (Math.abs(head.current.position.x - xTarget) < .025) head.current.position.z = THREE.MathUtils.damp(head.current.position.z, zTarget, 16, delta);
     }
     const cameraTarget = new THREE.Vector3(3.9 - p * 2.15, .45 + p * .25, 5.8 - p * 1.8);
     state.camera.position.lerp(cameraTarget, 1 - Math.exp(-delta * 2.1)); state.camera.lookAt(.15 + p * .28, -.1 + p * .3, 0);
   });
   return <group ref={rig} position={[1.35, -.15, 0]}>
     <mesh position={[0,-1.12,0]} receiveShadow><boxGeometry args={[3.55,.22,2.7]}/><meshStandardMaterial color="#353632" roughness={.33} metalness={.82}/></mesh>
-    <mesh position={[0,-.96,0]}><boxGeometry args={[2.75,.08,2.08]}/><meshStandardMaterial color="#a99e89" roughness={.24} metalness={.92}/></mesh>
+    {[-.62,.62].map(x => <mesh key={x} position={[x,-1.07,0]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.035,.035,2.35,16]}/><meshStandardMaterial color="#8d8f88" metalness={.86} roughness={.22}/></mesh>)}
+    <group>
+      <mesh position={[0,-1.035,0]} castShadow><boxGeometry args={[2.5,.07,1.7]}/><meshStandardMaterial color="#2b2c28" metalness={.45} roughness={.5}/></mesh>
+      <mesh position={[0,-.96,0]} receiveShadow><boxGeometry args={[2.75,.08,1.9]}/><meshStandardMaterial color="#a99e89" roughness={.24} metalness={.92}/></mesh>
+      <PrintedGlb progress={progress}/>
+    </group>
     {[-1.36,1.36].map(x => <mesh key={x} position={[x,.55,-.7]}><boxGeometry args={[.13,2.95,.15]}/><meshStandardMaterial color="#585a54" metalness={.8} roughness={.25}/></mesh>)}
     <mesh position={[0,1.86,-.7]}><boxGeometry args={[2.85,.16,.2]}/><meshStandardMaterial color="#4b4c47" metalness={.85} roughness={.23}/></mesh>
-    <mesh position={[0,.04 + progress * PRINT_HEIGHT,-.7]}><boxGeometry args={[2.72,.1,.13]}/><meshStandardMaterial color="#4b4c47" metalness={.86} roughness={.22}/></mesh>
-    <group ref={head} position={[0,-.12,-.05]} scale={TOOLHEAD_SCALE}>
-      <mesh position={[0,.18,-.29]}><boxGeometry args={[.18,.22,.42]}/><meshStandardMaterial color="#262722" metalness={.78} roughness={.28}/></mesh>
-      <mesh position={[0,.03,-.04]} castShadow><boxGeometry args={[.42,.58,.34]}/><meshStandardMaterial color="#30312e" metalness={.52} roughness={.34}/></mesh>
-      <mesh position={[0,.08,.16]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.13,.13,.025,28]}/><meshStandardMaterial color="#161714" roughness={.55} metalness={.3}/></mesh>
-      <mesh position={[0,.08,.18]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[.115,.012,8,32]}/><meshStandardMaterial color="#5c5c56" metalness={.67} roughness={.27}/></mesh>
-      <mesh position={[0,.08,.196]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.07,.07,.013,20]}/><meshStandardMaterial color="#2a2b27" roughness={.65}/></mesh>
-      <mesh position={[0,-.23,.06]}><boxGeometry args={[.28,.1,.23]}/><meshStandardMaterial color="#20211e" metalness={.35} roughness={.58}/></mesh>
-      {[0,1,2].map(i => <mesh key={i} position={[0,-.32-i*.027,-.06]}><boxGeometry args={[.15,.012,.14]}/><meshStandardMaterial color="#a5a59d" metalness={.75} roughness={.25}/></mesh>)}
-      <mesh position={[0,-.41,-.06]}><boxGeometry args={[.12,.08,.12]}/><meshStandardMaterial color="#a85f29" metalness={.42} roughness={.46}/></mesh>
-      <mesh position={[0,-.47,-.06]} rotation={[Math.PI,0,0]}><coneGeometry args={[.028,.075,14]}/><meshStandardMaterial color="#c17d38" metalness={.82} roughness={.18}/></mesh>
-      <mesh position={[0,.43,-.09]} rotation={[.08,0,0]}><cylinderGeometry args={[.026,.026,.22,10]}/><meshStandardMaterial color="#20211e" roughness={.78}/></mesh>
+    <Spool isScrolling={isScrolling}/>
+    <FilamentFeed gantry={gantry} head={head}/>
+    <group ref={gantry} position={[0,GANTRY_REST_Y,-.7]}>
+      <mesh><boxGeometry args={[2.72,.1,.13]}/><meshStandardMaterial color="#4b4c47" metalness={.86} roughness={.22}/></mesh>
+      <mesh position={[0,0,.09]}><boxGeometry args={[2.6,.05,.04]}/><meshStandardMaterial color="#7f817a" metalness={.9} roughness={.18}/></mesh>
+      <mesh position={[0,-.05,.1]}><boxGeometry args={[2.6,.012,.01]}/><meshStandardMaterial color="#141512" roughness={.85} metalness={.1}/></mesh>
+      <group ref={head} position={[0,HEAD_DROP,0]}>
+        <mesh position={[0,-HEAD_DROP,.1]} castShadow><boxGeometry args={[.42,.44,.1]}/><meshStandardMaterial color="#3a3b36" metalness={.62} roughness={.36}/></mesh>
+        <mesh position={[0,-HEAD_DROP-.06,.244]}><boxGeometry args={[.24,.3,.188]}/><meshStandardMaterial color="#33342f" metalness={.55} roughness={.4}/></mesh>
+        <group position={[0,0,.775]} scale={TOOLHEAD_SCALE}>
+          <mesh position={[0,.02,-.06]} castShadow><boxGeometry args={[.36,.52,.31]}/><meshStandardMaterial color="#2c2d29" metalness={.5} roughness={.44}/></mesh>
+          <mesh position={[0,.06,.1]}><boxGeometry args={[.3,.34,.02]}/><meshStandardMaterial color="#3b3c36" metalness={.56} roughness={.36}/></mesh>
+          <mesh position={[0,-.29,-.06]}><cylinderGeometry args={[.11,.055,.14,4]}/><meshStandardMaterial color="#262723" metalness={.48} roughness={.46}/></mesh>
+          <mesh position={[0,-.4,-.06]} rotation={[Math.PI,0,0]}><coneGeometry args={[.03,.08,16]}/><meshStandardMaterial color="#b9903f" metalness={.85} roughness={.24}/></mesh>
+          <mesh position={[0,.29,-.06]}><cylinderGeometry args={[.042,.042,.09,14]}/><meshStandardMaterial color="#4e4f49" metalness={.7} roughness={.3}/></mesh>
+        </group>
+      </group>
     </group>
-    <PrintedGlb progress={progress}/>
   </group>;
 }
 
