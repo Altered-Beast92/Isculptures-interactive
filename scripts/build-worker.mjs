@@ -7,7 +7,13 @@ const output = path.join(root, 'dist');
 if (path.dirname(output) !== root || path.basename(output) !== 'dist') throw new Error('Unsafe build directory');
 fs.rmSync(output, { recursive: true, force: true });
 for (const file of ['lib/enquiry.ts', 'functions/api/enquiry.ts', 'server/worker.ts']) {
-  const code = stripTypeScriptTypes(fs.readFileSync(file, 'utf8'));
+  let code = stripTypeScriptTypes(fs.readFileSync(file, 'utf8'));
+  if (file === 'server/worker.ts') {
+    const rules = fs.readFileSync('public/_redirects', 'utf8').split(/\r?\n/).map(line => line.trim()).filter(line => line && !line.startsWith('#')).map(line => line.split(/\s+/));
+    if (rules.some(rule => rule.length !== 3 || !['301', '302', '307', '308'].includes(rule[2]))) throw new Error('Invalid redirect rule');
+    if (!code.includes('/* REDIRECT_RULES */ []')) throw new Error('Redirect build marker is missing');
+    code = code.replace('/* REDIRECT_RULES */ []', JSON.stringify(rules));
+  }
   const dest = path.join(output, 'server', file.replace(/\.ts$/, '.js'));
   fs.mkdirSync(path.dirname(dest), { recursive: true }); fs.writeFileSync(dest, code);
 }
