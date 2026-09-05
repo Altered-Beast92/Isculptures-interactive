@@ -62,7 +62,7 @@ function PrintedGlb({ progress }: { progress: number }) {
   const model = useMemo(() => {
     const copy = scene.clone(true); const box = new THREE.Box3().setFromObject(copy); const size = box.getSize(new THREE.Vector3());
     const scale = PRINT_HEIGHT / Math.max(size.y, .001); copy.scale.setScalar(scale); copy.position.set(-(box.min.x + size.x / 2) * scale, -.91 - box.min.y * scale, -(box.min.z + size.z / 2) * scale);
-    copy.traverse((node) => { if (node instanceof THREE.Mesh) { node.castShadow = true; node.receiveShadow = true; const mats = Array.isArray(node.material) ? node.material : [node.material]; mats.forEach(mat => { const next = mat.clone(); next.clippingPlanes = [clip]; next.clipShadows = true; next.side = THREE.DoubleSide; node.material = next; }); } }); return copy;
+    copy.traverse((node) => { if (node instanceof THREE.Mesh) { node.castShadow = true; node.receiveShadow = true; node.material = new THREE.MeshStandardMaterial({ color: '#8f918d', roughness: .65, metalness: .05, clippingPlanes: [clip], clipShadows: true, side: THREE.DoubleSide }); } }); return copy;
   }, [scene, clip]);
   useFrame(() => { clip.constant = -.91 + Math.max(.01, Math.min(1, progress)) * PRINT_HEIGHT; });
   return <primitive object={model}/>;
@@ -183,7 +183,11 @@ function useCompact() {
 function World({ progress, isScrolling }: { progress: number; isScrolling: boolean }) {
   const compact = useCompact();
   return <Canvas dpr={[1, 1.6]} camera={{ position: [3.9, .45, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }} onCreated={({ gl }) => { gl.localClippingEnabled = true; }}>
-    <color attach="background" args={['#191b1a']} /><ambientLight intensity={.42} /><spotLight position={[3, 5, 4]} intensity={1000} angle={.44} penumbra={1} color="#fff4df" castShadow />
+    <color attach="background" args={['#191b1a']} />
+    {/* Broad, balanced studio lighting lowers the contrast between the GLB's existing facets. */}
+    <ambientLight intensity={1.05} />
+    <spotLight position={[-3, 5, 4]} intensity={520} angle={.72} penumbra={1} color="#fff4df" />
+    <spotLight position={[3, 3, 4]} intensity={220} angle={.78} penumbra={1} color="#e8efff" />
     {/* The studio light is built in-scene rather than with drei's `preset`,
         which downloads a multi-megabyte HDR from a third-party CDN before the
         first frame can draw. One cube render (frames={1}) replaces it. */}
