@@ -28,7 +28,7 @@ export default function SiteNav() {
     <a className="logo" href="/" aria-label="iSculptures home">i<span>sculptures</span></a>
     <button ref={toggle} className="menu-toggle" aria-expanded={open} aria-controls="site-links" onClick={() => setOpen(!open)}>{open ? 'Close menu' : 'Menu'}</button>
     <div className={'site-links' + (open ? ' is-open' : '')} id="site-links">
-      <a href="/pages/wholesale">Bulk &amp; business</a><a href="/pages/events-custom-gifts">Events</a><a href="/pages/ongoing-supply">Ongoing supply</a><a href="/pages/industrial">Capabilities</a><a href="/pages/about">About</a>
+      <a href="/pages/wholesale">Bulk &amp; business</a><a href="/work">Our work</a><a href="/pages/events-custom-gifts">Events</a><a href="/pages/ongoing-supply">Ongoing supply</a><a href="/pages/industrial">Capabilities</a><a href="/pages/about">About</a>
       <a href="/enquiry" className="nav-cta">Request a quote ↗</a>
     </div>
   </nav></header>;

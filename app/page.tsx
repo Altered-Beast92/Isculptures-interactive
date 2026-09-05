@@ -1,4 +1,6 @@
 import PrinterBackdrop from './components/printer-backdrop';
+import WorkGrid from './components/work-grid';
+import { featuredProjects } from '../content/projects';
 
 export default function Home() {
   return <main id="main-content">
@@ -12,6 +14,7 @@ export default function Home() {
       <div className="scroll-note">FROM AN IDEA TO A PRODUCTION RUN ↓</div>
     </section>
     <section className="case light" id="b2b"><p className="section-tag">01 / BULK &amp; BUSINESS</p><h2>Your next batch.<br/>Your next <i>supplier.</i></h2><div className="b2b-copy"><p>Tell us what you need, how many, and when. We’ll review the design and production requirements before confirming a quote.</p><ul className="b2b-points"><li>Bulk orders from 10 units</li><li>Custom designs and personalisation</li><li>One-off batches and repeat-order enquiries</li><li>Direct contact with the Sydney studio</li></ul><a className="primary" href="/pages/wholesale">Explore bulk &amp; trade <span>↗</span></a></div></section>
+    <section className="content-section selected-work" id="work"><p className="section-tag">FROM THE STUDIO</p><h2>Made, personalised<br/>&amp; ready to give.</h2><p className="portfolio-intro">A closer look at our event favours, commemorative pieces and custom gift boxes.</p><WorkGrid items={featuredProjects()}/><div className="portfolio-actions"><a className="secondary" href="/work">Explore selected work ↗</a><a href="https://www.instagram.com/impeccablesculptures/" target="_blank" rel="noreferrer">Latest work on Instagram ↗</a></div></section>
     <section className="case" id="events"><p className="section-tag">02 / EVENTS &amp; OCCASIONS</p><h2>Many pieces.<br/>One <i>occasion.</i></h2><div className="case-copy"><p>Bonbonniere, wedding and christening favours, religious keepsakes and branded event gifts. Share your quantity, personalisation and delivery date so we can assess the complete run.</p><a href="/pages/events-custom-gifts">Corporate gifts &amp; events →</a><br/><a href="/pages/bonbonniere-custom">Bonbonniere &amp; keepsakes →</a></div></section>
     <section className="case" id="supply"><p className="section-tag">03 / ONGOING SUPPLY</p><h2>Plan beyond<br/>the first <i>order.</i></h2><div className="case-copy"><p>Ordering for clients, a store or an organisation? Discuss repeat batches, estimated annual demand, packaging and scheduled deliveries with us.</p><a href="/pages/ongoing-supply">Discuss a supply arrangement →</a></div></section>
     <section className="case" id="printing"><p className="section-tag">04 / CAPABILITIES</p><h2>Make it fit<br/>the <i>purpose.</i></h2><div className="case-copy"><p>Start with a sketch, reference image or 3D file. We review material, size, finish and intended use—including enquiries for prototypes, jigs and functional parts.</p><a href="/pages/industrial">Custom parts &amp; prototypes →</a></div></section>

@@ -5,5 +5,6 @@ export default function SiteFooter() {
     <div className="footer-grid"><div><b>{CONTACT.legalName}</b><p>Custom 3D printing in Sydney.<br/>Australia-wide delivery.</p><a href={'tel:' + CONTACT.tel}>{CONTACT.phone}</a><br/><a href={'mailto:' + CONTACT.email}>{CONTACT.email}</a></div>
     <div><b>For your next project</b><a href="/pages/wholesale">Wholesale &amp; bulk orders</a><a href="/pages/ongoing-supply">Repeat orders &amp; supply</a><a href="/pages/bonbonniere-custom">Bonbonniere &amp; keepsakes</a><a href="/pages/about">About the studio</a></div>
     <div><b>Useful information</b><a href="/policies/privacy-policy">Privacy</a><a href="/policies/terms-of-service">Enquiries &amp; orders</a><a href="/policies/shipping-policy">Delivery</a><a href="/policies/refund-policy">Order issues</a><a href="https://www.etsy.com/au/shop/iSculptures" target="_blank" rel="noreferrer">Shop individual pieces on Etsy ↗</a></div></div>
+    <p><a href="/work">Explore our work →</a><br/><a href="https://www.instagram.com/impeccablesculptures/" target="_blank" rel="noreferrer">Follow Impeccable Sculptures on Instagram ↗</a></p>
     <small>© {new Date().getFullYear()} iSculptures · Sydney, Australia</small></footer>;
 }

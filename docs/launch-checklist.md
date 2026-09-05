@@ -11,7 +11,8 @@
 - Studio notifications and customer receipts through Resend, plus expiring attachment links.
 - Authenticated enquiry recovery API and notification retry command.
 - Canonicals, sitemap, organisation metadata, draft noindex, service links and real policy routes.
-- Placeholder reviews and fabricated projects removed. Case-study template retained for real work.
+- Placeholder reviews and fabricated projects removed. Ten supplied photographs now illustrate four real work galleries, linked from the homepage, service pages, navigation and sitemap.
+- Responsive WebP versions, descriptive alternative text, gallery metadata and a direct link to the studio Instagram profile. Source-to-output mapping is recorded in media-manifest.json.
 - Mobile navigation, direct contact links and lazy homepage-only printer animation.
 - Analytics integration hooks without an enabled analytics provider.
 

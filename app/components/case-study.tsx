@@ -4,7 +4,7 @@ import { getProject, projects } from '../../content/projects';
 import { testimonialsFor } from '../../content/testimonials';
 import { CATEGORY_LABELS, SOURCE_LABELS } from '../../content/types';
 
-// Reusable template, intentionally not a live route until verified projects exist.
+// Real photographed examples supplied by the studio.
 
 export async function generateStaticParams() {
   return projects.map(project => ({ slug: project.slug }));
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const project = getProject(slug);
   if (!project) return {};
   return {
-    title: `${project.title} — iSculptures`,
+    title: project.title,
     alternates: { canonical: `/work/${project.slug}` },
     description: project.summary,
     openGraph: { title: project.title, description: project.summary, type: 'article', images: project.images[0] ? [project.images[0].src] : undefined },
@@ -30,7 +30,7 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
   const [lead, ...rest] = project.images;
 
   return <main id="main-content" className="doc">
-    <nav className="doc-nav"><a className="logo" href="/">i<span>sculptures</span></a><a className="doc-back" href="/#work">← All work</a></nav>
+    <div className="portfolio-breadcrumb"><a href="/work">← Selected work</a></div>
     <article className="study">
       <p className="section-tag">{CATEGORY_LABELS[project.category]}{project.year ? ` · ${project.year}` : ''}</p>
       <h1>{project.title}</h1>

@@ -24,6 +24,7 @@ export type ProjectImage = {
   /** Intrinsic dimensions, so the grid can reserve space and avoid layout shift. */
   width?: number;
   height?: number;
+  smallWidth?: number;
 };
 
 export type Project = {

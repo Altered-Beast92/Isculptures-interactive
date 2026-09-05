@@ -1,0 +1,55 @@
+{
+  "provenance": "User-supplied media folder, 6 September 2026. Originals retained. Resized and compressed; no generated artwork or invented production claims.",
+  "assets": [
+    {
+      "source": "SaintEliasBonbonnierre.jpg",
+      "output": "public/work/event-favours.webp",
+      "bytes": 56724
+    },
+    {
+      "source": "Bonbonniere_Event_Favours.jpg",
+      "output": "public/work/event-display.webp",
+      "bytes": 58582
+    },
+    {
+      "source": "SaintEliasBonbonnierre.png",
+      "output": "public/work/favour-detail.webp",
+      "bytes": 60572
+    },
+    {
+      "source": "Saint_Peter_Bonbonniere.jpg",
+      "output": "public/work/boxed-keepsakes.webp",
+      "bytes": 55260
+    },
+    {
+      "source": "IMG_2395.jpg",
+      "output": "public/work/personalised-batch.webp",
+      "bytes": 54278
+    },
+    {
+      "source": "IMG_2385.jpg",
+      "output": "public/work/ribbon-tag.webp",
+      "bytes": 41218
+    },
+    {
+      "source": "Orthodox_Icon_Bonbonniere_Virgin_Mary_Christ.png",
+      "output": "public/work/commemorative-icons.webp",
+      "bytes": 152418
+    },
+    {
+      "source": "Personalised_Valentine_s_Day_Chocolate_Gift_Box_with_Custom_Message.jpg",
+      "output": "public/work/gift-boxes.webp",
+      "bytes": 78776
+    },
+    {
+      "source": "Pink_Valentine_s_Chocolate_Gift_Box_with_Black_Ribbon_and_Customisable_Plaque.jpg",
+      "output": "public/work/pink-gift-box.webp",
+      "bytes": 49200
+    },
+    {
+      "source": "Red_Valentine_s_Chocolate_Gift_Box_with_White_Ribbon_and_Customisable_Plaque.jpg",
+      "output": "public/work/red-gift-box.webp",
+      "bytes": 55284
+    }
+  ]
+}
