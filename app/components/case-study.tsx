@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getProject, projects } from '../../../content/projects';
-import { testimonialsFor } from '../../../content/testimonials';
-import { CATEGORY_LABELS, SOURCE_LABELS } from '../../../content/types';
+import { getProject, projects } from '../../content/projects';
+import { testimonialsFor } from '../../content/testimonials';
+import { CATEGORY_LABELS, SOURCE_LABELS } from '../../content/types';
 
-// A server component on purpose: case studies are the pages that need to rank,
-// so they ship real HTML rather than waiting on the three.js bundle to hydrate.
+// Reusable template, intentionally not a live route until verified projects exist.
 
 export async function generateStaticParams() {
   return projects.map(project => ({ slug: project.slug }));
@@ -17,6 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!project) return {};
   return {
     title: `${project.title} — iSculptures`,
+    alternates: { canonical: `/work/${project.slug}` },
     description: project.summary,
     openGraph: { title: project.title, description: project.summary, type: 'article', images: project.images[0] ? [project.images[0].src] : undefined },
   };
@@ -29,7 +29,7 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
   const quotes = testimonialsFor(project.slug);
   const [lead, ...rest] = project.images;
 
-  return <main className="doc">
+  return <main id="main-content" className="doc">
     <nav className="doc-nav"><a className="logo" href="/">i<span>sculptures</span></a><a className="doc-back" href="/#work">← All work</a></nav>
     <article className="study">
       <p className="section-tag">{CATEGORY_LABELS[project.category]}{project.year ? ` · ${project.year}` : ''}</p>
@@ -54,7 +54,7 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
       {quotes.length > 0 && <section className="study-quotes">{quotes.map(quote => <figure key={quote.id}><blockquote>{quote.quote}</blockquote><figcaption>{quote.author}{quote.company ? `, ${quote.company}` : ''} <span>{SOURCE_LABELS[quote.source]}</span></figcaption></figure>)}</section>}
 
       <div className="study-cta">
-        <a className="primary" href="/#project">Start a similar project <span>↗</span></a>
+        <a className="primary" href="/enquiry">Start a similar project <span>↗</span></a>
         {project.etsyUrl && <a className="secondary" href={project.etsyUrl} target="_blank" rel="noreferrer">Buy on Etsy <span>↗</span></a>}
       </div>
     </article>
