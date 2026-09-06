@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "isculptures-interactive",
+  "main": "server/enquiry-worker.ts",
+  "compatibility_date": "2026-09-06",
+  "workers_dev": true,
+  "keep_vars": true,
+  "r2_buckets": [
+    { "binding": "ENQUIRIES", "bucket_name": "isculptures-enquiries" }
+  ]
+}

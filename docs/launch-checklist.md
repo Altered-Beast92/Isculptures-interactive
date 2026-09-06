@@ -1,5 +1,13 @@
 # iSculptures B2B draft — launch handoff
 
+## Hosting update — Vercel and Cloudflare
+
+The owner selected Vercel for the website and Cloudflare for enquiries. Follow
+[vercel-cloudflare-setup.md](vercel-cloudflare-setup.md) for the API-only Worker,
+private R2 binding, exact website origins, Turnstile and Resend settings. This
+supersedes the Sites runtime setup below. Live account configuration and real
+mailbox verification remain required; local tests simulate external services.
+
 ## Implemented
 - Bulk positioning with the owner-confirmed minimum of 10 units.
 - Dedicated bulk, event, bonbonniere, functional-parts, ongoing-supply and about pages.

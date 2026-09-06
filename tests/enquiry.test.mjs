@@ -6,7 +6,9 @@ const moduleUrl = source => 'data:text/javascript;base64,' + Buffer.from(source)
 const compile = file => stripTypeScriptTypes(fs.readFileSync(file, 'utf8'));
 const validationUrl = moduleUrl(compile('lib/enquiry.ts'));
 const { validateEnquiry, validateFiles, MAX_FILE_BYTES } = await import(validationUrl);
-const { handleEnquiry, handleFile, handleAdmin, notify } = await import(moduleUrl(compile('functions/api/enquiry.ts').replace('../../lib/enquiry.js', validationUrl)));
+const handlerUrl = moduleUrl(compile('functions/api/enquiry.ts').replace('../../lib/enquiry.js', validationUrl));
+const { handleEnquiry, handleFile, handleAdmin, notify } = await import(handlerUrl);
+const { default: worker } = await import(moduleUrl(compile('server/enquiry-worker.ts').replace('../functions/api/enquiry.js', handlerUrl)));
 const payload = (overrides = {}) => ({ submissionId: crypto.randomUUID(), route: 'supply', consent: true, website: '', contact: { name: 'Test Buyer', email: 'buyer@example.test', company: 'Test Company', phone: '0400000000', customerType: 'Business' }, brief: 'A quarterly production run', quantity: 100, annualQuantity: 400, frequency: 'Quarterly', material: 'Please recommend', budget: '$12 per unit', requiredBy: '2026-11-20', deadlineFixed: true, dimensions: '80 mm', finish: 'Logo', packaging: 'Individual boxes', postcode: '2000', destinations: 'One site', notes: 'PO required', turnstileToken: 'test-token', ...overrides });
 class Bucket {
   objects = new Map(); fail = false;
@@ -18,9 +20,9 @@ class Bucket {
 const env = () => ({ ENQUIRIES: new Bucket(), ENQUIRIES_ENABLED: 'true', RESEND_API_KEY: 'test-key', ENQUIRY_TO: 'studio@example.test', ENQUIRY_FROM: 'quotes@example.test', TURNSTILE_SECRET: 'test-secret', TURNSTILE_SITE_KEY: 'test-site-key', FILE_LINK_SECRET: 'test-signing-secret', ENQUIRY_ADMIN_TOKEN: 'test-admin-token' });
 const request = (value, options = {}) => new Request('https://isculptures.com.au/api/enquiry', { method: 'POST', headers: { Origin: 'https://isculptures.com.au', 'Content-Type': 'application/json', ...options.headers }, body: JSON.stringify(value) });
 const responses = [];
-function fakeFetch({ emailFails = false, verification = true } = {}) {
+function fakeFetch({ emailFails = false, verification = true, hostname = 'isculptures.com.au', action = 'enquiry' } = {}) {
   return async (url, init) => {
-    if (String(url).includes('siteverify')) return Response.json({ success: verification, hostname: 'isculptures.com.au', action: 'enquiry' });
+    if (String(url).includes('siteverify')) return Response.json({ success: verification, hostname, action });
     assert.equal(url, 'https://api.resend.com/emails'); responses.push(JSON.parse(init.body));
     return Response.json(emailFails ? { error: 'failed' } : { id: 'email-test' }, { status: emailFails ? 503 : 200 });
   };
@@ -89,5 +91,103 @@ test('blocks failed verification, bad file signatures and unprotected admin acce
     assert.equal((await handleAdmin(new Request('https://isculptures.com.au/api/admin/enquiries'), environment)).status, 401);
     const authorised = await handleAdmin(new Request('https://isculptures.com.au/api/admin/enquiries', { headers: { Authorization: 'Bearer test-admin-token' } }), environment);
     assert.equal(authorised.status, 200);
+  } finally { globalThis.fetch = original; }
+});
+
+const apiUrl = 'https://enquiry.example.workers.dev/api/enquiry';
+const websiteOrigin = 'https://sculptures-preview.vercel.app';
+const splitEnv = () => ({ ...env(), ENQUIRY_ALLOWED_ORIGINS: websiteOrigin });
+const apiRequest = (value, origin = websiteOrigin) => new Request(apiUrl, {
+  method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify(value)
+});
+
+test('standalone API stays unavailable without valid explicit website origins', async () => {
+  for (const origins of [undefined, '', '*', 'https://*.vercel.app', websiteOrigin + '/enquiry', 'https://user:pass@example.test', 'null']) {
+    const environment = { ...env(), ENQUIRY_ALLOWED_ORIGINS: origins };
+    const config = await worker.fetch(new Request(apiUrl), environment);
+    assert.equal((await config.json()).available, false, String(origins));
+    assert.equal((await worker.fetch(apiRequest(payload()), environment)).status, 403);
+  }
+});
+
+test('CORS permits only exact approved origins and supported preflight requests', async () => {
+  const environment = splitEnv();
+  const config = await worker.fetch(new Request(apiUrl, { headers: { Origin: websiteOrigin } }), environment);
+  assert.equal((await config.json()).available, true);
+  assert.equal(config.headers.get('Access-Control-Allow-Origin'), websiteOrigin);
+  assert.equal(config.headers.get('Vary'), 'Origin');
+  assert.equal(config.headers.get('Cache-Control'), 'no-store');
+  assert.equal(config.headers.get('Access-Control-Allow-Credentials'), null);
+  for (const origin of [websiteOrigin + '.evil.test', 'https://another.vercel.app', 'null', new URL(apiUrl).origin]) {
+    const rejected = await worker.fetch(apiRequest(payload(), origin), environment);
+    assert.equal(rejected.status, 403);
+    assert.equal(rejected.headers.get('Access-Control-Allow-Origin'), null);
+  }
+  const preflight = (method, headers = 'content-type', origin = websiteOrigin) => new Request(apiUrl, {
+    method: 'OPTIONS', headers: { Origin: origin, 'Access-Control-Request-Method': method, 'Access-Control-Request-Headers': headers }
+  });
+  const accepted = await worker.fetch(preflight('POST'), environment);
+  assert.equal(accepted.status, 204);
+  assert.equal(accepted.headers.get('Access-Control-Allow-Origin'), websiteOrigin);
+  assert.equal(accepted.headers.get('Access-Control-Allow-Methods'), 'GET, POST');
+  assert.equal((await worker.fetch(preflight('DELETE'), environment)).status, 403);
+  assert.equal((await worker.fetch(preflight('POST', 'authorization'), environment)).status, 403);
+  assert.equal((await worker.fetch(preflight('POST', 'content-type', 'https://evil.test'), environment)).status, 403);
+  assert.equal((await worker.fetch(new Request(apiUrl, { method: 'POST', body: '{}' }), environment)).status, 403);
+});
+
+test('Vercel multipart submission verifies the website hostname and returns working Worker download links', async () => {
+  const original = globalThis.fetch; globalThis.fetch = fakeFetch({ hostname: new URL(websiteOrigin).hostname }); responses.length = 0;
+  try {
+    const environment = splitEnv();
+    const form = new FormData(); form.set('payload', JSON.stringify(payload()));
+    form.append('files', new File(['solid cross-origin\nendsolid cross-origin'], 'model.stl'));
+    const response = await worker.fetch(new Request(apiUrl, { method: 'POST', headers: { Origin: websiteOrigin }, body: form }), environment);
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('Access-Control-Allow-Origin'), websiteOrigin);
+    assert.equal(responses.length, 2);
+    const link = responses[0].text.match(/https:\/\/enquiry\.example\.workers\.dev\/api\/enquiry\/file\?\S+/);
+    assert.ok(link);
+    const file = await worker.fetch(new Request(link[0]), environment);
+    assert.equal(file.status, 200);
+    assert.equal(await file.text(), 'solid cross-origin\nendsolid cross-origin');
+    const reference = (await response.json()).id;
+    const adminUrl = new URL('/api/admin/enquiries?id=' + reference, apiUrl);
+    assert.equal((await worker.fetch(new Request(adminUrl), environment)).status, 401);
+    const record = await worker.fetch(new Request(adminUrl, { headers: { Authorization: 'Bearer test-admin-token', Origin: websiteOrigin } }), environment);
+    assert.equal(record.status, 200);
+    assert.equal(record.headers.get('Access-Control-Allow-Origin'), null);
+    assert.equal((await record.json()).id, reference);
+  } finally { globalThis.fetch = original; }
+});
+
+test('split hosting rejects Turnstile tokens for the API host, another site, or another action', async () => {
+  const original = globalThis.fetch;
+  try {
+    for (const options of [{ hostname: new URL(apiUrl).hostname }, { hostname: 'evil.test' }, { hostname: new URL(websiteOrigin).hostname, action: 'login' }]) {
+      globalThis.fetch = fakeFetch(options);
+      const environment = splitEnv();
+      const response = await worker.fetch(apiRequest(payload()), environment);
+      assert.equal(response.status, 403);
+      assert.equal(response.headers.get('Access-Control-Allow-Origin'), websiteOrigin);
+      assert.equal(environment.ENQUIRIES.objects.size, 0);
+    }
+  } finally { globalThis.fetch = original; }
+});
+
+test('API-only Worker exposes no website and preserves readable failure responses', async () => {
+  const environment = splitEnv();
+  assert.equal((await worker.fetch(new Request(new URL('/', apiUrl)), environment)).status, 404);
+  assert.equal((await worker.fetch(new Request(new URL('/unknown', apiUrl)), environment)).status, 404);
+  const disabled = await worker.fetch(apiRequest(payload()), { ...environment, ENQUIRIES_ENABLED: 'false' });
+  assert.equal(disabled.status, 503);
+  assert.equal(disabled.headers.get('Access-Control-Allow-Origin'), websiteOrigin);
+  const original = globalThis.fetch; globalThis.fetch = fakeFetch({ hostname: new URL(websiteOrigin).hostname });
+  try {
+    environment.ENQUIRIES.get = async () => { throw new Error('R2 unavailable'); };
+    const failure = await worker.fetch(apiRequest(payload()), environment);
+    assert.equal(failure.status, 503);
+    assert.equal(failure.headers.get('Access-Control-Allow-Origin'), websiteOrigin);
+    assert.ok((await failure.json()).error);
   } finally { globalThis.fetch = original; }
 });

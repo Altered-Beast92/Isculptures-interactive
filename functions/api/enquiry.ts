@@ -10,11 +10,26 @@ export interface Env {
   TURNSTILE_SITE_KEY?: string;
   FILE_LINK_SECRET?: string;
   ENQUIRY_ADMIN_TOKEN?: string;
+  // Comma-separated exact website origins. Undefined preserves same-origin hosting.
+  ENQUIRY_ALLOWED_ORIGINS?: string;
 }
 type Attachment = { name: string; size: number; key: string };
 export type RecordData = Enquiry & { id: string; receivedAt: string; attachments: Attachment[]; notification: 'pending' | 'sent'; receipt: 'pending' | 'sent' };
 export const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'X-Robots-Tag': 'noindex' } });
-export function configured(env: Env) { return !!(env.ENQUIRIES && env.RESEND_API_KEY && env.ENQUIRY_TO && env.ENQUIRY_FROM && env.FILE_LINK_SECRET && env.TURNSTILE_SECRET && env.TURNSTILE_SITE_KEY && env.ENQUIRIES_ENABLED === 'true'); }
+function parseOrigins(value: string): string[] {
+  const entries = value.split(',').map(origin => origin.trim()).filter(Boolean);
+  if (!entries.length) return [];
+  try {
+    return entries.every(origin => {
+      const url = new URL(origin);
+      return !origin.includes('*') && url.origin === origin && (url.protocol === 'https:' || (url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname)));
+    }) ? entries : [];
+  } catch { return []; }
+}
+export function enquiryOrigins(request: Request, env: Env): string[] {
+  return env.ENQUIRY_ALLOWED_ORIGINS === undefined ? [new URL(request.url).origin] : parseOrigins(env.ENQUIRY_ALLOWED_ORIGINS);
+}
+export function configured(env: Env) { return !!(env.ENQUIRIES && env.RESEND_API_KEY && env.ENQUIRY_TO && env.ENQUIRY_FROM && env.FILE_LINK_SECRET && env.TURNSTILE_SECRET && env.TURNSTILE_SITE_KEY && env.ENQUIRIES_ENABLED === 'true' && (env.ENQUIRY_ALLOWED_ORIGINS === undefined || parseOrigins(env.ENQUIRY_ALLOWED_ORIGINS).length)); }
 const keyFor = (id: string) => 'enquiries/' + id + '/enquiry.json';
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
 
@@ -94,7 +109,8 @@ async function plausibleFile(file: File) {
 export async function handleEnquiry(request: Request, env: Env): Promise<Response> {
   if (request.method === 'GET') return json({ available: configured(env), uploads: configured(env), turnstileSiteKey: configured(env) ? env.TURNSTILE_SITE_KEY : undefined });
   if (request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, POST' } });
-  if (request.headers.get('origin') !== new URL(request.url).origin) return json({ error: 'Please submit from this website.' }, 403);
+  const origin = request.headers.get('origin');
+  if (!origin || !enquiryOrigins(request, env).includes(origin)) return json({ error: 'Please submit from this website.' }, 403);
   if (!configured(env)) return json({ error: 'Online enquiries are not available. Please email info@isculptures.com.au.' }, 503);
   const contentType = request.headers.get('content-type') || '';
   if (!contentType.startsWith('multipart/form-data') && !contentType.startsWith('application/json')) return json({ error: 'Unsupported submission format.' }, 415);
@@ -124,7 +140,7 @@ export async function handleEnquiry(request: Request, env: Env): Promise<Respons
       body: JSON.stringify({ secret: env.TURNSTILE_SECRET, response: token, remoteip: request.headers.get('CF-Connecting-IP') || undefined })
     });
     const result = await verification.json() as { success?: boolean; hostname?: string; action?: string };
-    if (!result.success || result.hostname !== new URL(request.url).hostname || result.action !== 'enquiry') return json({ error: 'Verification expired or failed. Please retry.' }, 403);
+    if (!result.success || result.hostname !== new URL(origin).hostname || result.action !== 'enquiry') return json({ error: 'Verification expired or failed. Please retry.' }, 403);
   } catch { return json({ error: 'Verification is unavailable. Please retry shortly.' }, 503); }
   const id = data.submissionId;
   const bucket = env.ENQUIRIES!;
