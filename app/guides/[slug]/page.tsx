@@ -1,0 +1,25 @@
+import { notFound } from 'next/navigation';
+import { guides, getGuide } from '../../../content/guides';
+import media from '../../../content/work-media.json';
+import GuideGrid from '../../components/guide-grid';
+import { CONTACT, SITE_URL, pageMetadata } from '../../../lib/site';
+export const dynamicParams = false;
+export const generateStaticParams = () => guides.map(({ slug }) => ({ slug }));
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params; const guide = getGuide(slug);
+  return guide ? pageMetadata(guide.title, guide.summary, '/guides/' + slug) : {};
+}
+export default async function GuidePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params; const guide = getGuide(slug); if (!guide) notFound();
+  const photo = media[guide.image as keyof typeof media];
+  const schema = { '@context': 'https://schema.org', '@type': 'Article', headline: guide.title, description: guide.summary, mainEntityOfPage: SITE_URL + '/guides/' + slug, image: SITE_URL + photo.src, author: { '@type': 'Organization', '@id': SITE_URL + '/#organisation', name: CONTACT.name }, publisher: { '@id': SITE_URL + '/#organisation' } };
+  return <main id="main-content" className="document-page guide-page"><article>
+    <a className="guide-back" href="/guides">← All guides</a><p className="section-tag">{guide.category}</p><h1>{guide.title}</h1><p className="document-lede">{guide.summary}</p><p className="guide-byline">From the Impeccable Sculptures studio</p>
+    <aside className="guide-contents" aria-label="In this guide"><b>In this guide</b><ol>{guide.sections.map(section => <li key={section.id}><a href={'#' + section.id}>{section.title}</a></li>)}</ol></aside>
+    <div className="guide-body">{guide.sections.map(section => <section key={section.id} id={section.id}><h2>{section.title}</h2>{section.paragraphs.map((paragraph, i) => <p key={i}>{paragraph}</p>)}{section.points && <ul>{section.points.map(point => <li key={point}>{point}</li>)}</ul>}</section>)}</div>
+    <figure className="guide-example"><img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy"/><figcaption>An example from our studio. <a href={'/work/' + guide.project}>Explore the photographed work →</a></figcaption></figure>
+    <aside className="guide-enquiry"><h2>Put your brief into motion.</h2><p>Send what you know so far. Options, pricing and production timing are confirmed after review.</p><div className="portfolio-actions"><a className="primary" href={'/enquiry' + (guide.enquiryRoute ? '?route=' + guide.enquiryRoute : '')}>Discuss your order ↗</a><a href={'/pages/' + guide.service}>{guide.serviceLabel} →</a></div></aside>
+    <section className="guide-related"><h2>Keep planning</h2><GuideGrid items={guides.filter(item => item.slug !== slug).slice(0, 2)}/></section>
+  </article><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }}/></main>;
+}
+

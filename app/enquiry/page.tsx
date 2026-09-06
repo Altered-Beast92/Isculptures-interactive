@@ -1,0 +1,6 @@
+import EnquiryForm from '../components/enquiry-form';
+import { pageMetadata } from '../../lib/site';
+export const metadata = pageMetadata('Request a Bulk Quote | Impeccable Sculptures', 'Enquire about bulk 3D printing from 10 units, custom event gifts and ongoing business supply. Contact our Sydney studio.', '/enquiry');
+export default function EnquiryPage() {
+  return <main id="main-content" className="enquiry-canvas"><header className="enquiry-masthead"><span>IMPECCABLE SCULPTURES / START A PROJECT</span><a href="/">Back to the studio ↗</a></header><div className="enquiry-layout"><aside className="enquiry-introduction"><p className="enquiry-kicker">YOUR NEXT CHAPTER</p><h1>LET’S<br/><em>MAKE.</em></h1><p>Custom projects, event batches and business orders. Tell us what you have in mind.</p><div className="enquiry-direct"><span>Talk to the studio</span><a href="mailto:info@isculptures.com.au">info@isculptures.com.au ↗</a><a href="tel:+61437383684">0437 383 684</a></div></aside><div className="enquiry-workspace"><EnquiryForm/><noscript><p>Please enable JavaScript to use the enquiry form, or email <a href="mailto:info@isculptures.com.au">info@isculptures.com.au</a>.</p></noscript></div></div></main>;
+}

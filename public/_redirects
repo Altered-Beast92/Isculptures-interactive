@@ -1,38 +1,23 @@
 # Cloudflare Pages redirect map for the isculptures.com.au cutover.
 #
-# Built from the ten historical sitemaps in the Shopify files export, so every
-# URL that has ever been indexed is accounted for. First match wins, so the
-# specific rules must stay above the wildcards.
-#
-# The split is by SEARCH INTENT, not by URL shape. The old catalogue ranks for
-# retail queries ("saint charbel statue", "orthodox icon"). That traffic wants
-# to buy one thing, and now converts on Etsy — sending it to a B2B enquiry form
-# would just raise the bounce rate. Only the volume/enquiry URLs come across.
+# Migration map. Verify retail destinations and compare against Search Console before cutover.
+# Existing /pages/wholesale, /pages/industrial and event service URLs are retained as real pages.
 
 # --- Bulk, events and wholesale: the pages that match the new positioning ---
-/pages/events-custom-gifts   /#events    301
-/pages/events-custom         /#events    301
-/pages/bonbonniere-custom    /#events    301
-/products/wholesale          /#project   301
-/products/bonbonniere-gifts  /#events    301
-/products/bonbonnieres-gifts /#events    301
+/pages/events-custom         /pages/events-custom-gifts    301
+/products/wholesale          /enquiry   301
+/products/bonbonniere-gifts  /pages/events-custom-gifts    301
+/products/bonbonnieres-gifts /pages/events-custom-gifts    301
 
 # --- Contact and company pages ---
-/pages/contact               /#project   301
-/contact-us/                 /#project   301
-/about-us/                   /#about     301
-/faq/                        /#project   301
-/blog/                       /           301
+/pages/contact               /enquiry   301
+/contact-us/                 /enquiry   301
+/about-us/                   /pages/about     301
+/faq/ /#faq 301
 
-# --- Policies: repoint once the new policy pages exist. ---
-# TODO: replace these with real /policies/* pages before cutover; sending legal
-# pages to the homepage is acceptable only as a stopgap.
-/policies/privacy-policy     /           302
-/policies/refund-policy      /           302
-/policies/shipping-policy    /           302
-/policies/terms-of-service   /           302
-/privacy-policy/             /           302
-/terms-and-conditions/       /           302
+# --- Policies now have real pages; legacy addresses redirect directly. ---
+/privacy-policy/ /policies/privacy-policy 301
+/terms-and-conditions/ /policies/terms-of-service 301
 
 # --- Retail catalogue: hand off to Etsy, listing by listing. ---
 # A shopper landing on the exact item converts far better than one dropped at
@@ -43,7 +28,7 @@
 # search for the product's own terms rather than the shop root — a near miss
 # still beats an undifferentiated landing page.
 
-# Exact matches, old Shopify handle -> live Etsy listing
+# Existing listing mappings: recheck availability before live cutover.
 /products/jesus-christ-sacred-heart                              https://www.etsy.com/au/listing/1893943095/jesus-christ-sacred-heart-statue 301
 /products/saint-charbel-statue                                   https://www.etsy.com/au/listing/1893943073/saint-charbel-revered-statue 301
 /products/saint-charbel                                          https://www.etsy.com/au/listing/4432941364/saint-charbel-sitting-under-tree-statue 301
@@ -80,7 +65,7 @@
 /collections/orthodox-icons     https://www.etsy.com/au/shop/iSculptures?search_query=icon 301
 /collections/catholic-maronite  https://www.etsy.com/au/shop/iSculptures?search_query=saint 301
 
-# Catch-alls last: anything not named above.
+# Retail catch-alls retained for review against the current catalogue before cutover.
 /products/*     https://www.etsy.com/au/shop/iSculptures 301
 /collections/*  https://www.etsy.com/au/shop/iSculptures 301
 /collections    https://www.etsy.com/au/shop/iSculptures 301

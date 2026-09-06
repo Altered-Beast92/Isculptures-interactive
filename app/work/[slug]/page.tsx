@@ -1,62 +1,6 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { getProject, projects } from '../../../content/projects';
-import { testimonialsFor } from '../../../content/testimonials';
-import { CATEGORY_LABELS, SOURCE_LABELS } from '../../../content/types';
-
-// A server component on purpose: case studies are the pages that need to rank,
-// so they ship real HTML rather than waiting on the three.js bundle to hydrate.
-
-export async function generateStaticParams() {
+import { projects } from '../../../content/projects';
+export { default, generateMetadata } from '../../components/case-study';
+export const dynamicParams = false;
+export function generateStaticParams() {
   return projects.map(project => ({ slug: project.slug }));
-}
-
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const project = getProject(slug);
-  if (!project) return {};
-  return {
-    title: `${project.title} — iSculptures`,
-    description: project.summary,
-    openGraph: { title: project.title, description: project.summary, type: 'article', images: project.images[0] ? [project.images[0].src] : undefined },
-  };
-}
-
-export default async function CaseStudy({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const project = getProject(slug);
-  if (!project) notFound();
-  const quotes = testimonialsFor(project.slug);
-  const [lead, ...rest] = project.images;
-
-  return <main className="doc">
-    <nav className="doc-nav"><a className="logo" href="/">i<span>sculptures</span></a><a className="doc-back" href="/#work">← All work</a></nav>
-    <article className="study">
-      <p className="section-tag">{CATEGORY_LABELS[project.category]}{project.year ? ` · ${project.year}` : ''}</p>
-      <h1>{project.title}</h1>
-      <p className="study-lede">{project.summary}</p>
-
-      {lead
-        ? <img className="study-lead" src={lead.src} alt={lead.alt || project.title} width={lead.width} height={lead.height}/>
-        : <div className="study-lead placeholder" role="img" aria-label={`${project.title} — photography pending`}><span>IMAGE PENDING</span></div>}
-
-      <div className="study-body">
-        <div>{project.description && <p>{project.description}</p>}</div>
-        <dl className="study-meta">
-          {project.client && <><dt>Client</dt><dd>{project.client}</dd></>}
-          {project.materials?.length ? <><dt>Materials</dt><dd>{project.materials.join(' · ')}</dd></> : null}
-          {project.tags?.length ? <><dt>Tags</dt><dd>{project.tags.join(' · ')}</dd></> : null}
-        </dl>
-      </div>
-
-      {rest.length > 0 && <div className="study-gallery">{rest.map((image, i) => <img key={i} src={image.src} alt={image.alt || `${project.title}, view ${i + 2}`} width={image.width} height={image.height} loading="lazy"/>)}</div>}
-
-      {quotes.length > 0 && <section className="study-quotes">{quotes.map(quote => <figure key={quote.id}><blockquote>{quote.quote}</blockquote><figcaption>{quote.author}{quote.company ? `, ${quote.company}` : ''} <span>{SOURCE_LABELS[quote.source]}</span></figcaption></figure>)}</section>}
-
-      <div className="study-cta">
-        <a className="primary" href="/#project">Start a similar project <span>↗</span></a>
-        {project.etsyUrl && <a className="secondary" href={project.etsyUrl} target="_blank" rel="noreferrer">Buy on Etsy <span>↗</span></a>}
-      </div>
-    </article>
-  </main>;
 }

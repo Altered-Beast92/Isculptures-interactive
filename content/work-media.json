@@ -1,0 +1,93 @@
+{
+  "event-favours": {
+    "src": "/work/event-favours.webp",
+    "alt": "A batch of white sculptural favours in clear boxes with pale green ribbon",
+    "width": 1200,
+    "height": 707,
+    "smallWidth": 640
+  },
+  "event-display": {
+    "src": "/work/event-display.webp",
+    "alt": "Boxed sculptural favours arranged together on an event table",
+    "width": 999,
+    "height": 1500,
+    "smallWidth": 533
+  },
+  "favour-detail": {
+    "src": "/work/favour-detail.webp",
+    "alt": "Detail of sculptural favours and matching pale green bows",
+    "width": 1200,
+    "height": 905,
+    "smallWidth": 640
+  },
+  "boxed-keepsakes": {
+    "src": "/work/boxed-keepsakes.webp",
+    "alt": "White sculptural keepsakes in clear gold-edged presentation boxes",
+    "width": 1200,
+    "height": 891,
+    "smallWidth": 640
+  },
+  "personalised-batch": {
+    "src": "/work/personalised-batch.webp",
+    "alt": "A group of clear favour boxes with white bows and personalised gold tags",
+    "width": 1200,
+    "height": 800,
+    "smallWidth": 640
+  },
+  "ribbon-tag": {
+    "src": "/work/ribbon-tag.webp",
+    "alt": "A personalised gold tag tied to a clear favour box with a white bow",
+    "width": 1200,
+    "height": 776,
+    "smallWidth": 640
+  },
+  "commemorative-icons": {
+    "src": "/work/commemorative-icons.webp",
+    "alt": "Two arched religious icons with personalised commemorative bases",
+    "width": 1200,
+    "height": 750,
+    "smallWidth": 640
+  },
+  "gift-boxes": {
+    "src": "/work/gift-boxes.webp",
+    "alt": "Pink and red heart-shaped gift boxes with ribbons and message plaques",
+    "width": 1200,
+    "height": 804,
+    "smallWidth": 640
+  },
+  "pink-gift-box": {
+    "src": "/work/pink-gift-box.webp",
+    "alt": "Pink heart-shaped gift box with a black ribbon and personalised message plaque",
+    "width": 1200,
+    "height": 750,
+    "smallWidth": 640
+  },
+  "red-gift-box": {
+    "src": "/work/red-gift-box.webp",
+    "alt": "Red heart-shaped gift box with a white ribbon and message plaque",
+    "width": 1200,
+    "height": 907,
+    "smallWidth": 640
+  },
+  "custom-sculptures": {
+    "src": "/work/custom-sculptures.webp",
+    "alt": "Two gold-coloured character sculptures standing on a car bonnet",
+    "width": 768,
+    "height": 1024,
+    "smallWidth": 600
+  },
+  "yellow-rose-sculptures": {
+    "src": "/work/yellow-rose-sculptures.webp",
+    "alt": "A batch of yellow rose sculptures on black personalised display bases",
+    "width": 1036,
+    "height": 939,
+    "smallWidth": 640
+  },
+  "personalised-favour-tags": {
+    "src": "/work/personalised-favour-tags.webp",
+    "alt": "Tooth-shaped purple and white personalised tags tied to favour jars with lilac ribbon",
+    "width": 1080,
+    "height": 813,
+    "smallWidth": 640
+  }
+}
