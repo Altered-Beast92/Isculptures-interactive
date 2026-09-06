@@ -5,7 +5,7 @@ export const dynamicParams = false;
 export function generateStaticParams() { return policies.map(({ slug }) => ({ slug })); }
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params; const policy = policies.find(item => item.slug === slug);
-  return policy ? pageMetadata(policy.title + ' | iSculptures', policy.intro, '/policies/' + slug) : {};
+  return policy ? pageMetadata(policy.title + ' | Impeccable Sculptures', policy.intro, '/policies/' + slug) : {};
 }
 export default async function PolicyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params; const policy = policies.find(item => item.slug === slug); if (!policy) notFound();

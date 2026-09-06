@@ -19,6 +19,8 @@
 ## Configure before accepting online enquiries
 The existing mailbox receives mail; it does not itself provide an API for the website to send notifications.
 
+Owner confirmed that Resend and Cloudflare accounts are not set up yet. No live email, upload or Turnstile credentials are configured in the local workspace. Existing enquiry tests use mocked services; successful tests do not establish real mailbox delivery. Account setup and a chosen hosting environment are needed before the live connection and delivery check.
+
 Recommended setup: Cloudflare R2 private storage + Resend delivery to info@isculptures.com.au + Turnstile. Files stay out of email attachments; the studio receives private download links valid for seven days.
 
 Set runtime variables in Sites, not the browser bundle:
@@ -89,3 +91,11 @@ The owner requested the original full-page scroll-driven printer and spacious tr
 
 ## Immersive glass design — owner correction
 Replaced solid homepage bands with a continuous visible printing scene, individually framed translucent glass chapters, staggered photography, paired photo/story layouts and an inset glass footer. Retained full-page scroll progress, reduced-motion fallback, real work and Guides. This supersedes the conventional solid section layout; the owner explicitly wants an immersive visual identity distinct from the live Shopify store.
+
+## Local-only development — owner instruction
+Use http://localhost:3000 for review. Do not save or deploy further hosted Sites versions unless the owner explicitly requests publishing again. Owner requested removal of the existing private hosted preview; no unpublish/delete operation is exposed by the currently available Sites connector, so removal remains pending rather than completed.
+
+## Current design and branding — 6 September 2026
+The owner-approved direction uses oversized Onest typography, a continuous scroll-driven printer, and pale-yellow (#e6d4b1) homepage chapters 02, 04, 06 and 08 alternating with glass sections. The enquiry page uses a yellow canvas framed by dark-green header and footer, with four enquiry categories and a three-stage form. This supersedes the earlier all-glass and hero-only layouts.
+
+The business name is Impeccable Sculptures. Supplied logos are used in the shared header/footer and browser icons; metadata and organisation data use the full name. The existing domain and email address are retained. Selected new work adds personalised rose sculptures and favour tags; the homepage retains the gold character figures and only one religious work photo. Local development remains the review target, and real form delivery remains unconfigured.

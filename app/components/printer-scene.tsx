@@ -168,9 +168,9 @@ export default function PrinterScene({ progress, isScrolling }: { progress: numb
   return <Canvas dpr={[1, 1.6]} camera={{ position: [3.9, .45, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }} onCreated={({ gl }) => { gl.localClippingEnabled = true; }}>
     <color attach="background" args={['#191b1a']} />
     {/* Broad, balanced studio lighting lowers the contrast between the GLB's existing facets. */}
-    <ambientLight intensity={1.05} />
-    <spotLight position={[-3, 5, 4]} intensity={520} angle={.72} penumbra={1} color="#fff4df" />
-    <spotLight position={[3, 3, 4]} intensity={220} angle={.78} penumbra={1} color="#e8efff" />
+    <ambientLight intensity={.65} />
+    <spotLight position={[-3, 5, 4]} intensity={290} angle={.72} penumbra={1} color="#fff4df" />
+    <spotLight position={[3, 3, 4]} intensity={110} angle={.78} penumbra={1} color="#e8efff" />
     {/* The studio light is built in-scene rather than with drei's `preset`,
         which downloads a multi-megabyte HDR from a third-party CDN before the
         first frame can draw. One cube render (frames={1}) replaces it. */}

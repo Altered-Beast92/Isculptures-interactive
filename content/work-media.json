@@ -68,5 +68,26 @@
     "width": 1200,
     "height": 907,
     "smallWidth": 640
+  },
+  "custom-sculptures": {
+    "src": "/work/custom-sculptures.webp",
+    "alt": "Two gold-coloured character sculptures standing on a car bonnet",
+    "width": 768,
+    "height": 1024,
+    "smallWidth": 600
+  },
+  "yellow-rose-sculptures": {
+    "src": "/work/yellow-rose-sculptures.webp",
+    "alt": "A batch of yellow rose sculptures on black personalised display bases",
+    "width": 1036,
+    "height": 939,
+    "smallWidth": 640
+  },
+  "personalised-favour-tags": {
+    "src": "/work/personalised-favour-tags.webp",
+    "alt": "Tooth-shaped purple and white personalised tags tied to favour jars with lilac ribbon",
+    "width": 1080,
+    "height": 813,
+    "smallWidth": 640
   }
 }
