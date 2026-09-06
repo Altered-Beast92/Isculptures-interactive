@@ -83,3 +83,6 @@ Automated tests exercise the handler with mocked R2, Turnstile and email respons
 - Existing Shopify blog URLs are recorded in shopify-blog-inventory.json from the live sitemap. Similar slugs suggest overlap, but article bodies and traffic have not been audited. Do not infer that a URL is disposable or redirect the whole blog to the homepage.
 - Validate source copy with the owner before public cutover. Preserve useful existing articles/URLs or use individually justified redirects after content and Search Console review.
 - Desktop hero and 390px mobile navigation/guide layout checked; guide page had no horizontal overflow. Build and seven enquiry tests pass. Real email delivery remains unconfigured.
+
+## Owner design preference restored
+The owner requested the original full-page scroll-driven printer and spacious translucent sections. Restored the homepage and printer backdrop from the media-gallery version. Removed compact hero/service overrides. Retained the Guides and Services routes, navigation access and article styling. This supersedes the compact homepage and hero-only animation notes above.
