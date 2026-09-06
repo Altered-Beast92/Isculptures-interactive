@@ -3,6 +3,7 @@ import { services } from '../../../content/services';
 import { pageMetadata } from '../../../lib/site';
 import WorkGrid from '../../components/work-grid';
 import { projects } from '../../../content/projects';
+import { guides } from '../../../content/guides';
 export const dynamicParams = false;
 export function generateStaticParams() { return services.map(({ slug }) => ({ slug })); }
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -17,7 +18,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
     <a className="primary" href={'/enquiry' + (service.route ? '?route=' + service.route : '')}>{service.cta} ↗</a>
     <div className="document-sections">{service.sections.map(section => <section key={section.title}><h2>{section.title}</h2><p>{section.text}</p>{section.points && <ul>{section.points.map(point => <li key={point}>{point}</li>)}</ul>}</section>)}</div>
     {slug !== 'industrial' && <section className="service-work"><h2>From the studio</h2><WorkGrid items={(slug === 'bonbonniere-custom' ? projects.slice(0, 2) : [projects[0], projects[3]])}/><a href="/work">View all selected work →</a></section>}
-    <aside className="related-links"><h2>Explore your next step</h2>{services.filter(item => item.slug !== slug && item.slug !== 'about').map(item => <a key={item.slug} href={'/pages/' + item.slug}>{item.title} →</a>)}</aside>
+    <aside className="related-links"><h2>Explore your next step</h2>{guides.filter(guide => guide.service === slug).map(guide => <a key={guide.slug} href={"/guides/" + guide.slug}>{guide.title} →</a>)}{services.filter(item => item.slug !== slug && item.slug !== 'about').map(item => <a key={item.slug} href={'/pages/' + item.slug}>{item.title} →</a>)}</aside>
     <a className="primary" href={'/enquiry' + (service.route ? '?route=' + service.route : '')}>{service.cta} ↗</a>
   </article></main>;
 }

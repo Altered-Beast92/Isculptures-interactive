@@ -9,6 +9,6 @@ export const metadata: Metadata = {
   robots: { index: INDEXABLE, follow: INDEXABLE },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const organisation = { '@context': 'https://schema.org', '@type': 'Organization', '@id': SITE_URL + '/#organisation', name: CONTACT.name, alternateName: CONTACT.legalName, url: SITE_URL, email: CONTACT.email, telephone: CONTACT.tel, areaServed: 'Australia', sameAs: ['https://www.etsy.com/au/shop/iSculptures'] };
+  const organisation = { '@context': 'https://schema.org', '@type': 'Organization', '@id': SITE_URL + '/#organisation', name: CONTACT.name, alternateName: CONTACT.legalName, url: SITE_URL, email: CONTACT.email, telephone: CONTACT.tel, areaServed: 'Australia', sameAs: ['https://www.etsy.com/au/shop/iSculptures', 'https://www.instagram.com/impeccablesculptures/'] };
   return <html lang="en-AU"><body><a className="skip-link" href="#main-content">Skip to content</a><SiteNav/>{children}<SiteFooter/><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organisation).replace(/</g, '\\u003c') }}/></body></html>;
 }

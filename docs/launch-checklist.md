@@ -74,3 +74,12 @@ Measure qualified enquiries, quotes, wins, average order value and repeat orders
 
 ## Validation limits
 Automated tests exercise the handler with mocked R2, Turnstile and email responses; they do not prove delivery to the real mailbox. The production build and internal route checks do not establish Google rankings or real-user Core Web Vitals. Mobile/desktop browser checks are separate from a Lighthouse or field performance assessment.
+
+## Design and guides update — 6 September 2026
+- Shorter homepage with explicit bulk 3D printing headline, early photographed work, compact service overview and Services / Our Work / Guides / About navigation.
+- Printer animation is confined to the hero and unmounts when offscreen; reduced-motion and data-saving preferences remain respected.
+- Four original buying guides have static routes, unique metadata, article structured data, on-page contents, related service/project links and enquiry calls to action. Added to sitemap; preview remains noindex.
+- Guide copy describes the enquiry process and planning considerations; owner confirmation is still needed for materials, lead times, capacity, reviews and quantified case studies. No such claims were invented.
+- Existing Shopify blog URLs are recorded in shopify-blog-inventory.json from the live sitemap. Similar slugs suggest overlap, but article bodies and traffic have not been audited. Do not infer that a URL is disposable or redirect the whole blog to the homepage.
+- Validate source copy with the owner before public cutover. Preserve useful existing articles/URLs or use individually justified redirects after content and Search Console review.
+- Desktop hero and 390px mobile navigation/guide layout checked; guide page had no horizontal overflow. Build and seven enquiry tests pass. Real email delivery remains unconfigured.
