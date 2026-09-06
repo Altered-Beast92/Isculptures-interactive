@@ -86,3 +86,6 @@ Automated tests exercise the handler with mocked R2, Turnstile and email respons
 
 ## Owner design preference restored
 The owner requested the original full-page scroll-driven printer and spacious translucent sections. Restored the homepage and printer backdrop from the media-gallery version. Removed compact hero/service overrides. Retained the Guides and Services routes, navigation access and article styling. This supersedes the compact homepage and hero-only animation notes above.
+
+## Immersive glass design — owner correction
+Replaced solid homepage bands with a continuous visible printing scene, individually framed translucent glass chapters, staggered photography, paired photo/story layouts and an inset glass footer. Retained full-page scroll progress, reduced-motion fallback, real work and Guides. This supersedes the conventional solid section layout; the owner explicitly wants an immersive visual identity distinct from the live Shopify store.
