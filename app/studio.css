@@ -1,17 +1,17 @@
-@font-face{font-family:Onest;src:url('/fonts/onest-latin.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
 /* Impeccable Sculptures: a continuous 3D studio, warm chapter breaks and open typography. */
-.sculpture-story,.enquiry-canvas,.story-footer{font-family:Onest,Arial,sans-serif}
+.sculpture-story,.enquiry-canvas,.story-footer{font-family:Manrope,Arial,sans-serif}
 .sculpture-story{--accent:#c19854;--chapter-ink:#ede6d8;--chapter-muted:#c2c8bc;color:var(--chapter-ink)}
-.sculpture-story h1,.sculpture-story h2,.sculpture-story h3{font-family:Onest,Arial,sans-serif;font-weight:400}
-.sculpture-story h2{font-size:clamp(40px,4.6vw,78px);line-height:1.03;letter-spacing:-.065em;margin:0;text-transform:uppercase;font-weight:400}
-.sculpture-story h2 em{font-style:normal;color:var(--accent)}
-.sculpture-story .chapter-marker{margin-bottom:38px;gap:12px;font:11px/1.5 Onest,Arial,sans-serif;letter-spacing:.17em;color:var(--chapter-muted)}
+.sculpture-story h1,.sculpture-story h2,.sculpture-story h3{font-family:Manrope,Arial,sans-serif;font-weight:500}
+.sculpture-story h1{font-weight:600}
+.sculpture-story h2{font-size:clamp(40px,4.5vw,68px);line-height:1.04;letter-spacing:-.055em;margin:0;text-transform:none;font-weight:500}
+.sculpture-story h2 em{font-family:'Playfair Display',serif;font-style:italic;font-weight:500;color:var(--accent)}
+.sculpture-story .chapter-marker{margin-bottom:38px;gap:12px;font:12px/1.5 'DM Mono',monospace;letter-spacing:.12em;color:var(--chapter-muted)}
 .sculpture-story .chapter-marker>span:first-child{display:inline;width:auto;height:auto;border:0;border-radius:0;background:none;letter-spacing:.08em;color:var(--accent)}
 .cinematic-home.sculpture-story .story-stage,.cinematic-home.sculpture-story .floating-work,.cinematic-home.sculpture-story .floating-process,.cinematic-home.sculpture-story .floating-guides{padding:70px 6vw;min-height:0;display:block}
 .sculpture-story .block-solid{--chapter-ink:#243128;--chapter-muted:#4b5545;--accent:#796038;background:#e6d4b1;color:var(--chapter-ink);border:0}
 .sculpture-story .block-glass{background:linear-gradient(110deg,#101b15ba,#101b1555);border-block:1px solid #ffffff13}
 .sculpture-story .world:after{background:linear-gradient(90deg,#091510c7,transparent 73%),linear-gradient(0deg,#0c17105e,transparent 50%)}
-body:has(.sculpture-story) .site-header{font-family:Onest,Arial,sans-serif}
+body:has(.sculpture-story) .site-header{font-family:Manrope,Arial,sans-serif}
 body:has(.sculpture-story) .site-header .logo{font-size:19px;letter-spacing:-.07em}
 body:has(.sculpture-story) .site-links{font-size:14px;gap:22px}
 body:has(.sculpture-story) .site-header .nav-cta{font-size:14px;background:transparent;border:1px solid #e6d4b170;color:#e6d4b1;padding:12px 18px}
@@ -60,7 +60,7 @@ body:has(.sculpture-story) .site-header .nav-cta{font-size:14px;background:trans
 .process-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:7vw}
 .studio-process{list-style:none;margin:0;padding:0}.studio-process li{display:grid;grid-template-columns:38px 1fr;gap:10px 20px;padding:24px 0;border-top:1px solid #24312845}.studio-process li>span{font-size:26px;font-weight:300;color:#796038;line-height:1}.studio-process h3{margin:0;font-size:30px;letter-spacing:-.04em;line-height:1}.studio-process p{grid-column:2;margin:0;font-size:16px;color:#4b5545;line-height:1.7}
 .sculpture-story .floating-guides .guide-grid{margin:0;gap:30px}.sculpture-story .floating-guides .guide-card{background:#14241a75;backdrop-filter:blur(13px);border:0;border-top:1px solid #ffffff55;border-radius:0;padding:26px;box-shadow:none}
-.sculpture-story .guide-card .section-tag{font-size:10px;letter-spacing:.15em;color:#c9b48a}.sculpture-story .guide-card h3{font:400 30px/1.2 Onest,Arial,sans-serif;letter-spacing:-.04em;margin:18px 0}.sculpture-story .guide-card p{font-size:16px;line-height:1.8;color:#c2c8bc}
+.sculpture-story .guide-card .section-tag{font-size:10px;letter-spacing:.15em;color:#c9b48a}.sculpture-story .guide-card h3{font:400 30px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.04em;margin:18px 0}.sculpture-story .guide-card p{font-size:16px;line-height:1.8;color:#c2c8bc}
 .sculpture-story .faq-list details{border-color:#24312840;padding:22px 0}.sculpture-story .faq-list details:first-child{padding-top:0}.sculpture-story .faq-list summary{font-weight:500;font-size:17px}.sculpture-story .faq-list p{font-size:16px;line-height:1.8;color:#4b5545}
 .sculpture-story .chapter-navigation{position:fixed;right:13px;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;align-items:end;width:auto;height:auto;padding:7px 8px;gap:9px;border:0;background:#101b15d9;border-radius:18px;backdrop-filter:blur(10px)}
 .chapter-navigation a{display:flex;gap:7px;align-items:center;color:#c3cabb;font-size:9px;line-height:1;padding:4px 0}
@@ -71,8 +71,8 @@ body:has(.sculpture-story) .site-header .nav-cta{font-size:14px;background:trans
 @media(max-width:760px){.cinematic-home.sculpture-story .studio-opening{min-height:820px;height:100svh;max-height:960px;padding:120px 6vw 0}.sculpture-story .opening-copy h1{font-size:clamp(32px,8.5vw,44px)}.opening-copy{max-width:100%}.opening-copy>p:not(.eyebrow){font-size:16px;max-width:360px}.studio-wordmark{font-size:17vw;bottom:205px;left:4vw;right:auto}.opening-side-note{display:none}.opening-index{grid-template-columns:1fr 1fr;row-gap:24px;bottom:30px}.opening-index>a>span{font-size:30px}.opening-index>a{font-size:14px}.cinematic-home.sculpture-story .story-stage,.cinematic-home.sculpture-story .floating-work,.cinematic-home.sculpture-story .floating-process,.cinematic-home.sculpture-story .floating-guides{padding:44px 6vw}.story-columns,.process-layout{grid-template-columns:1fr;gap:30px}.sculpture-story h2{font-size:clamp(37px,9vw,54px)}.sculpture-story .chapter-marker{margin-bottom:25px}.story-section-heading{align-items:start;flex-direction:column;gap:15px}.studio-gallery{display:flex;height:auto;flex-direction:column;gap:18px}.studio-project{height:330px}.studio-project:first-child{height:500px}.studio-project:first-child img{object-position:50% 15%}.studio-social{text-align:left}.batch-detail>b{font-size:65px}.chapter-copy{font-size:16px}.sculpture-story .floating-guides .guide-grid{grid-template-columns:1fr}.sculpture-story .guide-card h3{font-size:27px}.studio-process h3,.sculpture-story .supply-ledger h3{font-size:27px}.heading-note{margin-top:20px}.sculpture-story .faq-list summary{font-size:16px}}
 @media(prefers-reduced-motion:reduce){.studio-project img,.studio-button,.chapter-navigation i{transition:none}.studio-project:hover img,.studio-button:hover{transform:none}}
 /* Enquiry: the same studio typography, on a warm paper surface. */
-body:has(.enquiry-canvas){background:#e6d4b1;color:#243128;font-family:Onest,Arial,sans-serif;min-height:100svh;display:flex;flex-direction:column}
-body:has(.enquiry-canvas) .site-header{background:#1b2a20;color:#e6d4b1;font-family:Onest,Arial,sans-serif}
+body:has(.enquiry-canvas){background:#e6d4b1;color:#243128;font-family:Manrope,Arial,sans-serif;min-height:100svh;display:flex;flex-direction:column}
+body:has(.enquiry-canvas) .site-header{background:#1b2a20;color:#e6d4b1;font-family:Manrope,Arial,sans-serif}
 body:has(.enquiry-canvas) .site-header nav{border-color:#e6d4b133}
 body:has(.enquiry-canvas) .site-header .nav-cta{background:#e6d4b1;color:#243128;border-color:#e6d4b1}
 .enquiry-canvas{padding:28px 6vw 65px;max-width:1720px;margin:auto;min-height:70svh;color:#243128;width:100%;flex:1}
@@ -81,13 +81,13 @@ body:has(.enquiry-canvas) .site-header .nav-cta{background:#e6d4b1;color:#243128
 .enquiry-layout{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:7vw;align-items:start}
 .enquiry-introduction{position:sticky;top:30px}
 .enquiry-kicker{font-size:10px;letter-spacing:.17em;color:#796038;margin:0 0 23px}
-.enquiry-introduction h1{font:400 clamp(80px,9.6vw,155px)/.84 Onest,Arial,sans-serif;letter-spacing:-.095em;margin:0 0 32px}
+.enquiry-introduction h1{font:400 clamp(80px,9.6vw,155px)/.84 Manrope,Arial,sans-serif;letter-spacing:-.095em;margin:0 0 32px}
 .enquiry-introduction h1 em{font-style:normal;color:#796038}
 .enquiry-introduction>p:not(.enquiry-kicker){font-size:16px;line-height:1.8;color:#4b5545;margin:0;max-width:340px}
 .enquiry-direct{display:flex;flex-direction:column;align-items:start;gap:8px;border-top:1px solid #24312835;padding-top:20px;margin-top:35px;font-size:14px;max-width:340px}.enquiry-direct>span{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#796038;margin-bottom:5px}.enquiry-direct>a{text-underline-offset:5px;overflow-wrap:anywhere}.enquiry-direct>a:hover{text-decoration:underline}
 .enquiry-workspace{min-width:0}
 .route-step{font-size:10px;letter-spacing:.14em;margin:0 0 18px;color:#796038}
-.route-picker h2{font:400 clamp(27px,3vw,42px)/1.1 Onest,Arial,sans-serif;letter-spacing:-.05em;margin:0 0 14px}
+.route-picker h2{font:400 clamp(27px,3vw,42px)/1.1 Manrope,Arial,sans-serif;letter-spacing:-.05em;margin:0 0 14px}
 .route-help{font-size:15px;line-height:1.7;color:#4b5545;margin:0 0 20px}
 .route-availability{font-size:13px;line-height:1.7;background:#fff8e044;border-left:2px solid #796038;padding:8px 12px;margin:0 0 20px;color:#535140}.route-availability a{text-decoration:underline;white-space:nowrap;text-underline-offset:3px}
 .route-list{border-top:1px solid #24312875}
@@ -101,9 +101,9 @@ body:has(.enquiry-canvas) .site-header .nav-cta{background:#e6d4b1;color:#243128
 .route-choice:hover,.route-choice:focus-visible{background:#243128;color:#e6d4b1;padding-left:14px}
 .route-choice:hover :is(.route-number,.route-description,.route-minimum),.route-choice:focus-visible :is(.route-number,.route-description,.route-minimum){color:#e6d4b1}.route-choice:hover .route-arrow{border-color:#e6d4b1}
 .route-footnote{font-size:12px;color:#4b5545;margin:23px 0 0}.route-picker[hidden]{display:none}
-.enquiry-canvas .staged-enquiry{margin:0;padding:0;background:transparent;color:#243128;font-family:Onest,Arial,sans-serif}
+.enquiry-canvas .staged-enquiry{margin:0;padding:0;background:transparent;color:#243128;font-family:Manrope,Arial,sans-serif}
 .enquiry-canvas .enquiry-category-intro{padding:45px 0 20px;margin:0 0 20px;border-color:#24312835}
-.enquiry-canvas .enquiry-category-intro h2{font:400 36px/1.15 Onest,Arial,sans-serif;letter-spacing:-.04em;margin:14px 0}
+.enquiry-canvas .enquiry-category-intro h2{font:400 36px/1.15 Manrope,Arial,sans-serif;letter-spacing:-.04em;margin:14px 0}
 .enquiry-canvas .enquiry-category-intro .section-tag{font-size:10px;letter-spacing:.13em;color:#796038}
 .enquiry-canvas .enquiry-category-intro p:last-child{font-size:14px;line-height:1.7;color:#4b5545}
 .enquiry-canvas .enquiry-form .change-category{left:0;right:auto;top:0;border:0;border-bottom:1px solid #24312855;padding:0 0 6px;border-radius:0;font-size:12px}
@@ -112,7 +112,7 @@ body:has(.enquiry-canvas) .site-header .nav-cta{background:#e6d4b1;color:#243128
 .enquiry-stages button{display:flex;align-items:center;gap:10px;padding:12px 0;background:transparent;border:0;border-bottom:1px solid #24312840;font-size:11px;color:#655e49;text-align:left}
 .enquiry-stages button span{font-size:14px}.enquiry-stages button[aria-current]{border-bottom:2px solid #243128;color:#243128;font-weight:600}
 .enquiry-canvas .enquiry-form fieldset{padding:0;border:0;margin:0 0 20px}
-.enquiry-canvas .enquiry-form legend{font:400 24px/1.2 Onest,Arial,sans-serif;padding:0 0 24px;letter-spacing:-.035em}
+.enquiry-canvas .enquiry-form legend{font:400 24px/1.2 Manrope,Arial,sans-serif;padding:0 0 24px;letter-spacing:-.035em}
 .enquiry-canvas .enquiry-form label{font-size:14px;gap:6px;line-height:1.5}.enquiry-canvas .enquiry-form label>span{font-size:12px;color:#4b5545}
 .enquiry-canvas .enquiry-form input:not([type=checkbox]),.enquiry-canvas .enquiry-form select,.enquiry-canvas .enquiry-form textarea{background:#fff7e380;border:1px solid #857d645e;border-radius:2px;color:#243128;font-size:16px}
 .enquiry-canvas .enquiry-form .optional-details{font-size:14px}.enquiry-canvas .attachment-panel{padding:15px;background:#fff7e330;border:1px dashed #857d64}
@@ -121,10 +121,10 @@ body:has(.enquiry-canvas) .site-header .nav-cta{background:#e6d4b1;color:#243128
 .enquiry-canvas .enquiry-step-actions .primary{margin:0 0 0 auto;background:#243128;color:#e6d4b1;border-radius:2px;font-size:13px;min-height:48px;width:auto;padding:14px 22px}
 .previous-step{background:none;border:0;color:#243128;padding:12px 0;font-size:14px}
 .enquiry-canvas .staged-enquiry [hidden]{display:none!important}
-.enquiry-footer{display:flex;flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:25px;min-height:0;padding:30px 6vw;background:#1b2a20;color:#e6d4b1;border-top:1px solid #e6d4b133;font-family:Onest,Arial,sans-serif;font-size:12px}
-.enquiry-footer>span{font:12px Onest,Arial,sans-serif;color:#c5bda7;letter-spacing:0}.enquiry-footer>div{display:flex;gap:24px}.enquiry-footer>div a:hover{text-decoration:underline;text-underline-offset:4px}
+.enquiry-footer{display:flex;flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:25px;min-height:0;padding:30px 6vw;background:#1b2a20;color:#e6d4b1;border-top:1px solid #e6d4b133;font-family:Manrope,Arial,sans-serif;font-size:12px}
+.enquiry-footer>span{font:12px Manrope,Arial,sans-serif;color:#c5bda7;letter-spacing:0}.enquiry-footer>div{display:flex;gap:24px}.enquiry-footer>div a:hover{text-decoration:underline;text-underline-offset:4px}
 body:has(.sculpture-story) .site-footer.story-footer,.site-footer.story-footer{border-radius:0;border:0;margin:0;padding:70px 6vw 30px;background:#102117e0;backdrop-filter:blur(18px);color:#e6d4b1;box-shadow:none}
-.site-footer.story-footer>h2{font:400 clamp(65px,10vw,160px)/.88 Onest,Arial,sans-serif;text-transform:uppercase;letter-spacing:-.075em;margin:26px 0 35px;color:#e6d4b1}
+.site-footer.story-footer>h2{font:500 clamp(55px,9vw,120px)/.96 Manrope,Arial,sans-serif;text-transform:none;letter-spacing:-.065em;margin:26px 0 35px;color:#e6d4b1}
 .site-footer.story-footer .primary{background:#e6d4b1;color:#243128;border-radius:2px;font-size:13px}
 .site-footer.story-footer>.footer-grid{margin-top:45px;border-top:1px solid #ffffff30;padding-top:28px;gap:30px}.story-footer>.footer-grid,.story-footer>p{font-size:13px}.story-footer>p{line-height:1.8}
 @media(max-width:1400px){body:has(.enquiry-canvas) .site-header .site-links{background:#1b2a20;color:#e6d4b1;border-color:#e6d4b140}body:has(.enquiry-canvas) .site-header .menu-toggle{color:#e6d4b1;border-color:#e6d4b160}}
@@ -136,14 +136,14 @@ body:has(.sculpture-story) .site-footer.story-footer,.site-footer.story-footer{b
 
 @media(max-width:760px){.enquiry-masthead,.enquiry-introduction>p,.route-help{display:none}.enquiry-introduction{margin-bottom:22px}.enquiry-introduction h1{margin-bottom:0}.route-picker h2{margin-bottom:15px}.enquiry-canvas{padding-top:25px}.route-title{font-size:22px}.route-choice{padding-block:16px}}
 
-.cinematic-home.sculpture-story :is(#b2b,#events,#supply,#printing,#faq) h2{grid-row:auto;grid-column:auto;margin:0;font-size:clamp(40px,4.6vw,78px)}
-.sculpture-story .opening-copy .eyebrow{font-family:Onest,Arial,sans-serif}
+.cinematic-home.sculpture-story :is(#b2b,#events,#supply,#printing,#faq) h2{grid-row:auto;grid-column:auto;margin:0;font-size:clamp(40px,4.5vw,68px)}
+.sculpture-story .opening-copy .eyebrow{font-family:Manrope,Arial,sans-serif}
 .sculpture-story .chapter-copy .studio-text-link{display:flex;width:fit-content}
 .brand-logo{display:inline-flex;flex-shrink:0;width:380px;max-width:100%;padding:0;background:transparent;line-height:0}
 .brand-logo img{display:block;width:100%;height:auto}
 .site-header .brand-logo{flex-shrink:1;min-width:0}
 .site-header nav,body:has(.cinematic-home) .site-header nav{height:112px}
-.site-header .site-links{font-family:Onest,Arial,sans-serif;font-size:14px;gap:20px}
+.site-header .site-links{font-family:Manrope,Arial,sans-serif;font-size:14px;gap:20px}
 .enquiry-footer .brand-logo{width:340px}
 .story-footer .footer-grid>div:first-child>a.brand-logo{display:inline-flex;margin:0;width:340px}
 .project-yellow-rose-sculptures img{object-position:50% 48%}
@@ -152,3 +152,46 @@ body:has(.sculpture-story) .site-footer.story-footer,.site-footer.story-footer{b
 @media(max-width:760px){.cinematic-home.sculpture-story :is(#b2b,#events,#supply,#printing,#faq) h2{font-size:clamp(37px,9vw,54px)}}
 
 @media(max-width:1400px){.site-header .site-links,body:has(.sculpture-story) .site-header .site-links{font-size:16px;gap:10px}}
+
+/* A translucent header keeps navigation legible over the moving printer. */
+.site-header,body:has(.cinematic-home) .site-header{
+  background:linear-gradient(180deg,rgba(15,24,19,.92),rgba(15,24,19,.78));
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 8px 30px #00000018;
+}
+.site-header nav,body:has(.cinematic-home) .site-header nav{border-bottom:1px solid #d4bd8f26}
+.site-header .site-links>a{
+  font-weight:500;
+  letter-spacing:.025em;
+  line-height:1.4;
+  color:#e0dccf;
+  text-underline-offset:7px;
+  text-decoration-thickness:1px;
+  transition:color .2s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.site-header .site-links>a:hover,.site-header .site-links>a[aria-current=page]{color:#e6c88f;text-decoration:underline}
+body .site-header .site-links .nav-cta{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  padding:13px 20px;
+  border:1px solid #d4b67a80;
+  border-radius:6px;
+  background:linear-gradient(135deg,#d4b67a24,#d4b67a0d);
+  color:#f0d9ab;
+  font-weight:600;
+  letter-spacing:.035em;
+  box-shadow:inset 0 1px 0 #fff0ca12,0 4px 14px #00000014;
+  text-decoration:none;
+}
+body .site-header .site-links .nav-cta:hover{
+  background:linear-gradient(135deg,#d4b67a42,#d4b67a24);
+  border-color:#e6c88fc4;
+  color:#fff0cf;
+  box-shadow:inset 0 1px 0 #fff0ca26,0 5px 20px #00000024;
+}
+.site-header .site-links>a:focus-visible,.site-header .menu-toggle:focus-visible{outline:2px solid #e6c88f;outline-offset:5px}
+@media(max-width:1400px){.site-header .site-links{background:rgba(15,24,19,.97)}.site-header .site-links>a:not(.nav-cta){padding:12px 10px}.site-header .site-links .nav-cta{margin-top:6px}}
+@media(prefers-reduced-motion:reduce){.site-header .site-links>a{transition:none}}
