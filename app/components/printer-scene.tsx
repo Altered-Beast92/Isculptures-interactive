@@ -1,7 +1,7 @@
 'use client';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ContactShadows, Sparkles, useGLTF } from '@react-three/drei';
-import { memo, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import PrinterRenderLoop from './printer-render-loop';
 import PrinterEnvironment from './printer-environment';
@@ -193,7 +193,11 @@ function useCompact() {
 
 export default function PrinterScene({ progress, isScrolling, active }: { progress: number; isScrolling: boolean; active: boolean }) {
   const compact = useCompact();
-  return <Canvas frameloop="never" dpr={compact ? 1 : [1, 1.5]} camera={{ position: [3.9, .45, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }} onCreated={({ gl }) => { gl.localClippingEnabled = true; }}>
+  const [renderScale, setRenderScale] = useState(1);
+  const lowerResolution = useCallback(() => setRenderScale(scale => Math.max(1 / 3, scale * .75)), []);
+  // Keep this in React state so scroll updates do not undo an adaptive DPR.
+  const dpr = Math.max(.5, Math.min(window.devicePixelRatio, compact ? 1 : 1.5) * renderScale);
+  return <Canvas frameloop="never" dpr={dpr} camera={{ position: [3.9, .45, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }} onCreated={({ gl }) => { gl.localClippingEnabled = true; }}>
     <Suspense fallback={null}>
       <PrinterEnvironment/>
       <color attach="background" args={['#191b1a']} />
@@ -205,7 +209,7 @@ export default function PrinterScene({ progress, isScrolling, active }: { progre
       {/* The rig is all procedural geometry, so it paints on the first frame;
           only the printed GLB inside it suspends. */}
       <PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact}/>
-      <PrinterRenderLoop active={active} compact={compact} isScrolling={isScrolling}/>
+      <PrinterRenderLoop active={active} compact={compact} isScrolling={isScrolling} onPressure={lowerResolution}/>
     </Suspense>
   </Canvas>;
 }
