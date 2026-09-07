@@ -231,3 +231,16 @@ only during temporary-profile cleanup. The next useful measurement is a new
 hosted PageSpeed run after deployment. Avoid inferring a remote score from these
 local results. Trace files and instrumentation live in the ignored artifacts
 folder; the application has no test-service detection or diagnostic hooks.
+
+## Fade after the first rendered frame
+
+The printer canvas now starts its 0.8-second CSS opacity fade only after the first
+3D draw completes. The previous fade started when the empty canvas mounted and
+could finish before the scene was ready. A per-canvas ref prevents scroll,
+resize and visibility changes from restarting it; hiding the tab pauses the CSS
+animation. Existing reduced-motion handling still applies.
+
+A browser check delayed the studio asset by two seconds: opacity remained zero
+until rendering began, then progressed to one with the draw count fixed at 35
+throughout the fade. Idle rendering stayed at zero draws per second. The
+production build and TypeScript check passed.
