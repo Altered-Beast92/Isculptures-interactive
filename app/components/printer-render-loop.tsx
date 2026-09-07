@@ -1,61 +1,71 @@
 'use client';
 
 import { useThree } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
+import { type RefObject, useEffect, useRef } from 'react';
+import { createPrinterFrameDriver } from '../../lib/printer-frame-driver';
 
-// Keep the subtle idle animation, but leave time for input and page loading
-// between frames. Scroll movement gets the higher frame rate.
-export default function PrinterRenderLoop({ active, compact, isScrolling, onPressure }: { active: boolean; compact: boolean; isScrolling: boolean; onPressure: () => void }) {
+type Props = {
+  active: boolean;
+  compact: boolean;
+  isScrolling: boolean;
+  progress: number;
+  moving: RefObject<boolean>;
+  wake: RefObject<(() => void) | null>;
+  onPressure: () => void;
+};
+
+export default function PrinterRenderLoop({ active, compact, isScrolling, progress, moving, wake, onPressure }: Props) {
   const advance = useThree(state => state.advance);
   const get = useThree(state => state.get);
   const gl = useThree(state => state.gl);
   const scene = useThree(state => state.scene);
   const camera = useThree(state => state.camera);
   const clock = useThree(state => state.clock);
+  const width = useThree(state => state.size.width);
+  const height = useThree(state => state.size.height);
+  const dpr = useThree(state => state.viewport.dpr);
   const fps = useRef(30);
-  fps.current = isScrolling ? (compact ? 30 : 60) : 30;
+  fps.current = isScrolling && !compact ? 60 : 30;
 
   useEffect(() => {
     if (!active) return;
     let cancelled = false;
-    let frame = 0;
-    let previous = 0;
-    let elapsed = clock.elapsedTime;
     let sampleStart = 0;
     let sampleFrames = 0;
     let sampleCpu = 0;
-    const render = (now: number) => {
-      if (cancelled) return;
-      if (!previous || now - previous >= 1000 / fps.current - .5) {
-        // Do not jump the animation forward after a suspended/slow frame.
-        elapsed += previous ? Math.min((now - previous) / 1000, .1) : 1 / fps.current;
-        previous = now;
+    const driver = createPrinterFrameDriver({
+      request: requestAnimationFrame,
+      cancel: cancelAnimationFrame,
+      fps: () => fps.current,
+      elapsed: clock.elapsedTime,
+      draw: (elapsed, now, first) => {
+        // Idle time must not count as a slow device when rendering resumes.
+        if (first) { sampleStart = now; sampleFrames = 0; sampleCpu = 0; }
+        moving.current = false;
         const started = performance.now();
         advance(elapsed);
-        // rAF slows down when the GPU cannot keep up, even if gl.render()
-        // itself returns quickly. Measure both delivered frames and CPU work.
-        if (!sampleStart) sampleStart = now;
         sampleFrames++;
         sampleCpu += performance.now() - started;
         const sampleDuration = now - sampleStart;
         if (sampleDuration >= 1500 && sampleFrames >= 6) {
           const deliveredFps = (sampleFrames - 1) * 1000 / sampleDuration;
-          if ((deliveredFps < 18 || sampleCpu / sampleFrames > 20) && get().viewport.dpr > .5) {
-            onPressure();
-          }
-          sampleStart = 0;
-          sampleFrames = 0;
-          sampleCpu = 0;
+          if ((deliveredFps < 18 || sampleCpu / sampleFrames > 20) && get().viewport.dpr > .5) onPressure();
+          sampleStart = now; sampleFrames = 0; sampleCpu = 0;
         }
-      }
-      frame = requestAnimationFrame(render);
-    };
-    // Let the driver compile shaders asynchronously before the first draw.
-    // The regular render path remains available on drivers without the extension.
-    const start = () => { if (!cancelled) frame = requestAnimationFrame(render); };
+        return moving.current;
+      },
+    });
+    wake.current = driver.wake;
+    const start = () => { if (!cancelled) driver.resume(); };
     void gl.compileAsync(scene, camera).then(start, start);
-    return () => { cancelled = true; cancelAnimationFrame(frame); };
-  }, [active, advance, camera, clock, get, gl, onPressure, scene]);
+    return () => {
+      cancelled = true;
+      driver.dispose();
+      if (wake.current === driver.wake) wake.current = null;
+    };
+  }, [active, advance, camera, clock, get, gl, moving, onPressure, scene, wake]);
 
+  // These can change while the last frame is held, including adaptive DPR.
+  useEffect(() => { wake.current?.(); }, [compact, dpr, height, isScrolling, progress, wake, width]);
   return null;
 }

@@ -1,10 +1,15 @@
 # Printer rendering and performance
 
-The homepage keeps its animated 3D printer, moving filament, scroll-driven print
-height, camera movement and particles. It uses a 30 fps idle loop, 30 fps mobile
-scrolling and up to 60 fps desktop scrolling. Mobile rendering uses device pixel
-ratio 1; desktop is capped at 1.5. A hidden tab pauses rendering without destroying
-the WebGL context.
+The homepage automatically loads its 3D printer and keeps scroll-driven print
+height, moving filament, spool rotation and camera movement. It renders only
+while something changes, then holds its last frame without queuing animation
+callbacks. Scrolling, resizing, adaptive resolution, model readiness and returning
+to a visible tab wake it again. Ambient particles use independent CSS transforms.
+
+Active rendering is capped at 30 fps on mobile, up to 60 fps during desktop
+scrolling, and 30 fps while movement settles. Mobile DPR is capped at 1 and desktop
+at 1.5, with the adaptive reduction described below. A hidden tab pauses rendering
+without destroying the WebGL context.
 
 The ground shadow is captured once in the printer's coordinate system and moves
 with the rig. The solid base supplies its footprint; the growing print does not
@@ -99,3 +104,64 @@ The production build and type checks passed. Browser interaction checks also
 confirmed that reduced resolution persists through scrolling and that model
 clipping, camera movement, tab visibility, navigation and normal-device quality
 continue working.
+
+## Follow-up: render only when the printer changes
+
+The hosted PageSpeed report supplied on 8 September 2026 scored 43 on mobile,
+with 26,780 ms total blocking time and 39.3 seconds of main-thread work. The
+largest category was Other (38.1 seconds), and all 20 listed longest tasks pointed
+to the printer bundle, including tasks late in the capture. That bundle already
+contained the earlier adaptive-resolution change. These findings motivated
+removing sustained idle rendering rather than assuming resolution alone fixed it.
+
+Report: https://pagespeed.web.dev/analysis/https-isculptures-interactive-vercel-app/w2zjg5r70f?form_factor=mobile
+
+The new frame driver stops scheduling rAF after the camera, rig and carriage
+settle. Its first frame uses the current scroll position immediately. A late GLB
+shader compilation explicitly wakes the stopped driver so the print appears even
+without further input. Damping continues after scroll events end, and idle time
+is excluded from animation deltas and adaptive performance samples. Printer
+transforms update before the filament geometry and cached shadow.
+
+No crawler detection is involved. The same behaviour runs for visitors and audit
+services. The existing reduced-motion and data-saving preferences still apply.
+Preview indexing settings remain unchanged; the report's SEO warning is separate.
+
+### Responsive logo
+
+The header/footer previously downloaded a 517,594-byte PNG. Its 2889 x 557 source
+now produces 400, 800 and 1200 px WebP variants of 12,818, 34,074 and 58,640 bytes.
+The shared logo uses srcset and reserves the correct intrinsic aspect ratio.
+Regenerate with `node scripts/prepare-brand-logo.mjs`; retain the original PNG.
+
+### Verification
+
+- All 16 tests pass, including four frame-driver regressions for zero idle
+  callbacks, late asset wake-ups, scroll coalescing, frame-rate limits, hidden-tab
+  cancellation, bounded resume deltas and disposal.
+- TypeScript and the production export build pass.
+- An instrumented production export in the in-app browser showed zero WebGL draw
+  calls per second after initial load and after scrolling settled. At 70% scroll,
+  model clipping changed from -0.8876 to 0.6579 and the camera moved accordingly.
+- Resizing from 1265 to 390 px retained the same canvas, visible 17,999-vertex
+  model and stable 35-geometry count. Returning to the top restored the initial
+  camera. Simulated hidden/visible transitions suspended and resumed rendering
+  with the same canvas. No page errors were reported.
+- With the GLB response deliberately delayed by 15 seconds on mobile at #work,
+  the rig reached zero draw calls while waiting. Model readiness then triggered
+  a redraw, revealed the original model and returned to zero draw calls without
+  any user input.
+- Local Lighthouse 13.4.1 mobile reports completed without audit runtime errors:
+
+| Chrome configuration | Performance | FCP | LCP | TBT | Speed index |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Default headless | 57 | 2.1 s | 8.6 s | 640 ms | 2.2 s |
+| Headless with GPU disabled | 60 | 2.1 s | 5.6 s | 740 ms | 2.3 s |
+
+These are diagnostic local runs against an uncompressed static server, not a
+before/after comparison or a prediction of hosted PageSpeed scores. Initial
+loading is still expensive. The Lighthouse CLI saved both complete reports, then
+returned EPERM while cleaning its temporary Windows Chrome profiles; the error
+was in cleanup, not in either report. Reports and the browser diagnostic fixture
+are in the ignored artifacts directory. Deployment and a fresh hosted audit are
+still required to assess the remote outcome.
