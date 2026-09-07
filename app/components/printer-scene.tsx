@@ -1,6 +1,6 @@
 'use client';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { ContactShadows, Sparkles, useGLTF } from '@react-three/drei';
+import { ContactShadows, useGLTF } from '@react-three/drei';
 import { memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import PrinterRenderLoop from './printer-render-loop';
@@ -41,7 +41,7 @@ function makeSectionCap(root: THREE.Object3D, level: number) {
   const outline = bins.filter((point): point is THREE.Vector2 => point !== null); if (outline.length < 3) return null; const shape = new THREE.Shape(outline); const geometry = new THREE.ShapeGeometry(shape); geometry.rotateX(Math.PI / 2); const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: '#d6d1c6', roughness: .47, metalness: .04, side: THREE.DoubleSide })); mesh.position.y = level + .002; return mesh;
 }
 
-function PrintedGlb({ progress }: { progress: number }) {
+function PrintedGlb({ progress, onReady }: { progress: number; onReady: () => void }) {
   const { scene } = useGLTF(PRINT_MODEL);
   const gl = useThree(state => state.gl);
   const camera = useThree(state => state.camera);
@@ -54,10 +54,10 @@ function PrintedGlb({ progress }: { progress: number }) {
   }, [scene, clip]);
   useEffect(() => {
     let cancelled = false;
-    const reveal = () => { if (!cancelled) model.visible = true; };
+    const reveal = () => { if (!cancelled) { model.visible = true; onReady(); } };
     void gl.compileAsync(model, camera, world).then(reveal, reveal);
     return () => { cancelled = true; model.visible = false; };
-  }, [camera, gl, model, world]);
+  }, [camera, gl, model, onReady, world]);
   useEffect(() => () => {
     // Geometry belongs to useGLTF's cache; only these cloned materials are ours.
     model.traverse(node => { if (node instanceof THREE.Mesh) node.material.dispose(); });
@@ -131,23 +131,38 @@ const PrinterGroundShadow = memo(function PrinterGroundShadow() {
   return <ContactShadows position={[0,-1.11,0]} opacity={.5} scale={7} blur={2.5} frames={1} resolution={256}/>;
 });
 
-function PrinterWorld({ progress, isScrolling, compact }: { progress: number; isScrolling: boolean; compact: boolean }) {
+function PrinterWorld({ progress, isScrolling, compact, moving, onReady }: { progress: number; isScrolling: boolean; compact: boolean; moving: React.RefObject<boolean>; onReady: () => void }) {
   const rig = useRef<THREE.Group>(null); const gantry = useRef<THREE.Group>(null); const head = useRef<THREE.Group>(null);
   const cameraTarget = useMemo(() => new THREE.Vector3(), []);
+  const initial = useRef(true);
+  const headTarget = useRef(0);
   useFrame((state, delta) => {
     const p = Math.min(1, Math.max(0, progress));
-    if (rig.current) rig.current.rotation.y = THREE.MathUtils.damp(rig.current.rotation.y, -.38 + p * .52 + state.pointer.x * .08, 4, delta);
-    // The bed is fixed: the gantry owns height and the carriage owns X. The
-    // toolhead is a child of the gantry, so its height is structural rather
-    // than a second copy of the same maths.
-    if (gantry.current) gantry.current.position.y = GANTRY_REST_Y + p * PRINT_HEIGHT;
-    if (isScrolling && head.current) {
-      const layer = Math.floor(p * 44); const xTarget = -.38 + (layer % 11) * .076;
-      head.current.position.x = THREE.MathUtils.damp(head.current.position.x, xTarget, 22, delta);
-    }
+    const rotationTarget = -.38 + p * .52 + state.pointer.x * .08;
     cameraTarget.set(3.9 - p * 2.15, .45 + p * .25, 5.8 - p * 1.8);
-    state.camera.position.lerp(cameraTarget, 1 - Math.exp(-delta * 2.1)); state.camera.lookAt(.15 + p * .28 + (compact ? COMPACT_AIM : 0), -.1 + p * .3, 0);
-  });
+    if (initial.current || isScrolling) headTarget.current = -.38 + (Math.floor(p * 44) % 11) * .076;
+    // Paint the correct initial pose immediately, including a restored scroll
+    // position. Subsequent scroll changes keep their original damped movement.
+    if (rig.current) {
+      rig.current.rotation.y = initial.current ? rotationTarget : THREE.MathUtils.damp(rig.current.rotation.y, rotationTarget, 4, delta);
+      if (Math.abs(rig.current.rotation.y - rotationTarget) < .001) rig.current.rotation.y = rotationTarget;
+      else moving.current = true;
+    }
+    // The bed is fixed; the gantry owns height and its carriage owns X.
+    if (gantry.current) gantry.current.position.y = GANTRY_REST_Y + p * PRINT_HEIGHT;
+    if (head.current) {
+      head.current.position.x = initial.current ? headTarget.current : THREE.MathUtils.damp(head.current.position.x, headTarget.current, 22, delta);
+      if (Math.abs(head.current.position.x - headTarget.current) < .001) head.current.position.x = headTarget.current;
+      else moving.current = true;
+    }
+    if (initial.current) state.camera.position.copy(cameraTarget);
+    else state.camera.position.lerp(cameraTarget, 1 - Math.exp(-delta * 2.1));
+    if (state.camera.position.distanceToSquared(cameraTarget) < 1e-6) state.camera.position.copy(cameraTarget);
+    else moving.current = true;
+    state.camera.lookAt(.15 + p * .28 + (compact ? COMPACT_AIM : 0), -.1 + p * .3, 0);
+    moving.current ||= isScrolling;
+    initial.current = false;
+  }, -1); // Update transforms before filament geometry and the cached shadow.
   return <group ref={rig} position={[1.35, -.15, 0]}>
     <PrinterGroundShadow/>
     <mesh position={[0,-1.12,0]} receiveShadow><boxGeometry args={[3.55,.22,2.7]}/><meshStandardMaterial color="#353632" roughness={.33} metalness={.82}/></mesh>
@@ -155,7 +170,7 @@ function PrinterWorld({ progress, isScrolling, compact }: { progress: number; is
     <group>
       <mesh position={[0,-1.035,0]} castShadow><boxGeometry args={[2.5,.07,1.7]}/><meshStandardMaterial color="#2b2c28" metalness={.45} roughness={.5}/></mesh>
       <mesh position={[0,-.96,0]} receiveShadow><boxGeometry args={[2.75,.08,1.9]}/><meshStandardMaterial color="#a99e89" roughness={.24} metalness={.92}/></mesh>
-      <Suspense fallback={null}><PrintedGlb progress={progress}/></Suspense>
+      <Suspense fallback={null}><PrintedGlb progress={progress} onReady={onReady}/></Suspense>
     </group>
     {[-1.36,1.36].map(x => <mesh key={x} position={[x,.55,-.7]}><boxGeometry args={[.13,2.95,.15]}/><meshStandardMaterial color="#585a54" metalness={.8} roughness={.25}/></mesh>)}
     <mesh position={[0,1.86,-.7]}><boxGeometry args={[2.85,.16,.2]}/><meshStandardMaterial color="#4b4c47" metalness={.85} roughness={.23}/></mesh>
@@ -193,6 +208,9 @@ function useCompact() {
 
 export default function PrinterScene({ progress, isScrolling, active }: { progress: number; isScrolling: boolean; active: boolean }) {
   const compact = useCompact();
+  const moving = useRef(false);
+  const wake = useRef<(() => void) | null>(null);
+  const requestFrame = useCallback(() => wake.current?.(), []);
   const [renderScale, setRenderScale] = useState(1);
   const lowerResolution = useCallback(() => setRenderScale(scale => Math.max(1 / 3, scale * .75)), []);
   // Keep this in React state so scroll updates do not undo an adaptive DPR.
@@ -205,11 +223,10 @@ export default function PrinterScene({ progress, isScrolling, active }: { progre
       <ambientLight intensity={.65} />
       <spotLight position={[-3, 5, 4]} intensity={290} angle={.72} penumbra={1} color="#fff4df" />
       <spotLight position={[3, 3, 4]} intensity={110} angle={.78} penumbra={1} color="#e8efff" />
-      <Sparkles count={32} scale={7} size={1.4} speed={.15} color="#d6bf91" />
       {/* The rig is all procedural geometry, so it paints on the first frame;
           only the printed GLB inside it suspends. */}
-      <PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact}/>
-      <PrinterRenderLoop active={active} compact={compact} isScrolling={isScrolling} onPressure={lowerResolution}/>
+      <PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact} moving={moving} onReady={requestFrame}/>
+      <PrinterRenderLoop active={active} compact={compact} isScrolling={isScrolling} progress={progress} moving={moving} wake={wake} onPressure={lowerResolution}/>
     </Suspense>
   </Canvas>;
 }

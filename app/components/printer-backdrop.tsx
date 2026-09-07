@@ -1,6 +1,6 @@
 'use client';
 import dynamic from 'next/dynamic';
-import { Component, type ReactNode, useEffect, useState } from 'react';
+import { Component, type CSSProperties, type ReactNode, useEffect, useState } from 'react';
 const PrinterScene = dynamic(() => import('./printer-scene'), { ssr: false });
 class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
@@ -30,8 +30,15 @@ export default function PrinterBackdrop() {
       setProgress(window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight)); setScrolling(true);
       clearTimeout(timer); timer = setTimeout(() => setScrolling(false), 120);
     }); };
-    update(); window.addEventListener('scroll', update, { passive: true });
-    return () => { clearTimeout(timer); cancelAnimationFrame(frame); window.removeEventListener('scroll', update); };
+    update(); window.addEventListener('scroll', update, { passive: true }); window.addEventListener('resize', update);
+    return () => { clearTimeout(timer); cancelAnimationFrame(frame); window.removeEventListener('scroll', update); window.removeEventListener('resize', update); };
   }, [enabled]);
-  return <div className="world" aria-hidden="true">{enabled && <SceneBoundary><PrinterScene progress={progress} isScrolling={scrolling} active={active}/></SceneBoundary>}</div>;
+  return <div className="world" aria-hidden="true" data-active={active}>{enabled && <>
+    <SceneBoundary><PrinterScene progress={progress} isScrolling={scrolling} active={active}/></SceneBoundary>
+    {/* Ambient dust moves independently so it does not redraw the 3D scene. */}
+    <div className="printer-dust">{Array.from({ length: 20 }, (_, i) => <i key={i} style={{
+      left: `${(i * 37 + 11) % 100}%`, top: `${(i * 53 + 7) % 100}%`,
+      '--dust-duration': `${8 + i % 7}s`, '--dust-delay': `-${i * 1.3}s`,
+    } as CSSProperties}/>)}</div>
+  </>}</div>;
 }

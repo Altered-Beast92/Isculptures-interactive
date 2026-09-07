@@ -195,3 +195,9 @@ body .site-header .site-links .nav-cta:hover{
 .site-header .site-links>a:focus-visible,.site-header .menu-toggle:focus-visible{outline:2px solid #e6c88f;outline-offset:5px}
 @media(max-width:1400px){.site-header .site-links{background:rgba(15,24,19,.97)}.site-header .site-links>a:not(.nav-cta){padding:12px 10px}.site-header .site-links .nav-cta{margin-top:6px}}
 @media(prefers-reduced-motion:reduce){.site-header .site-links>a{transition:none}}
+/* Compositor-only dust keeps the atmosphere without rendering the printer. */
+.printer-dust{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.printer-dust i{position:absolute;width:2px;height:2px;border-radius:50%;background:#d6bf91;opacity:.28;animation:printer-dust-drift var(--dust-duration) ease-in-out var(--dust-delay) infinite alternate}
+.world[data-active="false"] .printer-dust i{animation-play-state:paused}
+@keyframes printer-dust-drift{from{transform:translate3d(-6px,10px,0)}to{transform:translate3d(8px,-16px,0)}}
+@media(prefers-reduced-motion:reduce){.printer-dust{display:none}}
