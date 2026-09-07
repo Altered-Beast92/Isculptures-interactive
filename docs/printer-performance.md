@@ -62,3 +62,40 @@ Browser checks verified at 390 px and 1440 px:
 
 TypeScript, the production build and all 12 existing tests passed. Local reports,
 interaction results and screenshots are in the ignored `artifacts` directory.
+
+## Follow-up: sustained rendering on slow devices
+
+GTmetrix subsequently timed out too. A live-site check found no stuck or
+third-party requests (22 completed requests). In a more demanding reproduction,
+Chrome with SwiftShader, 6x CPU slowdown, a 1440 x 1000 viewport and device scale
+factor 2 kept producing long tasks after load. The initial scene rendered at DPR
+1.5. This can interfere with the CPU-idle condition required by GTmetrix:
+https://gtmetrix.com/blog/browser-timings/
+
+The renderer now samples delivered frame rate and CPU render time over at least
+1.5 seconds and six frames. Sustained performance below 18 fps or over 20 ms CPU
+per frame reduces the render resolution by 25%, down to a minimum DPR of 0.5.
+The model, lighting, particles and print animation remain active. The adjustment
+uses measured performance for every visitor, without identifying test services.
+Normal mobile/desktop browsers retained their initial DPR of 1/1.5 in checks.
+Resolution remains lowered for that scene's lifetime to avoid repeated switches;
+scroll updates preserve it, and a newly mounted scene starts at normal quality.
+
+In the final 15-second observation window of the slow-renderer reproduction:
+
+| Measurement | Deployed fixed-resolution version | Local adaptive version |
+| --- | ---: | ---: |
+| Longest CPU-idle interval | 4.54 s | 12.61 s |
+| Main scene renders | 45 | 162 |
+| Maximum measured render call | 88 ms | 38.3 ms |
+| Pending / failed requests | 0 / 0 | 0 / 0 |
+
+This reproduces a relevant failure mode, not the remote providers' exact machines.
+The adaptive version still requires deployment and independent hosted retesting.
+The direct PageSpeed API was unavailable to this session due to its API quota;
+that does not establish why the user's PageSpeed UI or GTmetrix timed out.
+
+The production build and type checks passed. Browser interaction checks also
+confirmed that reduced resolution persists through scrolling and that model
+clipping, camera movement, tab visibility, navigation and normal-device quality
+continue working.
