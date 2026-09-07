@@ -1,11 +1,10 @@
 'use client';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { ContactShadows, useGLTF } from '@react-three/drei';
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import PrinterRenderLoop from './printer-render-loop';
 import PrinterEnvironment from './printer-environment';
-const PRINT_MODEL = '/models/homepage_print.glb';
+import { usePrinterMesh } from './printer-mesh';
 const PRINT_HEIGHT = 2.24;
 const TOOLHEAD_SCALE = 1.25;
 // Gantry rest height and the carriage drop below the beam centre together put
@@ -41,17 +40,23 @@ function makeSectionCap(root: THREE.Object3D, level: number) {
   const outline = bins.filter((point): point is THREE.Vector2 => point !== null); if (outline.length < 3) return null; const shape = new THREE.Shape(outline); const geometry = new THREE.ShapeGeometry(shape); geometry.rotateX(Math.PI / 2); const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: '#d6d1c6', roughness: .47, metalness: .04, side: THREE.DoubleSide })); mesh.position.y = level + .002; return mesh;
 }
 
-function PrintedGlb({ progress, onReady }: { progress: number; onReady: () => void }) {
-  const { scene } = useGLTF(PRINT_MODEL);
+function PrintedModel({ progress, onReady }: { progress: number; onReady: () => void }) {
+  const { geometry, matrix } = usePrinterMesh();
   const gl = useThree(state => state.gl);
   const camera = useThree(state => state.camera);
   const world = useThree(state => state.scene);
   const clip = useMemo(() => new THREE.Plane(new THREE.Vector3(0, -1, 0), -.9), []);
   const model = useMemo(() => {
-    const copy = scene.clone(true); copy.visible = false; const box = new THREE.Box3().setFromObject(copy); const size = box.getSize(new THREE.Vector3());
-    const scale = PRINT_HEIGHT / Math.max(size.y, .001); copy.scale.setScalar(scale); copy.position.set(-(box.min.x + size.x / 2) * scale, -.91 - box.min.y * scale, -(box.min.z + size.z / 2) * scale);
-    copy.traverse((node) => { if (node instanceof THREE.Mesh) { node.castShadow = true; node.receiveShadow = true; node.material = new THREE.MeshStandardMaterial({ color: '#8f918d', roughness: .65, metalness: .05, clippingPlanes: [clip], clipShadows: true, side: THREE.DoubleSide }); } }); return copy;
-  }, [scene, clip]);
+    const material = new THREE.MeshStandardMaterial({ color: '#8f918d', roughness: .65, metalness: .05, clippingPlanes: [clip], clipShadows: true, side: THREE.DoubleSide });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.applyMatrix4(matrix); mesh.castShadow = mesh.receiveShadow = true;
+    const copy = new THREE.Group(); copy.add(mesh); copy.visible = false;
+    const box = new THREE.Box3().setFromObject(copy); const size = box.getSize(new THREE.Vector3());
+    const scale = PRINT_HEIGHT / Math.max(size.y, .001);
+    copy.scale.setScalar(scale);
+    copy.position.set(-(box.min.x + size.x / 2) * scale, -.91 - box.min.y * scale, -(box.min.z + size.z / 2) * scale);
+    return copy;
+  }, [geometry, matrix, clip]);
   useEffect(() => {
     let cancelled = false;
     const reveal = () => { if (!cancelled) { model.visible = true; onReady(); } };
@@ -59,7 +64,7 @@ function PrintedGlb({ progress, onReady }: { progress: number; onReady: () => vo
     return () => { cancelled = true; model.visible = false; };
   }, [camera, gl, model, onReady, world]);
   useEffect(() => () => {
-    // Geometry belongs to useGLTF's cache; only these cloned materials are ours.
+    // Geometry belongs to useLoader's cache; only these materials are ours.
     model.traverse(node => { if (node instanceof THREE.Mesh) node.material.dispose(); });
   }, [model]);
   useFrame(() => { clip.constant = -.91 + Math.max(.01, Math.min(1, progress)) * PRINT_HEIGHT; });
@@ -125,10 +130,12 @@ function Spool({ isScrolling }: { isScrolling: boolean }) {
   </group>;
 }
 
-// The base's footprint is fixed relative to the rig. Capture its soft shadow
-// once and rotate it with the printer instead of doing five extra passes/frame.
+// The fixed base's footprint is prepared offline and moves with the rig.
 const PrinterGroundShadow = memo(function PrinterGroundShadow() {
-  return <ContactShadows position={[0,-1.11,0]} opacity={.5} scale={7} blur={2.5} frames={1} resolution={256}/>;
+  const texture = useLoader(THREE.TextureLoader, '/models/printer-ground-shadow.png');
+  return <mesh position={[0,-1.24,0]} rotation={[-Math.PI / 2,0,0]}>
+    <planeGeometry args={[7,7]}/><meshBasicMaterial map={texture} transparent opacity={.5} depthWrite={false}/>
+  </mesh>;
 });
 
 function PrinterWorld({ progress, isScrolling, compact, moving, onReady }: { progress: number; isScrolling: boolean; compact: boolean; moving: React.RefObject<boolean>; onReady: () => void }) {
@@ -162,7 +169,7 @@ function PrinterWorld({ progress, isScrolling, compact, moving, onReady }: { pro
     state.camera.lookAt(.15 + p * .28 + (compact ? COMPACT_AIM : 0), -.1 + p * .3, 0);
     moving.current ||= isScrolling;
     initial.current = false;
-  }, -1); // Update transforms before filament geometry and the cached shadow.
+  }, -1); // Update transforms before rebuilding the filament geometry.
   return <group ref={rig} position={[1.35, -.15, 0]}>
     <PrinterGroundShadow/>
     <mesh position={[0,-1.12,0]} receiveShadow><boxGeometry args={[3.55,.22,2.7]}/><meshStandardMaterial color="#353632" roughness={.33} metalness={.82}/></mesh>
@@ -170,7 +177,7 @@ function PrinterWorld({ progress, isScrolling, compact, moving, onReady }: { pro
     <group>
       <mesh position={[0,-1.035,0]} castShadow><boxGeometry args={[2.5,.07,1.7]}/><meshStandardMaterial color="#2b2c28" metalness={.45} roughness={.5}/></mesh>
       <mesh position={[0,-.96,0]} receiveShadow><boxGeometry args={[2.75,.08,1.9]}/><meshStandardMaterial color="#a99e89" roughness={.24} metalness={.92}/></mesh>
-      <Suspense fallback={null}><PrintedGlb progress={progress} onReady={onReady}/></Suspense>
+      <Suspense fallback={null}><PrintedModel progress={progress} onReady={onReady}/></Suspense>
     </group>
     {[-1.36,1.36].map(x => <mesh key={x} position={[x,.55,-.7]}><boxGeometry args={[.13,2.95,.15]}/><meshStandardMaterial color="#585a54" metalness={.8} roughness={.25}/></mesh>)}
     <mesh position={[0,1.86,-.7]}><boxGeometry args={[2.85,.16,.2]}/><meshStandardMaterial color="#4b4c47" metalness={.85} roughness={.23}/></mesh>
@@ -224,7 +231,7 @@ export default function PrinterScene({ progress, isScrolling, active }: { progre
       <spotLight position={[-3, 5, 4]} intensity={290} angle={.72} penumbra={1} color="#fff4df" />
       <spotLight position={[3, 3, 4]} intensity={110} angle={.78} penumbra={1} color="#e8efff" />
       {/* The rig is all procedural geometry, so it paints on the first frame;
-          only the printed GLB inside it suspends. */}
+          only the printed model inside it suspends. */}
       <PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact} moving={moving} onReady={requestFrame}/>
       <PrinterRenderLoop active={active} compact={compact} isScrolling={isScrolling} progress={progress} moving={moving} wake={wake} onPressure={lowerResolution}/>
     </Suspense>

@@ -11,9 +11,9 @@ scrolling, and 30 fps while movement settles. Mobile DPR is capped at 1 and desk
 at 1.5, with the adaptive reduction described below. A hidden tab pauses rendering
 without destroying the WebGL context.
 
-The ground shadow is captured once in the printer's coordinate system and moves
-with the rig. The solid base supplies its footprint; the growing print does not
-need a freshly blurred floor shadow every frame.
+The ground shadow is a small texture prepared from the fixed base's footprint.
+It sits just below the base and moves with the rig, with no depth or blur render
+passes at startup or while scrolling.
 
 ## Studio lighting asset
 
@@ -165,3 +165,69 @@ returned EPERM while cleaning its temporary Windows Chrome profiles; the error
 was in cleanup, not in either report. Reports and the browser diagnostic fixture
 are in the ignored artifacts directory. Deployment and a fresh hosted audit are
 still required to assess the remote outcome.
+
+## Follow-up: prepare startup assets offline
+
+After the demand-rendering change, the user's hosted reports completed: PageSpeed
+scored 62 mobile (6,160 ms TBT) and 70 desktop (2,740 ms TBT); GTmetrix graded B and
+finished in 4.5 seconds. The remaining blocking prompted a startup investigation.
+A local trace did not reproduce Google's 6.16 seconds of blocking. It did expose
+first-render work, while source inspection confirmed that the once-only shadow
+still required five offscreen passes on the visitor's device.
+
+The homepage now uses two prepared assets:
+
+- `homepage-print.bin.gz` stores the source model's unchanged Float32 vertex
+  positions and node transform, with Uint16 triangle indices. Unused vertex colours
+  are omitted. The same 17,999 vertices and 36,564 triangles remain. The file is
+  382,039 bytes, versus the 727,852-byte original GLB. A small cached loader uses
+  typed-array views of the decompressed buffer, removing the GLTF/Draco loader
+  code from the homepage. It also accepts HTTP responses already decompressed.
+- `printer-ground-shadow.png` is a 2,915-byte, 256 x 256 soft rectangular
+  footprint of the 3.55 x 2.7 base. It approximates the fixed contact shadow using
+  a blurred mask, retaining 0.5 material opacity. Its plane sits below the base at
+  y = -1.24 in rig coordinates. The depth pass and four blur passes are gone.
+
+Regenerate after changing the source model or base dimensions:
+
+```powershell
+node scripts/prepare-printer-model.mjs
+node scripts/prepare-printer-shadow.mjs
+```
+
+Keep the original GLB as the source. The preparation script intentionally rejects
+animated, skinned, multi-mesh or differently attributed models so a replacement
+cannot silently lose features. The binary ISM1 header contains the vertex/index
+counts and original transform; runtime validation rejects incomplete or
+inconsistent buffers.
+
+### Verification and limits
+
+An instrumented browser recorded five shader programs instead of eight, and zero
+offscreen renders instead of five. The original print remains visible and scroll
+changes the clipping height and camera. Desktop/mobile resizing retains the
+canvas; rendering returns to zero draw calls after settling. A 15-second delayed
+mesh response still reveals the model automatically. Visual review confirmed the
+printer and its material appearance are retained, with a soft shadow under the
+base. All 18 tests and the production build pass, including exact comparisons of
+every source vertex, triangle index and matrix element against the prepared file.
+
+A matched pair of local Lighthouse 13.4.1 mobile runs used DevTools throttling and
+SwiftShader (different settings from the earlier simulated-throttling runs):
+
+| Metric | Demand-rendering baseline | Prepared assets |
+| --- | ---: | ---: |
+| Performance | 78 | 77 |
+| Total blocking time | 150 ms | 170 ms |
+| Main-thread work | 3.2 s | 2.9 s |
+| FCP / LCP | 3.8 s / 3.8 s | 3.8 s / 3.8 s |
+| JavaScript resource bytes, before HTTP compression | 1,453,111 | 1,375,941 |
+| Total resource bytes on the local static server | 3,307,823 | 2,887,755 |
+
+This pair establishes less downloaded code/data and less startup rendering work;
+it does **not** establish a blocking-time or score improvement. Both reports
+completed without audit runtime errors; the CLI again encountered Windows EPERM
+only during temporary-profile cleanup. The next useful measurement is a new
+hosted PageSpeed run after deployment. Avoid inferring a remote score from these
+local results. Trace files and instrumentation live in the ignored artifacts
+folder; the application has no test-service detection or diagnostic hooks.
