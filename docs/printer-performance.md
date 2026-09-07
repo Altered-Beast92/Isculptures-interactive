@@ -234,7 +234,7 @@ folder; the application has no test-service detection or diagnostic hooks.
 
 ## Fade after the first rendered frame
 
-The printer canvas now starts its 0.8-second CSS opacity fade only after the first
+The printer canvas now starts its 0.4-second CSS opacity fade only after the first
 3D draw completes. The previous fade started when the empty canvas mounted and
 could finish before the scene was ready. A per-canvas ref prevents scroll,
 resize and visibility changes from restarting it; hiding the tab pauses the CSS
