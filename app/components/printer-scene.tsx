@@ -1,8 +1,10 @@
 'use client';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { ContactShadows, Environment, Lightformer, Sparkles, useGLTF } from '@react-three/drei';
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { ContactShadows, Sparkles, useGLTF } from '@react-three/drei';
+import { memo, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
+import PrinterRenderLoop from './printer-render-loop';
+import PrinterEnvironment from './printer-environment';
 const PRINT_MODEL = '/models/homepage_print.glb';
 const PRINT_HEIGHT = 2.24;
 const TOOLHEAD_SCALE = 1.25;
@@ -41,12 +43,25 @@ function makeSectionCap(root: THREE.Object3D, level: number) {
 
 function PrintedGlb({ progress }: { progress: number }) {
   const { scene } = useGLTF(PRINT_MODEL);
+  const gl = useThree(state => state.gl);
+  const camera = useThree(state => state.camera);
+  const world = useThree(state => state.scene);
   const clip = useMemo(() => new THREE.Plane(new THREE.Vector3(0, -1, 0), -.9), []);
   const model = useMemo(() => {
-    const copy = scene.clone(true); const box = new THREE.Box3().setFromObject(copy); const size = box.getSize(new THREE.Vector3());
+    const copy = scene.clone(true); copy.visible = false; const box = new THREE.Box3().setFromObject(copy); const size = box.getSize(new THREE.Vector3());
     const scale = PRINT_HEIGHT / Math.max(size.y, .001); copy.scale.setScalar(scale); copy.position.set(-(box.min.x + size.x / 2) * scale, -.91 - box.min.y * scale, -(box.min.z + size.z / 2) * scale);
     copy.traverse((node) => { if (node instanceof THREE.Mesh) { node.castShadow = true; node.receiveShadow = true; node.material = new THREE.MeshStandardMaterial({ color: '#8f918d', roughness: .65, metalness: .05, clippingPlanes: [clip], clipShadows: true, side: THREE.DoubleSide }); } }); return copy;
   }, [scene, clip]);
+  useEffect(() => {
+    let cancelled = false;
+    const reveal = () => { if (!cancelled) model.visible = true; };
+    void gl.compileAsync(model, camera, world).then(reveal, reveal);
+    return () => { cancelled = true; model.visible = false; };
+  }, [camera, gl, model, world]);
+  useEffect(() => () => {
+    // Geometry belongs to useGLTF's cache; only these cloned materials are ours.
+    model.traverse(node => { if (node instanceof THREE.Mesh) node.material.dispose(); });
+  }, [model]);
   useFrame(() => { clip.constant = -.91 + Math.max(.01, Math.min(1, progress)) * PRINT_HEIGHT; });
   return <primitive object={model}/>;
 }
@@ -57,10 +72,11 @@ function PrintedGlb({ progress }: { progress: number }) {
 function FilamentFeed({ gantry, head }: { gantry: React.RefObject<THREE.Group | null>; head: React.RefObject<THREE.Group | null> }) {
   const mesh = useRef<THREE.Mesh>(null); const carrier = useRef<THREE.Group>(null); const last = useRef(new THREE.Vector3(1e3, 1e3, 1e3));
   const [geometry] = useState(() => new THREE.BufferGeometry());
+  const inlet = useMemo(() => new THREE.Vector3(), []);
   const material = useMemo(() => new THREE.MeshStandardMaterial({ color: '#cfc7b2', roughness: .42, metalness: .04 }), []);
   useFrame(() => {
     if (!mesh.current || !gantry.current || !head.current) return;
-    const inlet = new THREE.Vector3(head.current.position.x, gantry.current.position.y + HEAD_DROP + INLET_Y, INLET_Z);
+    inlet.set(head.current.position.x, gantry.current.position.y + HEAD_DROP + INLET_Y, INLET_Z);
     if (carrier.current) carrier.current.position.x = inlet.x;
     if (inlet.distanceToSquared(last.current) < 4e-5) return;
     last.current.copy(inlet);
@@ -77,6 +93,10 @@ function FilamentFeed({ gantry, head }: { gantry: React.RefObject<THREE.Group | 
     const next = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), 46, .021, 6, false);
     mesh.current.geometry.dispose(); mesh.current.geometry = next;
   });
+  useEffect(() => {
+    const current = mesh.current;
+    return () => { current?.geometry.dispose(); };
+  }, []);
   return <>
     <mesh position={[0,RAIL_Y,RAIL_Z]}><boxGeometry args={[2.78,.05,.07]}/><meshStandardMaterial color="#6e706a" metalness={.86} roughness={.24}/></mesh>
     <mesh position={[0,RAIL_Y+.05,RAIL_Z]}><boxGeometry args={[2.78,.05,.03]}/><meshStandardMaterial color="#42433e" metalness={.7} roughness={.34}/></mesh>
@@ -105,8 +125,15 @@ function Spool({ isScrolling }: { isScrolling: boolean }) {
   </group>;
 }
 
+// The base's footprint is fixed relative to the rig. Capture its soft shadow
+// once and rotate it with the printer instead of doing five extra passes/frame.
+const PrinterGroundShadow = memo(function PrinterGroundShadow() {
+  return <ContactShadows position={[0,-1.11,0]} opacity={.5} scale={7} blur={2.5} frames={1} resolution={256}/>;
+});
+
 function PrinterWorld({ progress, isScrolling, compact }: { progress: number; isScrolling: boolean; compact: boolean }) {
   const rig = useRef<THREE.Group>(null); const gantry = useRef<THREE.Group>(null); const head = useRef<THREE.Group>(null);
+  const cameraTarget = useMemo(() => new THREE.Vector3(), []);
   useFrame((state, delta) => {
     const p = Math.min(1, Math.max(0, progress));
     if (rig.current) rig.current.rotation.y = THREE.MathUtils.damp(rig.current.rotation.y, -.38 + p * .52 + state.pointer.x * .08, 4, delta);
@@ -118,10 +145,11 @@ function PrinterWorld({ progress, isScrolling, compact }: { progress: number; is
       const layer = Math.floor(p * 44); const xTarget = -.38 + (layer % 11) * .076;
       head.current.position.x = THREE.MathUtils.damp(head.current.position.x, xTarget, 22, delta);
     }
-    const cameraTarget = new THREE.Vector3(3.9 - p * 2.15, .45 + p * .25, 5.8 - p * 1.8);
+    cameraTarget.set(3.9 - p * 2.15, .45 + p * .25, 5.8 - p * 1.8);
     state.camera.position.lerp(cameraTarget, 1 - Math.exp(-delta * 2.1)); state.camera.lookAt(.15 + p * .28 + (compact ? COMPACT_AIM : 0), -.1 + p * .3, 0);
   });
   return <group ref={rig} position={[1.35, -.15, 0]}>
+    <PrinterGroundShadow/>
     <mesh position={[0,-1.12,0]} receiveShadow><boxGeometry args={[3.55,.22,2.7]}/><meshStandardMaterial color="#353632" roughness={.33} metalness={.82}/></mesh>
     {[-.62,.62].map(x => <mesh key={x} position={[x,-1.07,0]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.035,.035,2.35,16]}/><meshStandardMaterial color="#8d8f88" metalness={.86} roughness={.22}/></mesh>)}
     <group>
@@ -153,7 +181,7 @@ function PrinterWorld({ progress, isScrolling, compact }: { progress: number; is
 }
 
 function useCompact() {
-  const [compact, setCompact] = useState(false);
+  const [compact, setCompact] = useState(() => window.matchMedia('(max-width:760px)').matches);
   useEffect(() => {
     const query = window.matchMedia('(max-width:760px)');
     const update = () => setCompact(query.matches);
@@ -163,28 +191,22 @@ function useCompact() {
   return compact;
 }
 
-export default function PrinterScene({ progress, isScrolling }: { progress: number; isScrolling: boolean }) {
+export default function PrinterScene({ progress, isScrolling, active }: { progress: number; isScrolling: boolean; active: boolean }) {
   const compact = useCompact();
-  return <Canvas dpr={[1, 1.6]} camera={{ position: [3.9, .45, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }} onCreated={({ gl }) => { gl.localClippingEnabled = true; }}>
-    <color attach="background" args={['#191b1a']} />
-    {/* Broad, balanced studio lighting lowers the contrast between the GLB's existing facets. */}
-    <ambientLight intensity={.65} />
-    <spotLight position={[-3, 5, 4]} intensity={290} angle={.72} penumbra={1} color="#fff4df" />
-    <spotLight position={[3, 3, 4]} intensity={110} angle={.78} penumbra={1} color="#e8efff" />
-    {/* The studio light is built in-scene rather than with drei's `preset`,
-        which downloads a multi-megabyte HDR from a third-party CDN before the
-        first frame can draw. One cube render (frames={1}) replaces it. */}
-    <Environment resolution={128} frames={1}>
-      <mesh scale={30}><sphereGeometry args={[1, 16, 16]}/><meshBasicMaterial color="#242623" side={THREE.BackSide}/></mesh>
-      <Lightformer intensity={2.6} position={[0, 4, -6]} scale={[10, 6, 1]} color="#fff4df" />
-      <Lightformer intensity={1.2} position={[-5, 1, 2]} scale={[6, 6, 1]} color="#cdd6e0" />
-      <Lightformer intensity={.9} position={[5, -1, 3]} scale={[6, 4, 1]} color="#c9b48a" />
-    </Environment>
-    <Sparkles count={32} scale={7} size={1.4} speed={.15} color="#d6bf91" />
-    <ContactShadows position={[1.35,-1.26,0]} opacity={.5} scale={7} blur={2.5} />
-    {/* The rig is all procedural geometry, so it paints on the first frame;
-        only the printed GLB inside it suspends. */}
-    <PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact}/>
+  return <Canvas frameloop="never" dpr={compact ? 1 : [1, 1.5]} camera={{ position: [3.9, .45, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }} onCreated={({ gl }) => { gl.localClippingEnabled = true; }}>
+    <Suspense fallback={null}>
+      <PrinterEnvironment/>
+      <color attach="background" args={['#191b1a']} />
+      {/* Broad, balanced studio lighting lowers the contrast between the GLB's existing facets. */}
+      <ambientLight intensity={.65} />
+      <spotLight position={[-3, 5, 4]} intensity={290} angle={.72} penumbra={1} color="#fff4df" />
+      <spotLight position={[3, 3, 4]} intensity={110} angle={.78} penumbra={1} color="#e8efff" />
+      <Sparkles count={32} scale={7} size={1.4} speed={.15} color="#d6bf91" />
+      {/* The rig is all procedural geometry, so it paints on the first frame;
+          only the printed GLB inside it suspends. */}
+      <PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact}/>
+      <PrinterRenderLoop active={active} compact={compact} isScrolling={isScrolling}/>
+    </Suspense>
   </Canvas>;
 }
 
