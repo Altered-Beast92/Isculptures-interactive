@@ -42,6 +42,8 @@ export function validateEnquiry(input: unknown): Validation {
   const annualQuantity = number('annualQuantity', 1);
   const requiredBy = clean(value.requiredBy, 10);
   if (requiredBy && (!/^\d{4}-\d{2}-\d{2}$/.test(requiredBy) || Number.isNaN(Date.parse(requiredBy)) || new Date(requiredBy).toISOString().slice(0,10) !== requiredBy)) errors.requiredBy = 'Enter a valid delivery date.';
+  // Two days of slack absorbs the gap between the visitor's timezone and the Worker's.
+  else if (requiredBy && requiredBy < new Date(Date.now() - 2 * 86400000).toISOString().slice(0, 10)) errors.requiredBy = 'Choose a delivery date that has not already passed.';
   if (value.consent !== true) errors.consent = 'Please acknowledge the privacy notice before sending.';
   const submissionId = clean(value.submissionId, 36);
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(submissionId)) errors.submissionId = 'Refresh the page and try again.';

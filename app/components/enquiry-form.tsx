@@ -17,7 +17,11 @@ const categories: { route: EnquiryRoute; title: string; description: string; gui
   { route: 'design', title: 'Custom Design Enquiry', flag: 'FREE MOCKUP', description: 'Start with an idea, sketch or reference. We’ll review the design work needed.', guidance: 'Bulk production starts at 10 units. Design requirements and costs are confirmed with your quote.', prompt: 'Describe your idea, intended use, approximate size and any references you can share.' },
   { route: 'file', title: 'I have a 3D File', description: 'Bring your model for a review of printing and production requirements.', guidance: 'Bulk production starts at 10 units. Prototype requirements are reviewed with your quote.', prompt: 'What is the model for? Include the quantity, dimensions, material preferences and any critical tolerances.' },
 ];
-const megabytes = (bytes: number) => (bytes / 1048576).toFixed(bytes < 1048576 ? 2 : 1) + ' MB';
+const STEPS = ['Project', 'Delivery', 'Contact'];
+// Which step owns each field, so an error can be shown where it can actually be fixed.
+const FIELD_STEP: Record<string, number> = { brief: 0, quantity: 0, annualQuantity: 0, files: 0, requiredBy: 1, name: 2, email: 2, consent: 2 };
+const stepFor = (key: string) => FIELD_STEP[key] ?? 2;
+const fileSize = (bytes: number) => bytes < 1024 ? bytes + ' B' : bytes < 1048576 ? Math.round(bytes / 1024) + ' KB' : (bytes / 1048576).toFixed(1) + ' MB';
 // A quote needs to see the piece, not every pixel, so photographs travel at a workable size.
 async function shrinkImage(file: File) {
   if (!IMAGE_EXTENSIONS.includes(extensionOf(file.name)) || file.size < 900000) return file;
@@ -79,11 +83,15 @@ export default function EnquiryForm() {
   const challenge = useRef<HTMLDivElement>(null);
   const widget = useRef<string | null>(null);
   const submissionId = useRef('');
+  const legends = useRef<(HTMLLegendElement | null)[]>([]);
+  // Set after mount so the exported HTML does not carry a build-time date.
+  const [today, setToday] = useState('');
   const nextSlot = useRef(0);
   const transfers = useRef(new Map<number, AbortController>());
   const source = useRef({ sourcePath: '/enquiry', referrerHost: '', campaign: { source: '', medium: '', campaign: '' } });
   useEffect(() => {
     submissionId.current = crypto.randomUUID();
+    setToday(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10));
     const params = new URLSearchParams(window.location.search);
     const requested = params.get('route');
     if (requested === 'bulk' || requested === 'supply' || requested === 'design' || requested === 'file') { setRoute(requested); setHasSelected(true); }
@@ -133,6 +141,12 @@ export default function EnquiryForm() {
   useEffect(() => { if (hasSelected) projectHeading.current?.focus(); }, [hasSelected, route]);
   const error = (key: string) => errors[key] ? <span className="field-error" id={'error-' + key}>{errors[key]}</span> : null;
   const props = (key: string) => ({ 'aria-invalid': !!errors[key], 'aria-describedby': errors[key] ? 'error-' + key : undefined });
+  // A corrected field should stop looking wrong straight away, not wait for the next send.
+  const clearError = (target: EventTarget | null) => {
+    const field = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement ? target : null;
+    const name = field?.name;
+    if (name && errors[name]) setErrors(previous => { const next = { ...previous }; delete next[name]; return next; });
+  };
   const patch = (slot: number, change: Partial<Upload>) => setUploads(previous => previous.map(item => item.slot === slot ? { ...item, ...change } : item));
   const transfer = (entry: Upload, held: Ticket) => {
     const url = new URL(endpoint + '/upload', window.location.origin);
@@ -168,11 +182,12 @@ export default function EnquiryForm() {
     setErrors(previous => ({ ...previous, files: '' }));
   };
   const uploading = uploads.some(item => item.status === 'uploading');
+  const failed = uploads.filter(item => item.status === 'error');
   const stored = uploads.filter(item => item.status === 'done');
   const previewable = stored.find(item => item.slot === preview);
-  const send = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); if (state === 'sending' || !hasSelected || !form.current) return;
-    const values = new FormData(form.current); const field = (key: string) => String(values.get(key) || '');
+  // Both the step buttons and the send button read the form through here, so they agree on what is wrong.
+  const inspect = () => {
+    const values = new FormData(form.current!); const field = (key: string) => String(values.get(key) || '');
     const payload = { submissionId: submissionId.current, route, website: field('website'), consent: values.get('consent') === 'on',
       contact: { name: field('name'), email: field('email'), company: field('company'), phone: field('phone'), customerType: field('customerType') },
       brief: field('brief'), quantity: field('quantity'), annualQuantity: route === 'supply' ? field('annualQuantity') : '', frequency: route === 'supply' ? field('frequency') : '',
@@ -181,12 +196,39 @@ export default function EnquiryForm() {
       notes: field('notes'), ...source.current
     };
     const checked = validateEnquiry(payload);
-    const fileError = validateFiles(stored);
+    // An attachment that never arrived must not be quietly left out of the enquiry.
+    const fileError = failed.length ? 'One of your files did not upload. Retry it or remove it before sending.' : validateFiles(stored);
     if (fileError) checked.errors.files = fileError;
+    return checked;
+  };
+  // Two frames, so React has committed the new step before anything is measured or scrolled.
+  const afterPaint = (act: () => void) => requestAnimationFrame(() => requestAnimationFrame(act));
+  // Focus alone does not reliably bring a field back into view, so the scroll is explicit.
+  const bring = (node: HTMLElement | null | undefined) => { if (!node) return; node.focus({ preventScroll: true }); node.scrollIntoView({ block: 'center' }); };
+  const firstProblem = () => form.current?.querySelector<HTMLElement>('fieldset:not([hidden]) [aria-invalid="true"]') ?? null;
+  // Moving only moves. Clearing the message is the caller's business, so a failure can send
+  // the visitor to another step while its explanation stays on screen.
+  const reveal = (next: number) => {
+    setStep(next);
+    afterPaint(() => bring(firstProblem() ?? legends.current[next]));
+  };
+  const goTo = (next: number) => { setMessage(''); reveal(next); };
+  // Continue only moves on once this step is sound, so nothing is discovered at the very end.
+  const advance = () => {
+    setMessage('');
+    const { errors: found } = inspect();
+    const blocking = Object.fromEntries(Object.entries(found).filter(([key, value]) => value && stepFor(key) === step));
+    setErrors(previous => ({ ...previous, ...blocking }));
+    if (Object.keys(blocking).length) { afterPaint(() => bring(firstProblem())); return; }
+    reveal(step + 1);
+  };
+  const send = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); if (state === 'sending' || !hasSelected || !form.current) return;
+    const checked = inspect();
     setErrors(checked.errors); setMessage('');
     if (!checked.data || Object.keys(checked.errors).length) {
-      const keys = Object.keys(checked.errors);
-      setStep(keys.some(key => ['brief', 'quantity', 'annualQuantity', 'files'].includes(key)) ? 0 : keys.includes('requiredBy') ? 1 : 2);
+      const first = Object.keys(checked.errors).filter(key => checked.errors[key]).map(stepFor).sort()[0] ?? 0;
+      setState('idle'); reveal(first);
       return;
     }
     if (!config?.available) { setState('error'); setMessage('Online enquiries are temporarily unavailable. Please email your brief to info@isculptures.com.au.'); return; }
@@ -198,14 +240,23 @@ export default function EnquiryForm() {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(30000),
         body: JSON.stringify({ ...checked.data, ticket: ticket?.ticket, expires: ticket?.expires, attachments: stored.map(item => item.slot) })
       });
-      const result = await response.json();
-      if (!response.ok || result.ok !== true || typeof result.id !== 'string') throw new Error(result.error || 'We could not confirm receipt. Please try again or email the studio.');
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.ok !== true || typeof result.id !== 'string') {
+        const refused = new Error(result.error || 'We could not confirm receipt. Please try again or email the studio.') as Error & { status?: number };
+        refused.status = response.status;
+        throw refused;
+      }
       setReference(result.id); setState('sent');
       track('enquiry_submitted', route);
     } catch (problem) {
       track('enquiry_error', route);
       setState('error'); setMessage(problem instanceof Error ? problem.message : 'We could not confirm receipt. Please try again.');
-      const api = (window as Window & { turnstile?: TurnstileAPI }).turnstile; if (widget.current !== null) api?.reset(widget.current); setTicket(null);
+      // Only a refused verification is worth re-challenging for, and the widget lives on the first step.
+      if (problem instanceof Error && (problem as Error & { status?: number }).status === 403) {
+        const api = (window as Window & { turnstile?: TurnstileAPI }).turnstile;
+        if (widget.current !== null) api?.reset(widget.current);
+        setTicket(null); reveal(0);
+      }
     }
   };
   if (state === 'sent') return <div ref={feedback} tabIndex={-1} className="enquiry-success" role="status"><p className="section-tag">ENQUIRY RECEIVED</p><h2>Thank you. Your brief is saved.</h2><p>Keep your reference: <strong>{reference}</strong></p><p>The studio will review your requirements and reply to the email you provided. A submitted enquiry does not reserve production or confirm an order.</p><a className="primary" href="/">Back to the studio</a></div>;
@@ -220,11 +271,16 @@ export default function EnquiryForm() {
       </button>)}</div>
       <p className="route-footnote">Your brief → A studio review → Your quote</p>
     </section>
-    <form id="project-enquiry-form" hidden={!hasSelected} ref={form} className="enquiry-form staged-enquiry" onSubmit={send} onChange={() => { if (!started.current) { started.current = true; track('enquiry_started', route); } }} noValidate>
+    <form id="project-enquiry-form" hidden={!hasSelected} ref={form} className="enquiry-form staged-enquiry" onSubmit={send}
+      onInput={event => clearError(event.target)}
+      onChange={event => { clearError(event.target); if (!started.current) { started.current = true; track('enquiry_started', route); } }} noValidate>
     <div className="enquiry-category-intro"><button className="change-category" type="button" disabled={state === 'sending'} onClick={() => { setHasSelected(false); requestAnimationFrame(() => categoryHeading.current?.focus()); }}>← Change category</button><p className="section-tag">YOUR PROJECT</p><h2 ref={projectHeading} tabIndex={-1}>{selectedCategory.title}</h2><p>{selectedCategory.guidance}</p></div>
     {config && !config.available && <div className="form-notice" role="status"><b>Send your brief by email for now.</b><p>The online form is not accepting enquiries yet. Email <a href="mailto:info@isculptures.com.au">info@isculptures.com.au</a> or call <a href="tel:+61437383684">0437 383 684</a>.</p></div>}
-    <nav className="enquiry-stages" aria-label="Enquiry steps">{['Project', 'Delivery', 'Contact'].map((label, index) => <button key={label} type="button" aria-current={step === index ? 'step' : undefined} disabled={state === 'sending'} onClick={() => { setStep(index); setMessage(''); }}>0{index + 1}<span>{label}</span></button>)}</nav>
-    <fieldset hidden={step !== 0} disabled={state === 'sending'}><legend>Your project</legend>
+    <nav className="enquiry-stages" aria-label="Enquiry steps">{STEPS.map((label, index) => {
+      const unresolved = Object.keys(errors).some(key => errors[key] && stepFor(key) === index);
+      return <button key={label} type="button" className={unresolved ? 'stage-unresolved' : undefined} aria-current={step === index ? 'step' : undefined} aria-label={'0' + (index + 1) + ' ' + label + (unresolved ? ', needs attention' : '')} disabled={state === 'sending'} onClick={() => goTo(index)}>0{index + 1}<span>{label}</span>{unresolved && <em aria-hidden="true">!</em>}</button>;
+    })}</nav>
+    <fieldset hidden={step !== 0} disabled={state === 'sending'}><legend ref={node => { legends.current[0] = node; }} tabIndex={-1}>Your project</legend>
       <input type="hidden" name="route" value={route}/>
       <label>What would you like to make? <span>(required)</span><textarea name="brief" maxLength={5000} rows={4} {...props('brief')} placeholder={selectedCategory.prompt}/>{error('brief')}</label>
       <div className="enquiry-grid"><label>Quantity per order <span>(leave blank if unsure)</span><input name="quantity" type="number" min={route === 'bulk' || route === 'supply' ? 10 : 1} max={10000000} step="1" {...props('quantity')}/>{error('quantity')}</label><label>Approximate size / dimensions<input name="dimensions" maxLength={500} placeholder="e.g. 80 mm tall"/></label></div>
@@ -236,7 +292,7 @@ export default function EnquiryForm() {
         {config?.uploads && !ticket && <p className="attachment-hint">Complete the check above to attach files.</p>}
         {error('files')}
         {uploads.length > 0 && <ul className="attachment-list">{uploads.map(item => <li key={item.slot} className={'attachment attachment-' + item.status}>
-          <span className="attachment-name">{item.name}</span><span className="attachment-size">{megabytes(item.size)}</span>
+          <span className="attachment-name">{item.name}</span><span className="attachment-size">{fileSize(item.size)}</span>
           <span className="attachment-state">{item.status === 'uploading' ? Math.round(item.progress * 100) + '%' : item.status === 'done' ? 'Uploaded' : 'Failed'}</span>
           <progress className="attachment-progress" max={100} value={item.status === 'done' ? 100 : Math.round(item.progress * 100)} aria-label={'Upload progress for ' + item.name}/>
           {item.status === 'error' && <span className="attachment-error">{item.error} <button type="button" className="text-btn" onClick={() => { if (ticket) transfer(item, ticket); }}>Retry</button></span>}
@@ -246,14 +302,14 @@ export default function EnquiryForm() {
       {stored.some(item => /\.(stl|obj)$/i.test(item.name)) && <button className="text-btn" type="button" onClick={() => setPreview(preview === null ? stored.find(item => /\.(stl|obj)$/i.test(item.name))!.slot : null)}>{preview === null ? 'Preview a 3D model (optional)' : 'Close 3D preview'}</button>}
       {previewable && <ModelPreview key={previewable.slot} file={previewable.file}/>}
     </fieldset>
-    <fieldset hidden={step !== 1} disabled={state === 'sending'}><legend>Timing &amp; delivery</legend><div className="enquiry-grid"><label>Required delivery date<input name="requiredBy" type="date" {...props('requiredBy')}/>{error('requiredBy')}</label><label>Delivery suburb / postcode<input name="postcode" maxLength={100} autoComplete="postal-code"/></label></div><label className="check-label"><input type="checkbox" name="deadlineFixed"/>This delivery date is fixed</label><label>Multiple destinations or delivery notes <span>(optional)</span><input name="destinations" maxLength={500}/></label></fieldset>
-    <fieldset hidden={step !== 2} disabled={state === 'sending'}><legend>Your contact details</legend><div className="enquiry-grid"><label>Your name <span>(required)</span><input name="name" autoComplete="name" maxLength={200} {...props('name')}/>{error('name')}</label><label>Email <span>(required)</span><input name="email" type="email" autoComplete="email" maxLength={254} {...props('email')}/>{error('email')}</label><label>Company / organisation<input name="company" autoComplete="organization" maxLength={200}/></label><label>Phone <span>(optional)</span><input name="phone" type="tel" autoComplete="tel" maxLength={40}/></label></div>
+    <fieldset hidden={step !== 1} disabled={state === 'sending'}><legend ref={node => { legends.current[1] = node; }} tabIndex={-1}>Timing &amp; delivery</legend><div className="enquiry-grid"><label>Required delivery date<input name="requiredBy" type="date" min={today || undefined} {...props('requiredBy')}/>{error('requiredBy')}</label><label>Delivery suburb / postcode<input name="postcode" maxLength={100} autoComplete="postal-code"/></label></div><label className="check-label"><input type="checkbox" name="deadlineFixed"/>This delivery date is fixed</label><label>Multiple destinations or delivery notes <span>(optional)</span><input name="destinations" maxLength={500}/></label></fieldset>
+    <fieldset hidden={step !== 2} disabled={state === 'sending'}><legend ref={node => { legends.current[2] = node; }} tabIndex={-1}>Your contact details</legend><div className="enquiry-grid"><label>Your name <span>(required)</span><input name="name" autoComplete="name" maxLength={200} {...props('name')}/>{error('name')}</label><label>Email <span>(required)</span><input name="email" type="email" autoComplete="email" maxLength={254} {...props('email')}/>{error('email')}</label><label>Company / organisation<input name="company" autoComplete="organization" maxLength={200}/></label><label>Phone <span>(optional)</span><input name="phone" type="tel" autoComplete="tel" maxLength={40}/></label></div>
     <label>I’m enquiring as<select name="customerType" defaultValue=""><option value="">Please select (optional)</option>{CUSTOMER_TYPES.map(type => <option key={type}>{type}</option>)}</select></label><label>Anything else we should know?<textarea name="notes" rows={3} maxLength={3000} placeholder="Repeat order reference, approvals, tolerances, supplier onboarding or confidentiality requirements."/></label>
     <div className="trap" aria-hidden="true"><label>Leave empty<input name="website" tabIndex={-1} autoComplete="off"/></label></div>
     <label className="check-label"><input name="consent" type="checkbox" {...props('consent')}/><span>I have read the <a href="/policies/privacy-policy" target="_blank" rel="noreferrer">privacy notice</a> and understand my details and files will be used to respond to this enquiry.</span></label>{error('consent')}
     </fieldset>
     <div ref={feedback} tabIndex={-1} role={state === 'error' || Object.values(errors).some(Boolean) ? 'alert' : undefined}>{Object.values(errors).some(Boolean) && <p className="form-error">Please check the highlighted fields above.</p>}{message && <p className="form-error">{message} <a href="mailto:info@isculptures.com.au">Email the studio</a>.</p>}</div>
-    <div className="enquiry-step-actions">{step > 0 && <button className="previous-step" type="button" disabled={state === 'sending'} onClick={() => setStep(previous => previous - 1)}>← Back</button>}{step < 2 && <button className="primary next-step" type="button" onClick={() => { setStep(previous => previous + 1); projectHeading.current?.focus(); }}>Continue to {step === 0 ? 'delivery' : 'contact'} ↗</button>}
+    <div className="enquiry-step-actions">{step > 0 && <button className="previous-step" type="button" disabled={state === 'sending'} onClick={() => goTo(step - 1)}>← Back</button>}{step < 2 && <button className="primary next-step" type="button" onClick={advance}>Continue to {step === 0 ? 'delivery' : 'contact'} ↗</button>}
     <button hidden={step !== 2} className="primary" type="submit" disabled={state === 'sending' || !config?.available || uploading || (!!config?.turnstileSiteKey && !ticket)}>{state === 'sending' ? 'Sending your enquiry…' : uploading ? 'Waiting for your files…' : 'Send project enquiry ↗'}</button></div>
     <p className="fineprint">We confirm availability, materials, pricing and lead time after reviewing your brief. <a href="/policies/terms-of-service">About enquiries and orders</a>.</p>
   </form></>;
