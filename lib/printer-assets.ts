@@ -3,6 +3,7 @@
 // instead of waiting for it to arrive and run. Nothing here may import Three.js.
 export const PRINTER_MESH = '/models/homepage-print.bin.gz';
 export const PRINTER_STUDIO = '/models/printer-studio.bin.gz';
+export const PRINTER_SHADOW = '/models/printer-ground-shadow.png';
 
 const requests = new Map<string, Promise<ArrayBuffer>>();
 
@@ -27,5 +28,5 @@ export function printerAsset(url: string) {
 // Call as early as the scene is known to be wanted. Rejections are reported
 // where the scene awaits the same promise, so they are only silenced here.
 export function preloadPrinterAssets() {
-  for (const url of [PRINTER_MESH, PRINTER_STUDIO]) void printerAsset(url).catch(() => {});
+  for (const url of [PRINTER_MESH, PRINTER_STUDIO, PRINTER_SHADOW]) void printerAsset(url).catch(() => {});
 }
