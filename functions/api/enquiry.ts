@@ -1,4 +1,4 @@
-import { MAX_UPLOAD_BYTES, validateEnquiry, validateFiles, type Enquiry } from '../../lib/enquiry.js';
+import { EXTENSIONS, MAX_FILES, MAX_FILE_BYTES, MAX_SLOTS, MAX_UPLOAD_BYTES, TICKET_SECONDS, extensionOf, validateEnquiry, validateFiles, validateSlots, type Enquiry } from '../../lib/enquiry.js';
 
 export interface Env {
   ENQUIRIES?: R2Bucket;
@@ -30,7 +30,14 @@ export function enquiryOrigins(request: Request, env: Env): string[] {
   return env.ENQUIRY_ALLOWED_ORIGINS === undefined ? [new URL(request.url).origin] : parseOrigins(env.ENQUIRY_ALLOWED_ORIGINS);
 }
 export function configured(env: Env) { return !!(env.ENQUIRIES && env.RESEND_API_KEY && env.ENQUIRY_TO && env.ENQUIRY_FROM && env.FILE_LINK_SECRET && env.TURNSTILE_SECRET && env.TURNSTILE_SITE_KEY && env.ENQUIRIES_ENABLED === 'true' && (env.ENQUIRY_ALLOWED_ORIGINS === undefined || parseOrigins(env.ENQUIRY_ALLOWED_ORIGINS).length)); }
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const keyFor = (id: string) => 'enquiries/' + id + '/enquiry.json';
+const filesPrefix = (id: string) => 'enquiries/' + id + '/files/';
+const safeName = (name: string) => name.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/^[-.]+/, '').slice(-120);
+// Keys are '<slot>-<name>', so both parts read back without a second lookup.
+const tailOf = (key: string) => key.slice(key.lastIndexOf('/') + 1);
+const slotOf = (key: string) => Number(tailOf(key).slice(0, tailOf(key).indexOf('-')));
+const nameOf = (key: string) => tailOf(key).slice(tailOf(key).indexOf('-') + 1);
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
 
 async function limitedBody(request: Request, max: number): Promise<ArrayBuffer> {
@@ -94,85 +101,175 @@ export async function notify(record: RecordData, env: Env, origin: string) {
   await env.ENQUIRIES.put(keyFor(record.id), JSON.stringify(record), { httpMetadata: { contentType: 'application/json' } });
   return record;
 }
-async function plausibleFile(file: File) {
-  const ext = file.name.split('.').pop()?.toLowerCase();
-  const bytes = new Uint8Array(await file.slice(0, 512).arrayBuffer());
-  const prefix = new TextDecoder().decode(bytes);
-  if (ext === 'pdf') return prefix.startsWith('%PDF-');
-  if (ext === 'png') return bytes.slice(0,8).join(',') === '137,80,78,71,13,10,26,10';
-  if (ext === 'jpg' || ext === 'jpeg') return bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
-  if (ext === '3mf') return bytes[0] === 80 && bytes[1] === 75 && bytes[2] === 3 && bytes[3] === 4;
-  if (ext === 'stl') return /^\s*solid\b/i.test(prefix) || (file.size >= 84 && new DataView(bytes.buffer).getUint32(80, true) * 50 + 84 === file.size);
-  if (ext === 'obj') return !prefix.includes('\0') && !/<(?:html|script|svg)\b/i.test(prefix);
-  return false;
+// Sniffed from the opening bytes of the stream, so a mismatched file never reaches storage.
+export function plausibleBytes(name: string, bytes: Uint8Array, size: number) {
+  const decode = (from: number, to: number) => new TextDecoder().decode(bytes.slice(from, to));
+  const prefix = decode(0, 512);
+  switch (extensionOf(name)) {
+    case 'pdf': return prefix.startsWith('%PDF-');
+    case 'png': return bytes.length >= 8 && Array.from(bytes.slice(0, 8)).join(',') === '137,80,78,71,13,10,26,10';
+    case 'jpg': case 'jpeg': return bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
+    // HEIC and HEIF are ISO base media files: a box length, then the 'ftyp' marker.
+    case 'heic': case 'heif': return bytes.length >= 12 && decode(4, 8) === 'ftyp';
+    case '3mf': return bytes[0] === 80 && bytes[1] === 75 && bytes[2] === 3 && bytes[3] === 4;
+    case 'stl': return /^\s*solid\b/i.test(prefix) || (size >= 84 && bytes.byteLength >= 84 && new DataView(bytes.buffer, bytes.byteOffset, 84).getUint32(80, true) * 50 + 84 === size);
+    case 'obj': return !prefix.includes('\0') && !/<(?:html|script|svg)\b/i.test(prefix);
+    default: return false;
+  }
+}
+async function verifyTurnstile(env: Env, origin: string, token: unknown, ip: string | null): Promise<'ok' | 'failed' | 'unavailable'> {
+  if (typeof token !== 'string' || !token || token.length > 2048) return 'failed';
+  try {
+    const verification = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST', signal: AbortSignal.timeout(10000), headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret: env.TURNSTILE_SECRET, response: token, remoteip: ip || undefined })
+    });
+    const result = await verification.json() as { success?: boolean; hostname?: string; action?: string };
+    return result.success === true && result.hostname === new URL(origin).hostname && result.action === 'enquiry' ? 'ok' : 'failed';
+  } catch { return 'unavailable'; }
+}
+// One Turnstile check buys a ticket, and the ticket authorises every upload for that reference.
+const ticketFor = (env: Env, id: string, expires: string) => sign(env.FILE_LINK_SECRET!, 'upload:' + id + ':' + expires);
+async function ticketValid(env: Env, id: string, expires: string, ticket: string) {
+  const seconds = Date.now() / 1000;
+  if (!/^\d{10}$/.test(expires) || Number(expires) < seconds || Number(expires) > seconds + TICKET_SECONDS + 60) return false;
+  if (!/^[a-f0-9]{64}$/.test(ticket)) return false;
+  return equal(ticket, await ticketFor(env, id, expires));
+}
+function website(request: Request, env: Env) {
+  const origin = request.headers.get('origin');
+  return origin && enquiryOrigins(request, env).includes(origin) ? origin : null;
+}
+export async function handleTicket(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
+  const origin = website(request, env);
+  if (!origin) return json({ error: 'Please submit from this website.' }, 403);
+  if (!configured(env)) return json({ error: 'Online enquiries are not available. Please email info@isculptures.com.au.' }, 503);
+  let input: Record<string, unknown>;
+  try { input = JSON.parse(new TextDecoder().decode(await limitedBody(request, 8 * 1024))) as Record<string, unknown>; }
+  catch { return json({ error: 'Could not read this request.' }, 400); }
+  const id = typeof input.submissionId === 'string' ? input.submissionId : '';
+  if (!UUID.test(id)) return json({ error: 'Refresh the page and try again.' }, 400);
+  const state = await verifyTurnstile(env, origin, input.turnstileToken, request.headers.get('CF-Connecting-IP'));
+  if (state === 'unavailable') return json({ error: 'Verification is unavailable. Please retry shortly.' }, 503);
+  if (state === 'failed') return json({ error: 'Verification expired or failed. Please retry.' }, 403);
+  if (await env.ENQUIRIES!.head(keyFor(id))) return json({ error: 'This enquiry has already been sent.' }, 409);
+  const expires = String(Math.floor(Date.now() / 1000) + TICKET_SECONDS);
+  return json({ ticket: await ticketFor(env, id, expires), expires });
+}
+export async function handleUpload(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'PUT') return json({ error: 'Method not allowed.' }, 405);
+  const origin = website(request, env);
+  if (!origin) return json({ error: 'Please submit from this website.' }, 403);
+  if (!configured(env)) return json({ error: 'Uploads are not available.' }, 503);
+  const parameters = new URL(request.url).searchParams;
+  const id = parameters.get('id') || '', slot = Number(parameters.get('slot')), name = safeName(parameters.get('name') || '');
+  if (!UUID.test(id) || !Number.isInteger(slot) || slot < 0 || slot >= MAX_SLOTS || !name) return json({ error: 'This upload request is invalid.' }, 400);
+  if (!(await ticketValid(env, id, parameters.get('expires') || '', parameters.get('ticket') || ''))) return json({ error: 'Your verification expired. Please verify again.' }, 403);
+  if (!EXTENSIONS.includes(extensionOf(name))) return json({ error: 'Use STL, OBJ, 3MF, PDF, PNG, JPG or HEIC files.' }, 400);
+  const size = Number(request.headers.get('content-length'));
+  if (!Number.isSafeInteger(size) || size <= 0 || size > MAX_FILE_BYTES) return json({ error: 'Each file must contain data and be no larger than 50 MB.' }, 413);
+  if (!request.body) return json({ error: 'Could not read this file.' }, 400);
+  const bucket = env.ENQUIRIES!;
+  // Files can only be staged while the enquiry is still a draft.
+  if (await bucket.head(keyFor(id))) return json({ error: 'This enquiry has already been sent.' }, 409);
+  const staged = await bucket.list({ prefix: filesPrefix(id) });
+  const slotPrefix = filesPrefix(id) + slot + '-';
+  const others = staged.objects.filter(object => !object.key.startsWith(slotPrefix));
+  if (others.length >= MAX_FILES) return json({ error: 'Choose up to ' + MAX_FILES + ' files.' }, 400);
+  if (others.reduce((sum, object) => sum + object.size, 0) + size > MAX_UPLOAD_BYTES) return json({ error: 'Keep the combined file size under 150 MB.' }, 413);
+  const reader = request.body.getReader();
+  const head: Uint8Array[] = []; let length = 0;
+  try { while (length < 512) { const step = await reader.read(); if (step.done) break; head.push(step.value); length += step.value.byteLength; } }
+  catch { return json({ error: 'The upload was interrupted. Please try again.' }, 400); }
+  const opening = new Uint8Array(length); let offset = 0;
+  for (const chunk of head) { opening.set(chunk, offset); offset += chunk.byteLength; }
+  if (!plausibleBytes(name, opening, size)) { await reader.cancel().catch(() => {}); return json({ error: 'This file does not match its format. Please check ' + name + '.' }, 400); }
+  // A declared length lets the remainder stream straight into R2 instead of being buffered.
+  const key = slotPrefix + name;
+  const body = new FixedLengthStream(size);
+  const writer = body.writable.getWriter();
+  const stored = bucket.put(key, body.readable, { httpMetadata: { contentType: 'application/octet-stream', contentDisposition: 'attachment; filename="' + name + '"' } });
+  const pump = (async () => {
+    for (const chunk of head) await writer.write(chunk);
+    while (true) { const step = await reader.read(); if (step.done) break; await writer.write(step.value); }
+    await writer.close();
+  })();
+  try { await Promise.all([stored, pump]); }
+  catch {
+    await Promise.allSettled([reader.cancel(), writer.abort(), bucket.delete(key)]);
+    return json({ error: 'Could not store this file. Please try again.' }, 502);
+  }
+  // A replacement in the same slot would otherwise leave the previous name behind.
+  await Promise.allSettled(staged.objects.filter(object => object.key.startsWith(slotPrefix) && object.key !== key).map(object => bucket.delete(object.key)));
+  return json({ ok: true, slot, name, size });
 }
 export async function handleEnquiry(request: Request, env: Env): Promise<Response> {
   if (request.method === 'GET') return json({ available: configured(env), uploads: configured(env), turnstileSiteKey: configured(env) ? env.TURNSTILE_SITE_KEY : undefined });
   if (request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, POST' } });
-  const origin = request.headers.get('origin');
-  if (!origin || !enquiryOrigins(request, env).includes(origin)) return json({ error: 'Please submit from this website.' }, 403);
+  const origin = website(request, env);
+  if (!origin) return json({ error: 'Please submit from this website.' }, 403);
   if (!configured(env)) return json({ error: 'Online enquiries are not available. Please email info@isculptures.com.au.' }, 503);
-  const contentType = request.headers.get('content-type') || '';
-  if (!contentType.startsWith('multipart/form-data') && !contentType.startsWith('application/json')) return json({ error: 'Unsupported submission format.' }, 415);
-  let input: unknown; let files: File[] = [];
-  try {
-    const body = await limitedBody(request, contentType.startsWith('multipart') ? MAX_UPLOAD_BYTES + 128 * 1024 : 64 * 1024);
-    if (contentType.startsWith('multipart')) {
-      const form = await new Response(body, { headers: { 'Content-Type': contentType } }).formData();
-      const payload = form.get('payload');
-      if (typeof payload !== 'string' || payload.length > 64000) throw new Error('body');
-      input = JSON.parse(payload);
-      const items = form.getAll('files');
-      if (items.some(item => typeof item === 'string')) throw new Error('body');
-      files = items as File[];
-    } else input = JSON.parse(new TextDecoder().decode(body));
-  } catch (error) { return json({ error: error instanceof Error && error.message === 'size' ? 'Submission is too large.' : 'Could not read this submission.' }, error instanceof Error && error.message === 'size' ? 413 : 400); }
+  if (!(request.headers.get('content-type') || '').startsWith('application/json')) return json({ error: 'Unsupported submission format.' }, 415);
+  let input: Record<string, unknown>;
+  try { input = JSON.parse(new TextDecoder().decode(await limitedBody(request, 64 * 1024))) as Record<string, unknown>; }
+  catch (error) {
+    const large = error instanceof Error && error.message === 'size';
+    return json({ error: large ? 'Submission is too large.' : 'Could not read this submission.' }, large ? 413 : 400);
+  }
   const checked = validateEnquiry(input);
   if (!checked.data) return json({ error: 'Please check the required fields.', errors: checked.errors }, 400);
   if (checked.data.website) return json({ error: 'Could not verify the submission.' }, 400);
-  const issue = validateFiles(files); if (issue) return json({ error: issue }, 400);
-  const data = checked.data;
-  const token = (input as Record<string, unknown>).turnstileToken;
-  if (typeof token !== 'string' || !token || token.length > 2048) return json({ error: 'Please complete the verification.' }, 403);
-  try {
-    const verification = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST', signal: AbortSignal.timeout(10000), headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ secret: env.TURNSTILE_SECRET, response: token, remoteip: request.headers.get('CF-Connecting-IP') || undefined })
-    });
-    const result = await verification.json() as { success?: boolean; hostname?: string; action?: string };
-    if (!result.success || result.hostname !== new URL(origin).hostname || result.action !== 'enquiry') return json({ error: 'Verification expired or failed. Please retry.' }, 403);
-  } catch { return json({ error: 'Verification is unavailable. Please retry shortly.' }, 503); }
-  const id = data.submissionId;
-  const bucket = env.ENQUIRIES!;
+  const slots = validateSlots(input.attachments ?? []);
+  if (!slots) return json({ error: 'Please re-attach your files and try again.' }, 400);
+  const data = checked.data, id = data.submissionId, bucket = env.ENQUIRIES!;
+  if (!(await ticketValid(env, id, String(input.expires ?? ''), String(input.ticket ?? '')))) return json({ error: 'Your verification expired. Please verify again.' }, 403);
   const existing = await bucket.get(keyFor(id));
   if (existing) {
     const record = await existing.json<RecordData>();
     if (record.contact.email !== data.contact.email) return json({ error: 'Please start a new enquiry.' }, 409);
     return json({ ok: true, id });
   }
-  for (const file of files) if (!(await plausibleFile(file))) return json({ error: 'A file does not match its format. Please check ' + file.name + '.' }, 400);
-  const attachments: Attachment[] = [];
+  const staged = await bucket.list({ prefix: filesPrefix(id) });
+  const kept = staged.objects.filter(object => slots.includes(slotOf(object.key))).sort((a, b) => slotOf(a.key) - slotOf(b.key));
+  const issue = validateFiles(kept.map(object => ({ name: nameOf(object.key), size: object.size })));
+  if (issue) return json({ error: issue }, 400);
+  const attachments: Attachment[] = kept.map(object => ({ name: nameOf(object.key), size: object.size, key: object.key }));
   try {
-    for (const [index, file] of files.entries()) {
-      const filename = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-120);
-      const key = 'enquiries/' + id + '/files/' + index + '-' + filename;
-      await bucket.put(key, file.stream(), { httpMetadata: { contentType: 'application/octet-stream', contentDisposition: 'attachment; filename="' + filename + '"' } });
-      attachments.push({ name: filename, size: file.size, key });
-    }
     const record: RecordData = { ...data, website: '', id, receivedAt: new Date().toISOString(), attachments, notification: 'pending', receipt: 'pending' };
+    // Do not claim receipt unless the durable enquiry record was written.
     await bucket.put(keyFor(id), JSON.stringify(record), { httpMetadata: { contentType: 'application/json' } });
+    // Whatever the browser removed before sending is not part of the enquiry.
+    await Promise.allSettled(staged.objects.filter(object => !kept.includes(object)).map(object => bucket.delete(object.key)));
     try { await notify(record, env, new URL(request.url).origin); } catch { console.error('enquiry_notification_pending', id); }
     return json({ ok: true, id });
   } catch {
-    // Do not claim receipt unless the durable enquiry record was written.
-    await Promise.allSettled(attachments.map(file => bucket.delete(file.key)));
     return json({ error: 'Could not save your enquiry. Please retry or email the studio.' }, 502);
   }
+}
+// Files staged against an enquiry that was never sent are abandoned drafts, so a daily sweep clears them.
+export async function sweep(env: Env, now = Date.now()) {
+  if (!env.ENQUIRIES) return 0;
+  const bucket = env.ENQUIRIES;
+  let removed = 0, cursor: string | undefined;
+  for (let page = 0; page < 10; page++) {
+    const list = await bucket.list({ prefix: 'enquiries/', delimiter: '/', limit: 100, cursor });
+    for (const prefix of list.delimitedPrefixes) {
+      if (await bucket.head(prefix + 'enquiry.json')) continue;
+      const files = await bucket.list({ prefix: prefix + 'files/' });
+      if (!files.objects.length || files.objects.some(object => now - object.uploaded.getTime() < 24 * 3600 * 1000)) continue;
+      await Promise.allSettled(files.objects.map(object => bucket.delete(object.key)));
+      removed += files.objects.length;
+    }
+    if (!list.truncated) break;
+    cursor = list.cursor;
+  }
+  return removed;
 }
 export async function handleFile(request: Request, env: Env) {
   if (request.method !== 'GET') return json({ error: 'Method not allowed.' }, 405);
   const url = new URL(request.url), key = url.searchParams.get('key') || '', expires = url.searchParams.get('expires') || '', signature = url.searchParams.get('signature') || '';
-  if (!env.ENQUIRIES || !env.FILE_LINK_SECRET || !/^enquiries\/[a-f0-9-]{36}\/files\/[0-4]-[a-zA-Z0-9._-]+$/.test(key) || !/^\d{10}$/.test(expires) || Number(expires) < Date.now()/1000 || Number(expires) > Date.now()/1000 + 8*86400 || !/^[a-f0-9]{64}$/.test(signature)) return json({ error: 'This download link is invalid or expired.' }, 403);
+  if (!env.ENQUIRIES || !env.FILE_LINK_SECRET || !/^enquiries\/[a-f0-9-]{36}\/files\/(?:\d|1\d|2[0-3])-[a-zA-Z0-9._-]+$/.test(key) || !/^\d{10}$/.test(expires) || Number(expires) < Date.now()/1000 || Number(expires) > Date.now()/1000 + 8*86400 || !/^[a-f0-9]{64}$/.test(signature)) return json({ error: 'This download link is invalid or expired.' }, 403);
   if (!(await equal(signature, await sign(env.FILE_LINK_SECRET, key + ':' + expires)))) return json({ error: 'Invalid download link.' }, 403);
   const file = await env.ENQUIRIES.get(key); if (!file) return json({ error: 'File not found.' }, 404);
   return new Response(file.body, { headers: { 'Content-Type': 'application/octet-stream', 'Content-Disposition': 'attachment; filename="' + key.split('/').pop() + '"', 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff', 'X-Robots-Tag': 'noindex', 'Referrer-Policy': 'no-referrer', 'Content-Security-Policy': "default-src 'none'; sandbox" } });

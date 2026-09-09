@@ -13,9 +13,9 @@ mailbox verification remain required; local tests simulate external services.
 - Dedicated bulk, event, bonbonniere, functional-parts, ongoing-supply and about pages.
 - Shareable /enquiry route and support for old /#project links.
 - Accessible labelled enquiry form with separate per-run and annual quantities.
-- Private STL/OBJ/3MF/PDF/PNG/JPG uploads: 5 files, 10 MB per file, 20 MB combined.
+- Private STL/OBJ/3MF/PDF/PNG/JPG/HEIC uploads: 8 files, 50 MB per file, 150 MB combined. Files stream to R2 as they are chosen, each with its own progress and retry; photographs are resized in the browser first.
 - Durable R2 storage before success; full commercial brief preserved.
-- Turnstile server verification, strict origin checks, bounded requests and file validation.
+- Turnstile server verification exchanged for a 45-minute upload ticket, strict origin checks, bounded requests and file validation from the streamed bytes.
 - Studio notifications and customer receipts through Resend, plus expiring attachment links.
 - Authenticated enquiry recovery API and notification retry command.
 - Canonicals, sitemap, organisation metadata, draft noindex, service links and real policy routes.
