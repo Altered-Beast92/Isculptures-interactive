@@ -4,14 +4,15 @@ import { CUSTOMER_TYPES, validateEnquiry, validateFiles, type EnquiryRoute } fro
 import dynamic from 'next/dynamic';
 import { track } from '../../lib/analytics';
 const ModelPreview = dynamic(() => import('./model-preview'), { ssr: false });
+import RouteIcon from './route-icons';
 
 type Config = { available: boolean; uploads: boolean; turnstileSiteKey?: string };
 type TurnstileAPI = { render: (element: HTMLElement, options: Record<string, unknown>) => string; remove: (id: string) => void; reset: (id: string) => void };
 const endpoint = process.env.NEXT_PUBLIC_ENQUIRY_ENDPOINT || '/api/enquiry';
-const categories: { route: EnquiryRoute; title: string; description: string; guidance: string; prompt: string }[] = [
+const categories: { route: EnquiryRoute; title: string; description: string; guidance: string; prompt: string; flag?: string }[] = [
   { route: 'bulk', title: 'For an Event', description: 'Personalised gifts, bonbonniere and keepsakes for your guests.', guidance: 'Event batches start at 10 units.', prompt: 'Tell us about the occasion, number of guests, personalisation and event date.' },
   { route: 'supply', title: 'Business & Ongoing Supply', description: 'Trade orders, retail stock and repeat batches for your business.', guidance: 'Business batches start at 10 units per order.', prompt: 'What does your business need? Include the quantity and whether this is a one-off order or repeat supply.' },
-  { route: 'design', title: 'Custom Design Enquiry', description: 'Start with an idea, sketch or reference. We’ll review the design work needed.', guidance: 'Bulk production starts at 10 units. Design requirements and costs are confirmed with your quote.', prompt: 'Describe your idea, intended use, approximate size and any references you can share.' },
+  { route: 'design', title: 'Custom Design Enquiry', flag: 'FREE MOCKUP', description: 'Start with an idea, sketch or reference. We’ll review the design work needed.', guidance: 'Bulk production starts at 10 units. Design requirements and costs are confirmed with your quote.', prompt: 'Describe your idea, intended use, approximate size and any references you can share.' },
   { route: 'file', title: 'I have a 3D File', description: 'Bring your model for a review of printing and production requirements.', guidance: 'Bulk production starts at 10 units. Prototype requirements are reviewed with your quote.', prompt: 'What is the model for? Include the quantity, dimensions, material preferences and any critical tolerances.' },
 ];
 export default function EnquiryForm() {
@@ -118,8 +119,9 @@ export default function EnquiryForm() {
       <p className="route-step">01 / YOUR STARTING POINT</p>
       <h2 id="category-heading" ref={categoryHeading} tabIndex={-1}>What are we making?</h2><p className="route-help">Choose a starting point. We’ll work through the details with you.</p>
       {config && !config.available && <p className="route-availability" role="status">Online sending is not connected yet. <a href="mailto:info@isculptures.com.au">Enquire by email ↗</a></p>}
-      <div className="route-list">{categories.map((category, index) => <button key={category.route} type="button" className="route-choice" aria-controls="project-enquiry-form" disabled={state === 'sending'} onClick={() => { setRoute(category.route); setHasSelected(true); setStep(0); setErrors({}); setMessage(''); }}>
-        <span className="route-number">0{index + 1}</span><span className="route-choice-copy"><span className="route-title">{category.title}</span><span className="route-description">{category.description}</span><span className="route-minimum">BULK ORDERS / 10+ UNITS</span></span><span className="route-arrow" aria-hidden="true">↗</span>
+      <div className="route-grid">{categories.map(category => <button key={category.route} type="button" className="route-tab" aria-controls="project-enquiry-form" disabled={state === 'sending'} onClick={() => { setRoute(category.route); setHasSelected(true); setStep(0); setErrors({}); setMessage(''); }}>
+        <span className="route-tab-top"><span className="route-icon" aria-hidden="true"><RouteIcon route={category.route}/></span><span className="route-arrow" aria-hidden="true">↗</span></span>
+        <span className="route-title">{category.title}</span><span className="route-description">{category.description}</span><span className="route-foot">{category.flag && <span className="route-flag">{category.flag}</span>}<span className="route-minimum">BULK ORDERS / 10+ UNITS</span></span>
       </button>)}</div>
       <p className="route-footnote">Your brief → A studio review → Your quote</p>
     </section>
