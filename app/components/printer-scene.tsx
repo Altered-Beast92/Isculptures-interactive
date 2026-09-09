@@ -1,10 +1,11 @@
 'use client';
-import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import PrinterRenderLoop from './printer-render-loop';
 import PrinterEnvironment from './printer-environment';
 import { usePrinterMesh } from './printer-mesh';
+import { usePrinterShadow } from './printer-shadow';
 const PRINT_HEIGHT = 2.24;
 const TOOLHEAD_SCALE = 1.25;
 // Gantry rest height and the carriage drop below the beam centre together put
@@ -110,9 +111,11 @@ function Spool({ isScrolling }: { isScrolling: boolean }) {
   </group>;
 }
 
-// The fixed base's footprint is prepared offline and moves with the rig.
-const PrinterGroundShadow = memo(function PrinterGroundShadow() {
-  const texture = useLoader(THREE.TextureLoader, '/models/printer-ground-shadow.png');
+// The fixed base's footprint is prepared offline and moves with the rig. It
+// waits on its own texture, so it wakes the loop the way the printed model does.
+const PrinterGroundShadow = memo(function PrinterGroundShadow({ onReady }: { onReady: () => void }) {
+  const texture = usePrinterShadow();
+  useEffect(() => { onReady(); }, [onReady]);
   return <mesh position={[0,-1.24,0]} rotation={[-Math.PI / 2,0,0]}>
     <planeGeometry args={[7,7]}/><meshBasicMaterial map={texture} transparent opacity={.5} depthWrite={false}/>
   </mesh>;
@@ -151,7 +154,7 @@ function PrinterWorld({ progress, isScrolling, compact, moving, onReady }: { pro
     initial.current = false;
   }, -1); // Update transforms before rebuilding the filament geometry.
   return <group ref={rig} position={[1.35, -.15, 0]}>
-    <PrinterGroundShadow/>
+    <Suspense fallback={null}><PrinterGroundShadow onReady={onReady}/></Suspense>
     <mesh position={[0,-1.12,0]} receiveShadow><boxGeometry args={[3.55,.22,2.7]}/><meshStandardMaterial color="#353632" roughness={.33} metalness={.82}/></mesh>
     {[-.62,.62].map(x => <mesh key={x} position={[x,-1.07,0]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.035,.035,2.35,16]}/><meshStandardMaterial color="#8d8f88" metalness={.86} roughness={.22}/></mesh>)}
     <group>
@@ -210,8 +213,8 @@ export default function PrinterScene({ progress, isScrolling, active }: { progre
       <ambientLight intensity={.65} />
       <spotLight position={[-3, 5, 4]} intensity={290} angle={.72} penumbra={1} color="#fff4df" />
       <spotLight position={[3, 3, 4]} intensity={110} angle={.78} penumbra={1} color="#e8efff" />
-      {/* The rig is all procedural geometry, so it paints on the first frame;
-          only the printed model inside it suspends. */}
+      {/* The rig is all procedural geometry, so it paints on the first frame.
+          The printed model and the ground shadow each suspend on their own. */}
       <PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact} moving={moving} onReady={requestFrame}/>
       <PrinterRenderLoop active={active} compact={compact} isScrolling={isScrolling} progress={progress} moving={moving} wake={wake} onPressure={lowerResolution}/>
     </Suspense>
