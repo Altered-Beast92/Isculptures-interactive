@@ -25,6 +25,7 @@ export default function PrinterRenderLoop({ active, compact, isScrolling, progre
   const height = useThree(state => state.size.height);
   const dpr = useThree(state => state.viewport.dpr);
   const fps = useRef(30);
+  const presented = useRef(false);
   fps.current = isScrolling && !compact ? 60 : 30;
 
   useEffect(() => {
@@ -44,6 +45,11 @@ export default function PrinterRenderLoop({ active, compact, isScrolling, progre
         moving.current = false;
         const started = performance.now();
         advance(elapsed);
+        if (!presented.current) {
+          // Fade the populated canvas once; CSS handles opacity without more draws.
+          gl.domElement.dataset.printerReady = 'true';
+          presented.current = true;
+        }
         sampleFrames++;
         sampleCpu += performance.now() - started;
         const sampleDuration = now - sampleStart;
