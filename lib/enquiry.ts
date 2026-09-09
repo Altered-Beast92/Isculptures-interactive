@@ -1,7 +1,13 @@
-export const MAX_FILES = 5;
-export const MAX_FILE_BYTES = 10 * 1024 * 1024;
-export const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
-export const EXTENSIONS = ['stl', 'obj', '3mf', 'pdf', 'png', 'jpg', 'jpeg'];
+export const MAX_FILES = 8;
+export const MAX_FILE_BYTES = 50 * 1024 * 1024;
+export const MAX_UPLOAD_BYTES = 150 * 1024 * 1024;
+// Slots are handed out in order and never reused, so a removed file cannot collide with its replacement.
+export const MAX_SLOTS = 24;
+// An upload ticket outlives a Turnstile token so one human check covers a whole brief.
+export const TICKET_SECONDS = 45 * 60;
+export const EXTENSIONS = ['stl', 'obj', '3mf', 'pdf', 'png', 'jpg', 'jpeg', 'heic', 'heif'];
+export const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'heic', 'heif'];
+export const extensionOf = (name: string) => name.split('.').pop()?.toLowerCase() || '';
 export const ROUTES = ['bulk', 'supply', 'design', 'file'] as const;
 export type EnquiryRoute = typeof ROUTES[number];
 export const CUSTOMER_TYPES = ['Business', 'Event planner / agency', 'Retailer / reseller', 'Parish / organisation', 'Private event', 'Other'];
@@ -51,9 +57,16 @@ export function validateEnquiry(input: unknown): Validation {
   return Object.keys(errors).length ? { errors } : { data, errors };
 }
 export function validateFiles(files: { name: string; size: number }[]): string | null {
-  if (files.length > MAX_FILES) return 'Choose up to 5 files.';
-  if (files.some(file => !EXTENSIONS.includes(file.name.split('.').pop()?.toLowerCase() || ''))) return 'Use STL, OBJ, 3MF, PDF, PNG or JPG files.';
-  if (files.some(file => !file.size || file.size > MAX_FILE_BYTES)) return 'Each file must contain data and be no larger than 10 MB.';
-  if (files.reduce((sum, file) => sum + file.size, 0) > MAX_UPLOAD_BYTES) return 'Keep the combined file size under 20 MB.';
+  if (files.length > MAX_FILES) return 'Choose up to ' + MAX_FILES + ' files.';
+  if (files.some(file => !EXTENSIONS.includes(extensionOf(file.name)))) return 'Use STL, OBJ, 3MF, PDF, PNG, JPG or HEIC files.';
+  if (files.some(file => !file.size || file.size > MAX_FILE_BYTES)) return 'Each file must contain data and be no larger than 50 MB.';
+  if (files.reduce((sum, file) => sum + file.size, 0) > MAX_UPLOAD_BYTES) return 'Keep the combined file size under 150 MB.';
   return null;
+}
+// The browser reports which slots it still wants; anything else staged under the reference is discarded.
+export function validateSlots(input: unknown): number[] | null {
+  if (!Array.isArray(input) || input.length > MAX_FILES) return null;
+  const slots = input.map(value => typeof value === 'number' ? value : NaN);
+  if (slots.some(slot => !Number.isInteger(slot) || slot < 0 || slot >= MAX_SLOTS)) return null;
+  return new Set(slots).size === slots.length ? slots : null;
 }

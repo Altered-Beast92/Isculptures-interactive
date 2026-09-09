@@ -1,4 +1,11 @@
-import { enquiryOrigins, handleEnquiry, handleAdmin, handleFile, json, type Env } from '../functions/api/enquiry.js';
+import { enquiryOrigins, handleEnquiry, handleAdmin, handleFile, handleTicket, handleUpload, json, sweep, type Env } from '../functions/api/enquiry.js';
+
+// The browser reaches these three; signed download links and administration do not use CORS.
+const browserRoutes: Record<string, { methods: string; handle: (request: Request, env: Env) => Promise<Response> }> = {
+  '/api/enquiry': { methods: 'GET, POST', handle: handleEnquiry },
+  '/api/enquiry/ticket': { methods: 'POST', handle: handleTicket },
+  '/api/enquiry/upload': { methods: 'PUT', handle: handleUpload },
+};
 
 // API-only deployment: Vercel serves the website; Cloudflare receives uploads.
 export default {
@@ -14,21 +21,22 @@ export default {
       if (allowed) headers.set('Access-Control-Allow-Origin', origin!);
       return new Response(response.body, { status: response.status, headers });
     };
+    const route = browserRoutes[path];
     try {
-      if (path === '/api/enquiry') {
+      if (route) {
         if (origin && !allowed) return cors(json({ error: 'Please submit from this website.' }, 403));
         if (request.method === 'OPTIONS') {
           const method = request.headers.get('Access-Control-Request-Method');
           const headers = (request.headers.get('Access-Control-Request-Headers') || '').split(',').map(value => value.trim().toLowerCase()).filter(Boolean);
-          if (!allowed || !['GET', 'POST'].includes(method || '') || headers.some(header => header !== 'content-type')) return cors(json({ error: 'Request not allowed.' }, 403));
+          if (!allowed || !route.methods.split(', ').includes(method || '') || headers.some(header => header !== 'content-type')) return cors(json({ error: 'Request not allowed.' }, 403));
           return cors(new Response(null, { status: 204, headers: {
-            'Access-Control-Allow-Methods': 'GET, POST',
+            'Access-Control-Allow-Methods': route.methods,
             'Access-Control-Allow-Headers': 'Content-Type',
             'Access-Control-Max-Age': '600',
             'Cache-Control': 'no-store'
           } }));
         }
-        return cors(await handleEnquiry(request, env));
+        return cors(await route.handle(request, env));
       }
       if (path === '/api/enquiry/file') return await handleFile(request, env);
       // Administration stays token-authenticated and has no browser CORS access.
@@ -37,7 +45,14 @@ export default {
     } catch {
       console.error('enquiry_request_failed');
       const response = json({ error: 'The service is temporarily unavailable. Please email info@isculptures.com.au.' }, 503);
-      return path === '/api/enquiry' ? cors(response) : response;
+      return route ? cors(response) : response;
     }
+  },
+  // Abandoned drafts leave staged files behind; the daily trigger clears them.
+  async scheduled(_event: ScheduledController, bindings: Env, context: ExecutionContext): Promise<void> {
+    context.waitUntil(sweep(bindings).then(
+      removed => { if (removed) console.log('enquiry_sweep_removed', removed); },
+      () => console.error('enquiry_sweep_failed')
+    ));
   }
 };
