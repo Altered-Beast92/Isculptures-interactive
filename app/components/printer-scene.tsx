@@ -20,26 +20,6 @@ const RAIL_Y = 1.72, RAIL_Z = -.55, RAIL_END = -1.31;
 // Toolhead inlet: Y is measured from the carriage origin, Z is fixed in rig space.
 const INLET_Y = .4125, INLET_Z = 0;
 
-function Sculpture({ compact = false, colour = '#d8d4c9', quantity = 1 }: { compact?: boolean; colour?: string; quantity?: number }) {
-  const group = useRef<THREE.Group>(null);
-  useFrame((state) => { if (group.current) group.current.rotation.y = state.clock.elapsedTime * (compact ? .18 : .08) + state.pointer.x * .18; });
-  return <group ref={group} rotation={[.2, -.3, 0]}>{Array.from({ length: quantity }, (_, i) => <mesh key={i} position={[(i - (quantity - 1) / 2) * .72, 0, (i % 2) * .18]} castShadow><icosahedronGeometry args={[compact ? .56 : 1.25, 3]} /><meshStandardMaterial color={colour} roughness={.28} metalness={.5} /></mesh>)}</group>;
-}
-
-function makeSectionCap(root: THREE.Object3D, level: number) {
-  const hits: THREE.Vector2[] = []; const a = new THREE.Vector3(); const b = new THREE.Vector3(); const c = new THREE.Vector3();
-  root.updateMatrixWorld(true);
-  root.traverse((node) => { if (!(node instanceof THREE.Mesh)) return; const pos = node.geometry.getAttribute('position'); if (!pos) return; const index = node.geometry.index; const triangles = index ? index.count / 3 : pos.count / 3;
-    for (let i = 0; i < triangles; i++) { const ids = [index ? index.getX(i * 3) : i * 3, index ? index.getX(i * 3 + 1) : i * 3 + 1, index ? index.getX(i * 3 + 2) : i * 3 + 2]; const v = [a.fromBufferAttribute(pos, ids[0]).applyMatrix4(node.matrixWorld), b.fromBufferAttribute(pos, ids[1]).applyMatrix4(node.matrixWorld), c.fromBufferAttribute(pos, ids[2]).applyMatrix4(node.matrixWorld)];
-      for (let edge = 0; edge < 3; edge++) { const p = v[edge], q = v[(edge + 1) % 3]; const dp = p.y - level, dq = q.y - level; if ((dp > 0 && dq > 0) || (dp < 0 && dq < 0) || Math.abs(dp - dq) < 1e-6) continue; const t = dp / (dp - dq); hits.push(new THREE.Vector2(p.x + (q.x - p.x) * t, p.z + (q.z - p.z) * t)); }
-    }
-  });
-  if (hits.length < 3) return null;
-  const centre = hits.reduce((sum, point) => sum.add(point), new THREE.Vector2()).multiplyScalar(1 / hits.length); const bins: (THREE.Vector2 | null)[] = Array(48).fill(null);
-  hits.forEach(point => { const angle = (Math.atan2(point.y - centre.y, point.x - centre.x) + Math.PI * 2) % (Math.PI * 2); const bin = Math.floor(angle / (Math.PI * 2) * bins.length); if (!bins[bin] || point.distanceToSquared(centre) > bins[bin]!.distanceToSquared(centre)) bins[bin] = point; });
-  const outline = bins.filter((point): point is THREE.Vector2 => point !== null); if (outline.length < 3) return null; const shape = new THREE.Shape(outline); const geometry = new THREE.ShapeGeometry(shape); geometry.rotateX(Math.PI / 2); const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: '#d6d1c6', roughness: .47, metalness: .04, side: THREE.DoubleSide })); mesh.position.y = level + .002; return mesh;
-}
-
 function PrintedModel({ progress, onReady }: { progress: number; onReady: () => void }) {
   const { geometry, matrix } = usePrinterMesh();
   const gl = useThree(state => state.gl);
@@ -64,7 +44,7 @@ function PrintedModel({ progress, onReady }: { progress: number; onReady: () => 
     return () => { cancelled = true; model.visible = false; };
   }, [camera, gl, model, onReady, world]);
   useEffect(() => () => {
-    // Geometry belongs to useLoader's cache; only these materials are ours.
+    // The geometry is shared by every mount; only these materials are ours.
     model.traverse(node => { if (node instanceof THREE.Mesh) node.material.dispose(); });
   }, [model]);
   useFrame(() => { clip.constant = -.91 + Math.max(.01, Math.min(1, progress)) * PRINT_HEIGHT; });
