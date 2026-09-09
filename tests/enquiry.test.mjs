@@ -66,6 +66,11 @@ test('rejects malformed data, invalid minimums and missing consent', () => {
   assert.ok(validateEnquiry(payload({ quantity: 9 })).errors.quantity);
   assert.ok(validateEnquiry(payload({ quantity: 10.5 })).errors.quantity);
   assert.ok(validateEnquiry(payload({ requiredBy: '2026-02-30' })).errors.requiredBy);
+  const day = offset => new Date(Date.now() + offset * 86400000).toISOString().slice(0, 10);
+  assert.ok(validateEnquiry(payload({ requiredBy: day(-30) })).errors.requiredBy, 'a delivery date in the past is refused');
+  assert.equal(validateEnquiry(payload({ requiredBy: day(30) })).errors.requiredBy, undefined);
+  // Two days of slack keeps a visitor ahead of, or behind, the Worker's clock from being blocked.
+  assert.equal(validateEnquiry(payload({ requiredBy: day(-1) })).errors.requiredBy, undefined);
   assert.ok(validateEnquiry(payload({ consent: false })).errors.consent);
   assert.equal(validateEnquiry(payload({ quantity: '', annualQuantity: '' })).data.quantity, null);
   assert.equal(validateEnquiry(payload({ route: 'file', quantity: 1 })).data.quantity, 1);

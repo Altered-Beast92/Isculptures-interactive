@@ -244,3 +244,9 @@ body .site-header .site-links .nav-cta:hover{
 .attachment-remove{grid-column:1/-1;justify-self:start;padding:0;background:none;border:0;border-bottom:1px solid currentColor;font-size:12px;color:#4b5545}
 .enquiry-canvas .attachment-panel .text-btn{padding:0 0 1px}
 @media(max-width:600px){.attachment{grid-template-columns:minmax(0,1fr) auto;padding:11px 12px}.attachment-state{grid-column:1/-1}}
+
+/* A step that still needs attention says so, so a hidden error is not hunted for. */
+.enquiry-stages button.stage-unresolved{border-bottom-color:#9c3d2e;color:#8c3a2b}
+.enquiry-stages button.stage-unresolved>em{font-style:normal;font-weight:700;color:#9c3d2e;margin-left:6px}
+.enquiry-canvas .enquiry-form legend:focus{outline:3px solid #bd9150;outline-offset:6px}
+.enquiry-canvas .enquiry-form legend:focus:not(:focus-visible){outline:none}
