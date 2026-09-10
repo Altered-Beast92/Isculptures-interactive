@@ -1,5 +1,14 @@
 # iSculptures B2B draft — launch handoff
 
+## Latest audit — 10 September 2026
+
+See [the current site audit](site-audit-2026-09-10.md) for prioritised remaining work,
+implemented SEO changes and validation limits. The website remains local-only/noindex.
+Vercel now has the shared redirect map; run `node scripts/sync-redirects.mjs` after
+editing it. The exact retail destinations and 53 recorded blog URLs still need review.
+Use the Vercel/standalone Cloudflare setup below rather than older combined Sites
+deployment notes when configuring the current enquiry flow.
+
 ## Hosting update — Vercel and Cloudflare
 
 The owner selected Vercel for the website and Cloudflare for enquiries. Follow

@@ -17,7 +17,7 @@ const mono = localFont({ src: [
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  ...pageMetadata('Bulk 3D Printing Sydney | Impeccable Sculptures', 'Custom 3D printing for bulk orders from 10 units, event favours, branded gifts and repeat supply. Sydney studio. Australia-wide delivery.', '/'),
+  ...pageMetadata('Custom & Bulk 3D Printing Sydney', 'Sydney studio for custom 3D printing, personalised event favours and corporate gifts. Bulk orders from 10 units, repeat production and Australia-wide delivery.', '/'),
   robots: { index: INDEXABLE, follow: INDEXABLE },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -1,4 +1,5 @@
-# Cloudflare Pages redirect map for the isculptures.com.au cutover.
+# Shared redirect map for the isculptures.com.au cutover.
+# Run node scripts/sync-redirects.mjs after edits to update Vercel's rules.
 #
 # Migration map. Verify retail destinations and compare against Search Console before cutover.
 # Existing /pages/wholesale, /pages/industrial and event service URLs are retained as real pages.
@@ -21,8 +22,8 @@
 
 # --- Retail catalogue: hand off to Etsy, listing by listing. ---
 # A shopper landing on the exact item converts far better than one dropped at
-# the shop front door, so these point at real listing IDs (verified against the
-# live shop, which currently carries 11 listings).
+# the shop front door. These listing IDs come from the earlier migration map;
+# availability and product equivalence still require review before cutover.
 #
 # Where the old Shopify product has NO Etsy equivalent, the fallback is a shop
 # search for the product's own terms rather than the shop root — a near miss
@@ -65,7 +66,6 @@
 /collections/orthodox-icons     https://www.etsy.com/au/shop/iSculptures?search_query=icon 301
 /collections/catholic-maronite  https://www.etsy.com/au/shop/iSculptures?search_query=saint 301
 
-# Retail catch-alls retained for review against the current catalogue before cutover.
-/products/*     https://www.etsy.com/au/shop/iSculptures 301
-/collections/*  https://www.etsy.com/au/shop/iSculptures 301
+# Unknown product/collection URLs must return 404 rather than redirect to an
+# unrelated shop homepage. Add exact replacements after the catalogue review.
 /collections    https://www.etsy.com/au/shop/iSculptures 301

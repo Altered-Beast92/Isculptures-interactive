@@ -30,7 +30,7 @@ export default function SiteNav() {
     <button ref={toggle} className="menu-toggle" aria-expanded={open} aria-controls="site-links" onClick={() => setOpen(!open)}>{open ? 'Close menu' : 'Menu'}</button>
     <div className={'site-links' + (open ? ' is-open' : '')} id="site-links">
       <a href="/pages/wholesale" aria-current={pathname === '/pages/wholesale' ? 'page' : undefined}>Bulk &amp; trade</a>
-      <a href="/pages/bonbonniere-custom" aria-current={pathname === '/pages/bonbonniere-custom' || pathname === '/pages/events-custom-gifts' ? 'page' : undefined}>Events &amp; keepsakes</a>
+      <a href="/pages/bonbonniere-custom" aria-current={pathname === '/pages/bonbonniere-custom' ? 'page' : undefined}>Events &amp; keepsakes</a>
       <a href="/pages/industrial" aria-current={pathname === '/pages/industrial' ? 'page' : undefined}>Parts &amp; prototypes</a>
       <a href="/pages/ongoing-supply" aria-current={pathname === '/pages/ongoing-supply' ? 'page' : undefined}>Ongoing supply</a>
       <a href="/work" aria-current={pathname.startsWith('/work') ? 'page' : undefined}>Our work</a><a href="/guides" aria-current={pathname.startsWith('/guides') ? 'page' : undefined}>Guides</a>

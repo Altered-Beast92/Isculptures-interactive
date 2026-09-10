@@ -253,3 +253,10 @@ body .site-header .site-links .nav-cta:hover{
 
 /* Keep contact links comfortable to tap without changing their typography. */
 .site-footer.story-footer .footer-grid>div>a:not(.brand-logo){display:flex;align-items:center;min-height:32px;width:fit-content}
+
+/* Visible trails share the same hierarchy as the search breadcrumb data. */
+.breadcrumbs { margin-bottom: 1.75rem; font-size: .875rem; line-height: 1.6; }
+.breadcrumbs ol { display: flex; flex-wrap: wrap; gap: .35rem .6rem; list-style: none; padding: 0; margin: 0; }
+.breadcrumbs li { display: inline; overflow-wrap: anywhere; }
+.breadcrumbs li + li::before { content: '/'; margin-right: .6rem; opacity: .55; }
+.breadcrumbs a { text-underline-offset: .2em; }

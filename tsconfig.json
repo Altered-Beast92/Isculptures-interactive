@@ -35,6 +35,7 @@
     "functions",
     "server",
     "out",
+    "dist",
     "artifacts"
   ]
 }

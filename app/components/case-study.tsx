@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { getProject } from '../../content/projects';
 import { testimonialsFor } from '../../content/testimonials';
 import { SOURCE_LABELS } from '../../content/types';
+import { pageMetadata } from '../../lib/site';
+import Breadcrumbs from './breadcrumbs';
 
 // Real photographed examples supplied by the studio.
 
@@ -10,11 +12,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) return {};
+  const metadata = pageMetadata(project.title, project.summary, `/work/${project.slug}`);
   return {
-    title: project.title,
-    alternates: { canonical: `/work/${project.slug}` },
-    description: project.summary,
-    openGraph: { title: project.title, description: project.summary, type: 'article', images: project.images[0] ? [project.images[0].src] : undefined },
+    ...metadata,
+    openGraph: { ...metadata.openGraph, type: 'article', images: project.images[0] ? [project.images[0].src] : undefined },
   };
 }
 
@@ -27,7 +28,7 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
   const enquiryUrl = `/enquiry?route=${project.category === 'events' ? 'bulk' : 'design'}&project=${encodeURIComponent(project.title)}`;
 
   return <main id="main-content" className="doc">
-    <div className="portfolio-breadcrumb"><a href="/work">← Selected work</a></div>
+    <Breadcrumbs items={[{ name: 'Our work', path: '/work' }, { name: project.title, path: '/work/' + project.slug }]}/>
     <article className="study">
       <div className="study-hero"><div className="study-intro">
       <p className="section-tag">FROM THE STUDIO{project.year ? ` · ${project.year}` : ''}</p>
