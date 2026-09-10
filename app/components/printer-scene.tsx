@@ -1,223 +1,68 @@
 'use client';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import * as THREE from 'three';
-import PrinterRenderLoop from './printer-render-loop';
-import PrinterEnvironment from './printer-environment';
-import { usePrinterMesh } from './printer-mesh';
-import { usePrinterShadow } from './printer-shadow';
-const PRINT_HEIGHT = 2.24;
-const TOOLHEAD_SCALE = 1.25;
-// Gantry rest height and the carriage drop below the beam centre together put
-// the nozzle tip one visible clearance above the build plate at progress 0.
-const GANTRY_REST_Y = .04;
-const HEAD_DROP = -.275;
-// On narrow viewports the camera aims a little closer to the rig, which nudges
-// the printer toward the centre of frame instead of hanging off the right edge.
-const COMPACT_AIM = .46;
-const SPOOL_X = -1.78, SPOOL_Y = 1.05, SPOOL_Z = -.7, SPOOL_R = .4;
-// Filament guide rail, slung under the front edge of the top beam.
-const RAIL_Y = 1.72, RAIL_Z = -.55, RAIL_END = -1.31;
-// Toolhead inlet: Y is measured from the carriage origin, Z is fixed in rig space.
-const INLET_Y = .4125, INLET_Z = 0;
-
-function PrintedModel({ progress, onReady }: { progress: number; onReady: () => void }) {
-  const { geometry, matrix } = usePrinterMesh();
-  const gl = useThree(state => state.gl);
-  const camera = useThree(state => state.camera);
-  const world = useThree(state => state.scene);
-  const clip = useMemo(() => new THREE.Plane(new THREE.Vector3(0, -1, 0), -.9), []);
-  const model = useMemo(() => {
-    const material = new THREE.MeshStandardMaterial({ color: '#8f918d', roughness: .65, metalness: .05, clippingPlanes: [clip], clipShadows: true, side: THREE.DoubleSide });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.applyMatrix4(matrix); mesh.castShadow = mesh.receiveShadow = true;
-    const copy = new THREE.Group(); copy.add(mesh); copy.visible = false;
-    const box = new THREE.Box3().setFromObject(copy); const size = box.getSize(new THREE.Vector3());
-    const scale = PRINT_HEIGHT / Math.max(size.y, .001);
-    copy.scale.setScalar(scale);
-    copy.position.set(-(box.min.x + size.x / 2) * scale, -.91 - box.min.y * scale, -(box.min.z + size.z / 2) * scale);
-    return copy;
-  }, [geometry, matrix, clip]);
+import { useEffect, useRef, useState } from 'react';
+import { PRINTER_RIG, PRINTER_MESH, PRINTER_STUDIO, PRINTER_SHADOW, printerAsset } from '../../lib/printer-assets';
+import type { PrinterState, PrinterViewState, createPrinterRenderer } from '../../lib/printer-scene';
+export default function PrinterScene(props: PrinterState) {
+  const container = useRef<HTMLDivElement>(null);
+  const state = useRef(props); state.current = props;
+  const update = useRef<(() => void) | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   useEffect(() => {
-    let cancelled = false;
-    const reveal = () => { if (!cancelled) { model.visible = true; onReady(); } };
-    void gl.compileAsync(model, camera, world).then(reveal, reveal);
-    return () => { cancelled = true; model.visible = false; };
-  }, [camera, gl, model, onReady, world]);
-  useEffect(() => () => {
-    // The geometry is shared by every mount; only these materials are ours.
-    model.traverse(node => { if (node instanceof THREE.Mesh) node.material.dispose(); });
-  }, [model]);
-  useFrame(() => { clip.constant = -.91 + Math.max(.01, Math.min(1, progress)) * PRINT_HEIGHT; });
-  return <primitive object={model}/>;
-}
-
-// The feed is guided rather than free-hanging: filament leaves the spool, rises
-// into a rail slung under the top beam, runs along it to a carrier that tracks
-// the carriage, and only then drops into the toolhead.
-function FilamentFeed({ gantry, head }: { gantry: React.RefObject<THREE.Group | null>; head: React.RefObject<THREE.Group | null> }) {
-  const mesh = useRef<THREE.Mesh>(null); const carrier = useRef<THREE.Group>(null); const last = useRef(new THREE.Vector3(1e3, 1e3, 1e3));
-  const [geometry] = useState(() => new THREE.BufferGeometry());
-  const inlet = useMemo(() => new THREE.Vector3(), []);
-  const material = useMemo(() => new THREE.MeshStandardMaterial({ color: '#cfc7b2', roughness: .42, metalness: .04 }), []);
-  useFrame(() => {
-    if (!mesh.current || !gantry.current || !head.current) return;
-    inlet.set(head.current.position.x, gantry.current.position.y + HEAD_DROP + INLET_Y, INLET_Z);
-    if (carrier.current) carrier.current.position.x = inlet.x;
-    if (inlet.distanceToSquared(last.current) < 4e-5) return;
-    last.current.copy(inlet);
-    const points = [
-      new THREE.Vector3(SPOOL_X, SPOOL_Y + SPOOL_R, SPOOL_Z),
-      new THREE.Vector3(SPOOL_X + .07, SPOOL_Y + SPOOL_R + .4, SPOOL_Z + .06),
-      new THREE.Vector3(RAIL_END, RAIL_Y + .04, RAIL_Z),
-      new THREE.Vector3(RAIL_END + .22, RAIL_Y, RAIL_Z),
-      new THREE.Vector3(inlet.x - .12, RAIL_Y, RAIL_Z),
-      new THREE.Vector3(inlet.x, RAIL_Y - .06, RAIL_Z + .03),
-      new THREE.Vector3(inlet.x, inlet.y + .34, inlet.z - .05),
-      inlet,
-    ];
-    const next = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), 46, .021, 6, false);
-    mesh.current.geometry.dispose(); mesh.current.geometry = next;
-  });
-  useEffect(() => {
-    const current = mesh.current;
-    return () => { current?.geometry.dispose(); };
+    const element = container.current;
+    if (!element) return;
+    let disposed = false, fallingBack = false;
+    let worker: Worker | undefined;
+    let renderer: ReturnType<typeof createPrinterRenderer> | undefined;
+    let canvas: HTMLCanvasElement;
+    const view = (): PrinterViewState => ({ ...state.current, width: element.clientWidth, height: element.clientHeight, dpr: window.devicePixelRatio });
+    const makeCanvas = () => {
+      const node = document.createElement('canvas');
+      Object.assign(node.style, { display: 'block', width: '100%', height: '100%' });
+      element.replaceChildren(node); return node;
+    };
+    const fallback = async () => {
+      if (disposed || fallingBack) return;
+      fallingBack = true; worker?.terminate(); worker = undefined;
+      // A transferred canvas cannot acquire a main-thread context; replace it.
+      canvas = makeCanvas();
+      try {
+        const { createPrinterRenderer } = await import('../../lib/printer-scene');
+        if (disposed) return;
+        renderer = createPrinterRenderer(canvas, view, setError, () => { canvas.dataset.printerReady = 'true'; });
+      } catch (error) { if (!disposed) setError(error instanceof Error ? error : new Error(String(error))); }
+    };
+    canvas = makeCanvas();
+    if (typeof Worker !== 'undefined' && typeof canvas.transferControlToOffscreen === 'function') {
+      try {
+        worker = new Worker(new URL('../../lib/printer.worker.ts', import.meta.url), { type: 'module', name: 'isculptures-printer' });
+        worker.onerror = event => { event.preventDefault(); void fallback(); };
+        worker.onmessage = event => {
+          if (disposed || fallingBack) return;
+          if (event.data?.type === 'ready') canvas.dataset.printerReady = 'true';
+          if (event.data?.type === 'error') void fallback();
+        };
+        const offscreen = canvas.transferControlToOffscreen();
+        // Preserve the preload cache for a fallback/remount; transfer copies once.
+        void Promise.all([PRINTER_RIG, PRINTER_MESH, PRINTER_STUDIO, PRINTER_SHADOW].map(url => printerAsset(url).then(data => data.slice(0)))).then(([rig, model, environment, shadow]) => {
+          if (disposed || !worker) return;
+          worker.postMessage({ type: 'init', canvas: offscreen, state: view(), buffers: { rig, model, environment, shadow } }, [offscreen, rig, model, environment, shadow]);
+        }).catch(() => { void fallback(); });
+      } catch { void fallback(); }
+    } else { void fallback(); }
+    const notify = () => {
+      if (disposed) return;
+      worker?.postMessage({ type: 'update', state: view() });
+      renderer?.update();
+    };
+    update.current = notify;
+    const observer = new ResizeObserver(notify); observer.observe(element);
+    window.addEventListener('resize', notify);
+    return () => {
+      disposed = true; observer.disconnect(); window.removeEventListener('resize', notify);
+      update.current = null; worker?.terminate(); renderer?.dispose(); canvas.remove();
+    };
   }, []);
-  return <>
-    <mesh position={[0,RAIL_Y,RAIL_Z]}><boxGeometry args={[2.78,.05,.07]}/><meshStandardMaterial color="#6e706a" metalness={.86} roughness={.24}/></mesh>
-    <mesh position={[0,RAIL_Y+.05,RAIL_Z]}><boxGeometry args={[2.78,.05,.03]}/><meshStandardMaterial color="#42433e" metalness={.7} roughness={.34}/></mesh>
-    {[RAIL_END,-RAIL_END].map(x => <mesh key={x} position={[x,RAIL_Y+.09,RAIL_Z-.06]}><boxGeometry args={[.1,.22,.13]}/><meshStandardMaterial color="#4b4c47" metalness={.72} roughness={.32}/></mesh>)}
-    <group ref={carrier} position={[0,RAIL_Y,RAIL_Z]}>
-      <mesh position={[0,0,.04]} castShadow><boxGeometry args={[.16,.13,.12]}/><meshStandardMaterial color="#33342f" metalness={.6} roughness={.38}/></mesh>
-      <mesh position={[0,-.06,.06]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[.035,.012,6,16]}/><meshStandardMaterial color="#8d8f88" metalness={.82} roughness={.26}/></mesh>
-    </group>
-    <mesh ref={mesh} geometry={geometry} material={material}/>
-  </>;
+  useEffect(() => { update.current?.(); }, [props.active, props.progress, props.isScrolling]);
+  if (error) throw error;
+  return <div ref={container} style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}/>;
 }
-
-function Spool({ isScrolling }: { isScrolling: boolean }) {
-  const reel = useRef<THREE.Group>(null);
-  useFrame((_, delta) => { if (reel.current && isScrolling) reel.current.rotation.x -= delta * .55; });
-  return <group position={[SPOOL_X, SPOOL_Y, SPOOL_Z]}>
-    <mesh position={[.21,0,0]} rotation={[0,0,Math.PI/2]}><cylinderGeometry args={[.05,.05,.42,14]}/><meshStandardMaterial color="#6f716a" metalness={.8} roughness={.3}/></mesh>
-    <mesh position={[.42,0,0]}><boxGeometry args={[.44,.13,.11]}/><meshStandardMaterial color="#4b4c47" metalness={.7} roughness={.35}/></mesh>
-    <mesh position={[.42,-.13,0]}><boxGeometry args={[.1,.26,.1]}/><meshStandardMaterial color="#4b4c47" metalness={.7} roughness={.35}/></mesh>
-    <mesh position={[.63,0,0]}><boxGeometry args={[.06,.34,.24]}/><meshStandardMaterial color="#3f403b" metalness={.66} roughness={.4}/></mesh>
-    <group ref={reel}>
-      <mesh rotation={[0,0,Math.PI/2]} castShadow><cylinderGeometry args={[SPOOL_R,SPOOL_R,.19,36]}/><meshStandardMaterial color="#cfc7b2" roughness={.62} metalness={.03}/></mesh>
-      {[-.11,.11].map(x => <mesh key={x} position={[x,0,0]} rotation={[0,0,Math.PI/2]}><cylinderGeometry args={[.45,.45,.014,36]}/><meshStandardMaterial color="#242522" roughness={.55} metalness={.12}/></mesh>)}
-      <mesh rotation={[0,0,Math.PI/2]}><cylinderGeometry args={[.17,.17,.23,20]}/><meshStandardMaterial color="#1c1d1a" roughness={.6} metalness={.1}/></mesh>
-    </group>
-  </group>;
-}
-
-// The fixed base's footprint is prepared offline and moves with the rig. It
-// waits on its own texture, so it wakes the loop the way the printed model does.
-const PrinterGroundShadow = memo(function PrinterGroundShadow({ onReady }: { onReady: () => void }) {
-  const texture = usePrinterShadow();
-  useEffect(() => { onReady(); }, [onReady]);
-  return <mesh position={[0,-1.24,0]} rotation={[-Math.PI / 2,0,0]}>
-    <planeGeometry args={[7,7]}/><meshBasicMaterial map={texture} transparent opacity={.5} depthWrite={false}/>
-  </mesh>;
-});
-
-function PrinterWorld({ progress, isScrolling, compact, moving, onReady }: { progress: number; isScrolling: boolean; compact: boolean; moving: React.RefObject<boolean>; onReady: () => void }) {
-  const rig = useRef<THREE.Group>(null); const gantry = useRef<THREE.Group>(null); const head = useRef<THREE.Group>(null);
-  const cameraTarget = useMemo(() => new THREE.Vector3(), []);
-  const initial = useRef(true);
-  const headTarget = useRef(0);
-  useFrame((state, delta) => {
-    const p = Math.min(1, Math.max(0, progress));
-    const rotationTarget = -.38 + p * .52 + state.pointer.x * .08;
-    cameraTarget.set(3.9 - p * 2.15, .45 + p * .25, 5.8 - p * 1.8);
-    if (initial.current || isScrolling) headTarget.current = -.38 + (Math.floor(p * 44) % 11) * .076;
-    // Paint the correct initial pose immediately, including a restored scroll
-    // position. Subsequent scroll changes keep their original damped movement.
-    if (rig.current) {
-      rig.current.rotation.y = initial.current ? rotationTarget : THREE.MathUtils.damp(rig.current.rotation.y, rotationTarget, 4, delta);
-      if (Math.abs(rig.current.rotation.y - rotationTarget) < .001) rig.current.rotation.y = rotationTarget;
-      else moving.current = true;
-    }
-    // The bed is fixed; the gantry owns height and its carriage owns X.
-    if (gantry.current) gantry.current.position.y = GANTRY_REST_Y + p * PRINT_HEIGHT;
-    if (head.current) {
-      head.current.position.x = initial.current ? headTarget.current : THREE.MathUtils.damp(head.current.position.x, headTarget.current, 22, delta);
-      if (Math.abs(head.current.position.x - headTarget.current) < .001) head.current.position.x = headTarget.current;
-      else moving.current = true;
-    }
-    if (initial.current) state.camera.position.copy(cameraTarget);
-    else state.camera.position.lerp(cameraTarget, 1 - Math.exp(-delta * 2.1));
-    if (state.camera.position.distanceToSquared(cameraTarget) < 1e-6) state.camera.position.copy(cameraTarget);
-    else moving.current = true;
-    state.camera.lookAt(.15 + p * .28 + (compact ? COMPACT_AIM : 0), -.1 + p * .3, 0);
-    moving.current ||= isScrolling;
-    initial.current = false;
-  }, -1); // Update transforms before rebuilding the filament geometry.
-  return <group ref={rig} position={[1.35, -.15, 0]}>
-    <Suspense fallback={null}><PrinterGroundShadow onReady={onReady}/></Suspense>
-    <mesh position={[0,-1.12,0]} receiveShadow><boxGeometry args={[3.55,.22,2.7]}/><meshStandardMaterial color="#353632" roughness={.33} metalness={.82}/></mesh>
-    {[-.62,.62].map(x => <mesh key={x} position={[x,-1.07,0]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.035,.035,2.35,16]}/><meshStandardMaterial color="#8d8f88" metalness={.86} roughness={.22}/></mesh>)}
-    <group>
-      <mesh position={[0,-1.035,0]} castShadow><boxGeometry args={[2.5,.07,1.7]}/><meshStandardMaterial color="#2b2c28" metalness={.45} roughness={.5}/></mesh>
-      <mesh position={[0,-.96,0]} receiveShadow><boxGeometry args={[2.75,.08,1.9]}/><meshStandardMaterial color="#a99e89" roughness={.24} metalness={.92}/></mesh>
-      <Suspense fallback={null}><PrintedModel progress={progress} onReady={onReady}/></Suspense>
-    </group>
-    {[-1.36,1.36].map(x => <mesh key={x} position={[x,.55,-.7]}><boxGeometry args={[.13,2.95,.15]}/><meshStandardMaterial color="#585a54" metalness={.8} roughness={.25}/></mesh>)}
-    <mesh position={[0,1.86,-.7]}><boxGeometry args={[2.85,.16,.2]}/><meshStandardMaterial color="#4b4c47" metalness={.85} roughness={.23}/></mesh>
-    <Spool isScrolling={isScrolling}/>
-    <FilamentFeed gantry={gantry} head={head}/>
-    <group ref={gantry} position={[0,GANTRY_REST_Y,-.7]}>
-      <mesh><boxGeometry args={[2.72,.1,.13]}/><meshStandardMaterial color="#4b4c47" metalness={.86} roughness={.22}/></mesh>
-      <mesh position={[0,0,.09]}><boxGeometry args={[2.6,.05,.04]}/><meshStandardMaterial color="#7f817a" metalness={.9} roughness={.18}/></mesh>
-      <mesh position={[0,-.05,.1]}><boxGeometry args={[2.6,.012,.01]}/><meshStandardMaterial color="#141512" roughness={.85} metalness={.1}/></mesh>
-      <group ref={head} position={[0,HEAD_DROP,0]}>
-        <mesh position={[0,-HEAD_DROP,.1]} castShadow><boxGeometry args={[.42,.44,.1]}/><meshStandardMaterial color="#3a3b36" metalness={.62} roughness={.36}/></mesh>
-        <mesh position={[0,-HEAD_DROP-.06,.244]}><boxGeometry args={[.24,.3,.188]}/><meshStandardMaterial color="#33342f" metalness={.55} roughness={.4}/></mesh>
-        <group position={[0,0,.775]} scale={TOOLHEAD_SCALE}>
-          <mesh position={[0,.02,-.06]} castShadow><boxGeometry args={[.36,.52,.31]}/><meshStandardMaterial color="#2c2d29" metalness={.5} roughness={.44}/></mesh>
-          <mesh position={[0,.06,.1]}><boxGeometry args={[.3,.34,.02]}/><meshStandardMaterial color="#3b3c36" metalness={.56} roughness={.36}/></mesh>
-          <mesh position={[0,-.29,-.06]}><cylinderGeometry args={[.11,.055,.14,4]}/><meshStandardMaterial color="#262723" metalness={.48} roughness={.46}/></mesh>
-          <mesh position={[0,-.4,-.06]} rotation={[Math.PI,0,0]}><coneGeometry args={[.03,.08,16]}/><meshStandardMaterial color="#b9903f" metalness={.85} roughness={.24}/></mesh>
-          <mesh position={[0,.29,-.06]}><cylinderGeometry args={[.042,.042,.09,14]}/><meshStandardMaterial color="#4e4f49" metalness={.7} roughness={.3}/></mesh>
-        </group>
-      </group>
-    </group>
-  </group>;
-}
-
-function useCompact() {
-  const [compact, setCompact] = useState(() => window.matchMedia('(max-width:760px)').matches);
-  useEffect(() => {
-    const query = window.matchMedia('(max-width:760px)');
-    const update = () => setCompact(query.matches);
-    update(); query.addEventListener('change', update);
-    return () => query.removeEventListener('change', update);
-  }, []);
-  return compact;
-}
-
-export default function PrinterScene({ progress, isScrolling, active }: { progress: number; isScrolling: boolean; active: boolean }) {
-  const compact = useCompact();
-  const moving = useRef(false);
-  const wake = useRef<(() => void) | null>(null);
-  const requestFrame = useCallback(() => wake.current?.(), []);
-  const [renderScale, setRenderScale] = useState(1);
-  const lowerResolution = useCallback(() => setRenderScale(scale => Math.max(1 / 3, scale * .75)), []);
-  // Keep this in React state so scroll updates do not undo an adaptive DPR.
-  const dpr = Math.max(.5, Math.min(window.devicePixelRatio, compact ? 1 : 1.5) * renderScale);
-  return <Canvas frameloop="never" dpr={dpr} camera={{ position: [3.9, .45, 5.8], fov: 42 }} gl={{ antialias: true, alpha: true }} onCreated={({ gl }) => { gl.localClippingEnabled = true; }}>
-    <Suspense fallback={null}>
-      <PrinterEnvironment/>
-      <color attach="background" args={['#191b1a']} />
-      {/* Broad, balanced studio lighting lowers the contrast between the GLB's existing facets. */}
-      <ambientLight intensity={.65} />
-      <spotLight position={[-3, 5, 4]} intensity={290} angle={.72} penumbra={1} color="#fff4df" />
-      <spotLight position={[3, 3, 4]} intensity={110} angle={.78} penumbra={1} color="#e8efff" />
-      {/* The rig is all procedural geometry, so it paints on the first frame.
-          The printed model and the ground shadow each suspend on their own. */}
-      <PrinterWorld progress={progress} isScrolling={isScrolling} compact={compact} moving={moving} onReady={requestFrame}/>
-      <PrinterRenderLoop active={active} compact={compact} isScrolling={isScrolling} progress={progress} moving={moving} wake={wake} onPressure={lowerResolution}/>
-    </Suspense>
-  </Canvas>;
-}
-

@@ -1,6 +1,8 @@
 # Printer rendering and performance
 
-The homepage automatically loads its 3D printer and keeps scroll-driven print
+The homepage automatically loads its live 3D printer. The prepared rig and
+Three.js renderer run in an OffscreenCanvas worker where supported, with a lazy
+main-thread fallback for other browsers. It keeps scroll-driven print
 height, moving filament, spool rotation and camera movement. It renders only
 while something changes, then holds its last frame without queuing animation
 callbacks. Scrolling, resizing, adaptive resolution, model readiness and returning
@@ -277,3 +279,73 @@ artifacts/audit-september-live-restored-mobile.json. Live renderer startup is
 still the main performance cost. The production build passed, and browser
 checks at 2556 x 1221 and 390 x 844 confirmed automatic rendering at zero scroll,
 no poster, working scroll updates and no page errors.
+
+## 10 September 2026: prepared sections and worker rendering
+
+The live printer retains its original camera, lighting, materials, model and
+scroll animation. There is no still image, interaction gate or audit detection.
+
+The 32 rigid component meshes are prepared offline into five independent
+sections: frame, gantry, head, spool and filament carrier. Original linear
+colours, roughness and metalness are stored per vertex so those sections share
+one PBR material without approximating their surfaces. The rig is 90,144 bytes
+uncompressed and 11,269 bytes gzipped. Including the printed object, filament
+and ground shadow, a visible frame requires eight draw calls instead of roughly
+34. Filament vertex and index buffers are retained across movement.
+
+Run node scripts/prepare-printer-rig.mjs after editing
+scripts/printer-rig-source.mjs. The unit tests compare every prepared attribute
+and triangle to that source. The original printed model and its compression are
+unchanged; it still has 17,999 vertices. Recheck the PBR shader customization in
+lib/printer-resources.ts when upgrading Three.js.
+
+The homepage no longer uses React Three Fiber. Its React component manages a
+worker and forwards scroll, visibility and viewport state. Three.js loading,
+shader preparation and rendering happen inside the worker. Existing binary
+preloads are copied and transferred once; the cache stays valid for remounts or
+fallbacks. The renderer holds a completed frame with no idle animation callbacks.
+Worker termination cleans up on unmount. If OffscreenCanvas or worker startup
+is unavailable, a fresh canvas uses the same direct Three.js controller on the
+main thread. The enquiry's separate model-preview implementation is unchanged.
+
+Matched Lighthouse 13.4.1 mobile runs used the same Chrome configuration and
+local production export server with gzip for HTML/CSS/JS:
+
+| Metric | Previous live printer | Prepared rig + worker |
+| --- | ---: | ---: |
+| Performance | 67 | 78 |
+| Total blocking time | 500 ms | 140 ms |
+| First contentful paint | 1.7 s | 1.7 s |
+| Largest contentful paint | 5.2 s | 5.4 s |
+| JavaScript transfer bytes (whole page) | 381,089 | 334,192 |
+| Total transfer bytes | 1,025,225 | 989,779 |
+
+Desktop scored 98 with 0 ms blocking time and 1.1 s LCP. Accessibility and best
+practices remained 100 on both; SEO remains 69 because this preview is noindex.
+The measured gain is less blocking and less JavaScript, not improved mobile
+LCP. These are local lab results, not the user's hosted PageSpeed environment;
+the 13,640 ms remote blocking-time measurement has not been independently
+reproduced. Deploy and retest to establish hosted results.
+
+In a separate SwiftShader test with 6x main-thread CPU slowdown, the original
+printer produced several startup long tasks (including 506 ms script work and
+a 345 ms render task). With the worker, the only observed main-thread long task
+was the page's initial 286 ms hydration task. This test explicitly throttles the
+main thread; it is not a simulation of equally slow worker hardware.
+
+Validation:
+
+- All 26 tests, frontend/Worker type checks, and the production build passed.
+- Desktop/mobile screenshots at the initial and scrolled poses were effectively
+  identical to the original (mean channel difference below 0.0001 out of 255,
+  with independently animated dust hidden in both captures).
+- Browser checks verified eight draws, correct print clipping/head/spool/camera
+  movement, stable geometry and filament buffers, zero idle rendering, hidden-tab
+  pause/resume, resize, reduced-motion unmount/remount and enquiry navigation.
+- Browsers without OffscreenCanvas and simulated worker-startup failures both
+  loaded the direct renderer successfully. The successful worker path created
+  no WebGL context on the page's main thread.
+
+Local audit and browser evidence is in artifacts/audit-structure-before-mobile.json,
+artifacts/audit-structure-worker-mobile.json, artifacts/audit-structure-worker-desktop.json,
+artifacts/printer-worker-checks.json and artifacts/structure-visual-comparison.json.
