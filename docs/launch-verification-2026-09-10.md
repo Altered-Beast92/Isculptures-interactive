@@ -10,19 +10,31 @@ Read-only requests to the deployed API establish:
 | Website origin | Result |
 | --- | --- |
 | `https://isculptures-interactive.vercel.app` | HTTP 200, `available: true`, `uploads: true`, matching CORS header |
-| `https://isculptures-interactive-gxc8lcewz-dannys-projects-8300a045.vercel.app` | HTTP 403, no CORS allow header |
+| `https://isculptures-interactive-gxc8lcewz-dannys-projects-8300a045.vercel.app` | Initially HTTP 403; now HTTP 200 with matching CORS header |
+| `https://isculptures-interactive-git-cod-048558-dannys-projects-8300a045.vercel.app` | HTTP 200, available with uploads, matching CORS header |
+| Unrelated Vercel origin | HTTP 403, no CORS allow header |
 
-The preview fallback is therefore caused by the backend origin restriction, not a
-missing Vercel endpoint variable. To test the preview, add its exact origin to the
-existing Cloudflare `ENQUIRY_ALLOWED_ORIGINS`, preserving current entries. Add its
-hostname to the Turnstile widget as required. Do not use a wildcard Vercel allowlist.
-Recheck this if the deployment receives a different hostname after a new build.
+The preview fallback was caused by the backend origin restriction, not a missing
+Vercel endpoint variable. After the owner signed in, both exact preview origins were
+added to Cloudflare `ENQUIRY_ALLOWED_ORIGINS`, preserving the three existing origins.
+The same two hostnames were added to Turnstile, preserving its original hostname,
+Managed mode and disabled pre-clearance. No secrets were revealed or rotated.
 
-Cloudflare dashboard and local Wrangler are not authenticated in the available
-session. Sign-in and the intended test-customer email were requested. No valid
-enquiry, attachment upload or notification was sent in this verification pass.
-Mailbox receipt, stored records, signed file download and provider configuration
-remain to be proved before cutover. API availability alone does not prove them.
+All 16 live availability and preflight checks passed across the main origin, two
+preview origins and an unrelated origin. The stable branch preview displays
+Turnstile Success and enables its file picker after server-side ticket verification.
+Use that stable branch URL for subsequent builds to avoid adding every deployment
+hostname. Results are saved in `artifacts/preview-cors-results.json` locally.
+
+The intended test-customer email is still required. No valid enquiry, attachment
+upload or notification was sent in this verification pass. Mailbox receipt, stored
+records and signed file download remain to be proved before cutover. API availability
+and a successful ticket do not prove those later steps.
+
+The Cloudflare dashboard also displayed a GitHub integration warning, used
+`npm run build` rather than the documented `npm run build:worker`, and had builds
+for non-production branches enabled. These build settings were observed but not
+changed during the origin fix. Check them before relying on automatic API releases.
 
 ## Changes prepared on the SEO branch
 
@@ -64,4 +76,5 @@ access limitation, not evidence that the mapped products are discontinued.
    mail DNS. Enable indexing only for the business-domain production release and
    verify canonical URLs, sitemap and redirects on that domain.
 
-No business-domain, DNS, indexing, mail-provider or retention settings were changed.
+Only the two preview origins and matching Turnstile hostnames were added. No
+business-domain, DNS, indexing, mail-provider or retention settings were changed.
