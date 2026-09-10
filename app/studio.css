@@ -126,6 +126,7 @@ body:has(.enquiry-canvas) .site-header .nav-cta{background:#e6d4b1;color:#243128
 .enquiry-canvas .enquiry-form fieldset{padding:0;border:0;margin:0 0 20px}
 .enquiry-canvas .enquiry-form legend{font:400 24px/1.2 var(--font-manrope),Arial,sans-serif;padding:0 0 24px;letter-spacing:-.035em}
 .enquiry-canvas .enquiry-form label{font-size:14px;gap:6px;line-height:1.5}.enquiry-canvas .enquiry-form label>span{font-size:12px;color:#4b5545}
+.enquiry-canvas .enquiry-form label>input:not([type=checkbox]),.enquiry-canvas .enquiry-form label>select,.enquiry-canvas .enquiry-form label>textarea{margin-top:6px}
 .enquiry-canvas .enquiry-form input:not([type=checkbox]),.enquiry-canvas .enquiry-form select,.enquiry-canvas .enquiry-form textarea{background:#fff7e380;border:1px solid #857d645e;border-radius:2px;color:#243128;font-size:16px}
 .enquiry-canvas .enquiry-form .optional-details{font-size:14px}.enquiry-canvas .attachment-panel{padding:15px;background:#fff7e330;border:1px dashed #857d64}
 .enquiry-canvas .attachment-panel p{font-size:13px;line-height:1.7}.enquiry-canvas .enquiry-form .fineprint{font-size:12px;color:#4b5545;line-height:1.8}
