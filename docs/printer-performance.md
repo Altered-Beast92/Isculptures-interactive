@@ -244,3 +244,36 @@ A browser check delayed the studio asset by two seconds: opacity remained zero
 until rendering began, then progressed to one with the draw count fixed at 35
 throughout the fade. Idle rendering stayed at zero draws per second. The
 production build and TypeScript check passed.
+
+## 10 September 2026: asset and accessibility fixes
+
+Automatic live 3D is retained. A still-first experiment was removed after visual
+review: cropping a fixed camera capture to a wide screen enlarged the printer
+and lost the intended framing. No poster assets or scroll-to-load gate remain.
+The 94 mobile / 100 desktop results reported for that experiment do not describe
+the current automatic-3D version and must not be used as its performance claim.
+
+Retained improvements:
+
+- Use next/font/local with the original font files and preload Manrope.
+- Resize the favicon from approximately 602 KB to 3.7 KB (64 x 64).
+- Add a 600px logo candidate and correct homepage gallery image sizing hints.
+- Darken gold on cream for small-text contrast, enlarge footer link targets and
+  include chapter numbers in navigation accessible names.
+- Measure document height on resize instead of every scroll callback.
+
+SEO remains limited by the preview's intentional noindex and robots.txt block.
+SITE_INDEXABLE should only be enabled for the production launch; the canonical
+domain remains https://isculptures.com.au.
+
+The enquiry implementation and backend are unchanged. Earlier verification of
+the retained changes passed all 23 tests and browser checks for all four enquiry
+categories at mobile and desktop widths using mocked configuration.
+
+After restoring live startup, a fresh local compressed Lighthouse mobile run
+scored 67 performance, 100 accessibility, 100 best practices and 69 SEO, with
+1.7 s FCP, 5.2 s LCP and 540 ms total blocking time. Report:
+artifacts/audit-september-live-restored-mobile.json. Live renderer startup is
+still the main performance cost. The production build passed, and browser
+checks at 2556 x 1221 and 390 x 844 confirmed automatic rendering at zero scroll,
+no poster, working scroll updates and no page errors.
