@@ -2,10 +2,12 @@
 
 ## Latest audit — 10 September 2026
 
-See [the current site audit](site-audit-2026-09-10.md) for prioritised remaining work,
-implemented SEO changes and validation limits. The website remains local-only/noindex.
-Vercel now has the shared redirect map; run `node scripts/sync-redirects.mjs` after
-editing it. The exact retail destinations and 53 recorded blog URLs still need review.
+See [the latest launch verification](launch-verification-2026-09-10.md) for current
+deployment, enquiry and testing status, and [the site audit](site-audit-2026-09-10.md)
+for the broader review. Vercel deployments remain noindex. The subsequent
+[blog migration review](blog-migration-review.md) maps all 53 recorded blog URLs to
+original replacement guides; Search Console and retail destination checks remain.
+Run `node scripts/sync-redirects.mjs` after editing the shared redirect map.
 Use the Vercel/standalone Cloudflare setup below rather than older combined Sites
 deployment notes when configuring the current enquiry flow.
 
@@ -34,6 +36,10 @@ mailbox verification remain required; local tests simulate external services.
 - Analytics integration hooks without an enabled analytics provider.
 
 ## Configure before accepting online enquiries
+
+Historical setup notes below describe the earlier unconfigured state. The current
+Worker now reports availability for the main Vercel origin. See the latest launch
+verification above for the remaining Preview allowlist and mailbox checks.
 The existing mailbox receives mail; it does not itself provide an API for the website to send notifications.
 
 Owner confirmed that Resend and Cloudflare accounts are not set up yet. No live email, upload or Turnstile credentials are configured in the local workspace. Existing enquiry tests use mocked services; successful tests do not establish real mailbox delivery. Account setup and a chosen hosting environment are needed before the live connection and delivery check.
