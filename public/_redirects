@@ -70,6 +70,20 @@
 # unrelated shop homepage. Add exact replacements after the catalogue review.
 /collections    https://www.etsy.com/au/shop/iSculptures 301
 
+# --- Shopify's built-in addresses: exact equivalents on the new site or Etsy. ---
+# The store-wide catalogue and cart go to the Etsy shop front; accounts and search no longer exist.
+/collections/all        https://www.etsy.com/au/shop/iSculptures 301
+/collections/frontpage  https://www.etsy.com/au/shop/iSculptures 301
+/products               https://www.etsy.com/au/shop/iSculptures 301
+/cart                   https://www.etsy.com/au/shop/iSculptures 301
+/search                 /             301
+/account                /             301
+/account/login          /             301
+/account/register       /             301
+/pages/faq              /#faq         301
+/pages/about-us         /pages/about  301
+/blogs/news             /guides       301
+
 # --- Blog migration: reviewed article topics, consolidated into original guides. ---
 # Exact decisions and pre-cutover Search Console caveat: docs/blog-migration-review.md
 /blogs/custom-3d-printing /guides 301

@@ -226,6 +226,61 @@
       "statusCode": 301
     },
     {
+      "source": "/collections/all",
+      "destination": "https://www.etsy.com/au/shop/iSculptures",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/frontpage",
+      "destination": "https://www.etsy.com/au/shop/iSculptures",
+      "statusCode": 301
+    },
+    {
+      "source": "/products",
+      "destination": "https://www.etsy.com/au/shop/iSculptures",
+      "statusCode": 301
+    },
+    {
+      "source": "/cart",
+      "destination": "https://www.etsy.com/au/shop/iSculptures",
+      "statusCode": 301
+    },
+    {
+      "source": "/search",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/account",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/account/login",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/account/register",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/faq",
+      "destination": "/#faq",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/about-us",
+      "destination": "/pages/about",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/news",
+      "destination": "/guides",
+      "statusCode": 301
+    },
+    {
       "source": "/blogs/custom-3d-printing",
       "destination": "/guides",
       "statusCode": 301
