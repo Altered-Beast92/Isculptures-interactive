@@ -1,5 +1,4 @@
 import PrinterBackdrop from './components/printer-backdrop';
-import ChapterNavigation from './components/chapter-navigation';
 import GuideGrid from './components/guide-grid';
 import MockupNote from './components/mockup-note';
 import { guides } from '../content/guides';
@@ -21,7 +20,7 @@ export default function Home() {
   // Headings keep a space before each <br/> so crawlers don't read the lines as one word.
   return <main id="main-content" className="cinematic-home sculpture-story">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(website).replace(/</g, '\\u003c') }}/>
-    <PrinterBackdrop/><ChapterNavigation/>
+    <PrinterBackdrop/>
     <section className="hero cinema-hero" id="top">
       <div className="eyebrow">CUSTOM &amp; BULK 3D PRINTING / SYDNEY STUDIO</div>
       <h1 className="business-heading">Custom 3D printing <br/><i>in Sydney.</i></h1>

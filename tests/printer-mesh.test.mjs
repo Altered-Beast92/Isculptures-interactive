@@ -9,7 +9,7 @@ const bytes = gunzipSync(fs.readFileSync('public/models/homepage-print.bin.gz'))
 const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
 
 function glb() {
-  const file = fs.readFileSync('public/models/homepage_print.glb');
+  const file = fs.readFileSync('assets/models/homepage_print.glb');
   const jsonLength = file.readUInt32LE(12);
   const document = JSON.parse(file.subarray(20, 20 + jsonLength));
   const binary = file.subarray(28 + jsonLength);
