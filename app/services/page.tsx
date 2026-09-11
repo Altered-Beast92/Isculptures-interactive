@@ -13,9 +13,9 @@ export default function ServicesPage() {
       <p>{service.description}</p>
       <span className="service-index-arrow" aria-hidden="true">↗</span>
     </a></li>)}</ol>
-    <aside className="service-cta">
+    <section className="service-cta">
       <div><p className="section-tag">NOT SURE?</p><h2>Just send us your idea.</h2><p>Tell us what you want made, roughly how many and when. We’ll work out the best way to do it.</p><MockupNote/></div>
       <div className="service-cta-actions"><a className="primary" href="/enquiry">Get a quote <span aria-hidden="true">↗</span></a><a href={'mailto:' + CONTACT.email}>{CONTACT.email}</a><a href={'tel:' + CONTACT.tel}>{CONTACT.phone}</a></div>
-    </aside>
+    </section>
   </main>;
 }

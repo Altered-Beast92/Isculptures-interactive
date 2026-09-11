@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getProject } from '../../content/projects';
 import { testimonialsFor } from '../../content/testimonials';
 import { SOURCE_LABELS } from '../../content/types';
-import { pageMetadata } from '../../lib/site';
+import { SITE_URL, pageMetadata } from '../../lib/site';
 import Breadcrumbs from './breadcrumbs';
 import MockupNote from './mockup-note';
 
@@ -14,9 +14,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const project = getProject(slug);
   if (!project) return {};
   const metadata = pageMetadata(project.title, project.summary, `/work/${project.slug}`);
+  const photo = project.images[0] ? [{ url: SITE_URL + project.images[0].src, alt: project.images[0].alt || project.title }] : undefined;
   return {
     ...metadata,
-    openGraph: { ...metadata.openGraph, type: 'article', images: project.images[0] ? [project.images[0].src] : undefined },
+    openGraph: { ...metadata.openGraph, type: 'article', images: photo ?? metadata.openGraph?.images },
+    twitter: { ...metadata.twitter, images: photo ?? metadata.twitter?.images },
   };
 }
 
