@@ -5,6 +5,7 @@ import { testimonialsFor } from '../../content/testimonials';
 import { SOURCE_LABELS } from '../../content/types';
 import { pageMetadata } from '../../lib/site';
 import Breadcrumbs from './breadcrumbs';
+import MockupNote from './mockup-note';
 
 // Real photographed examples supplied by the studio.
 
@@ -36,6 +37,7 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
       <p className="study-lede">{project.summary}</p>
       <a className="primary" href={enquiryUrl}>Ask about something similar ↗</a>
       <p className="study-order-note">The minimum order is 10 units. We’ll confirm the design, finish and timing in your quote.</p>
+      <MockupNote/>
       </div>
       {lead
         ? <img className="study-lead" src={lead.src} alt={lead.alt || project.title} width={lead.width} height={lead.height}/>

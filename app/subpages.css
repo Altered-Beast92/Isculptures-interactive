@@ -168,6 +168,19 @@ main .service-cta .primary:hover{background:#394a36}
   .service-index-arrow{grid-column:2;grid-row:1/3;width:40px;height:40px}
   .policy-body p{font-size:16px}
 }
+/* The free design mockup: a flagged link that sits under calls to action on any surface. */
+.mockup-note{display:inline-flex;align-items:center;gap:10px;width:fit-content;margin-top:18px;padding:5px 14px 5px 5px;border:1px solid #e6d4b159;border-radius:999px;background:#e6d4b10f;font-size:13px;line-height:1.3;color:#ede6d8;transition:background .2s,border-color .2s}
+.mockup-note-flag{padding:4px 9px;border-radius:999px;background:var(--sand);color:var(--sand-ink);font:500 10px/1.2 var(--font-mono),monospace;letter-spacing:.12em}
+.mockup-note>span:last-child{color:var(--sand)}
+.mockup-note:hover{background:#e6d4b124;border-color:var(--sand)}
+.document-page .mockup-note:not(.primary):hover{text-decoration:none}
+:is(.service-cta,.enquiry-canvas) .mockup-note{border-color:#25312655;background:#2531260a;color:var(--sand-ink)}
+:is(.service-cta,.enquiry-canvas) .mockup-note-flag{background:var(--sand-ink);color:var(--sand)}
+:is(.service-cta,.enquiry-canvas) .mockup-note>span:last-child{color:var(--sand-ink)}
+:is(.service-cta,.enquiry-canvas) .mockup-note:hover{background:#25312614;border-color:var(--sand-ink)}
+.hero-brief .mockup-note{margin-top:20px}
+.study-intro .mockup-note{margin-top:0}
+
 @media(prefers-reduced-motion:reduce){
   main :is(.portfolio-card,.guide-card):hover,.service-links a:hover>span:last-child{transform:none}
 }

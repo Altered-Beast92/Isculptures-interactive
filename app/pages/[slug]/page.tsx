@@ -8,6 +8,7 @@ import { CONTACT, SITE_URL, pageMetadata } from '../../../lib/site';
 import Breadcrumbs from '../../components/breadcrumbs';
 import WorkGrid from '../../components/work-grid';
 import GuideGrid from '../../components/guide-grid';
+import MockupNote from '../../components/mockup-note';
 export const dynamicParams = false;
 export function generateStaticParams() { return services.map(({ slug }) => ({ slug })); }
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -40,6 +41,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       <div>
         <p className="section-tag">{service.eyebrow}</p><h1>{heading}</h1><p className="document-lede">{service.intro}</p>
         <div className="service-actions"><a className="primary" href={enquiry}>{service.cta} <span aria-hidden="true">↗</span></a>{!about && <a href={'tel:' + CONTACT.tel}>Or call {CONTACT.phone}</a>}</div>
+        <MockupNote/>
       </div>
       {service.facts && <div className="service-glance"><p className="section-tag">QUICK FACTS</p><dl>{service.facts.map(fact => <div key={fact.label}><dt>{fact.label}</dt><dd>{fact.href ? <a href={fact.href}>{fact.value}</a> : fact.value}</dd></div>)}</dl></div>}
     </header>
