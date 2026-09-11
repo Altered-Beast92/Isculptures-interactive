@@ -264,7 +264,6 @@ export default function EnquiryForm() {
     <section className="route-picker" aria-labelledby="category-heading" hidden={hasSelected}>
       <p className="route-step">01 / YOUR STARTING POINT</p>
       <h2 id="category-heading" ref={categoryHeading} tabIndex={-1}>What are we making?</h2><p className="route-help">Choose a starting point. We’ll work through the details with you.</p>
-      {config && !config.available && <p className="route-availability" role="status">Online sending is not connected yet. <a href="mailto:info@isculptures.com.au">Enquire by email ↗</a></p>}
       <div className="route-grid">{categories.map(category => <button key={category.route} type="button" className="route-tab" aria-controls="project-enquiry-form" disabled={state === 'sending'} onClick={() => { setRoute(category.route); setHasSelected(true); setStep(0); setErrors({}); setMessage(''); }}>
         <span className="route-tab-top"><span className="route-icon" aria-hidden="true"><RouteIcon route={category.route}/></span><span className="route-arrow" aria-hidden="true">↗</span></span>
         <span className="route-title">{category.title}</span><span className="route-description">{category.description}</span><span className="route-foot">{category.flag && <span className="route-flag">{category.flag}</span>}<span className="route-minimum">BULK ORDERS / 10+ UNITS</span></span>
@@ -275,7 +274,6 @@ export default function EnquiryForm() {
       onInput={event => clearError(event.target)}
       onChange={event => { clearError(event.target); if (!started.current) { started.current = true; track('enquiry_started', route); } }} noValidate>
     <div className="enquiry-category-intro"><button className="change-category" type="button" disabled={state === 'sending'} onClick={() => { setHasSelected(false); requestAnimationFrame(() => categoryHeading.current?.focus()); }}>← Change category</button><p className="section-tag">YOUR PROJECT</p><h2 ref={projectHeading} tabIndex={-1}>{selectedCategory.title}</h2><p>{selectedCategory.guidance}</p></div>
-    {config && !config.available && <div className="form-notice" role="status"><b>Send your brief by email for now.</b><p>The online form is not accepting enquiries yet. Email <a href="mailto:info@isculptures.com.au">info@isculptures.com.au</a> or call <a href="tel:+61437383684">0437 383 684</a>.</p></div>}
     <nav className="enquiry-stages" aria-label="Enquiry steps">{STEPS.map((label, index) => {
       const unresolved = Object.keys(errors).some(key => errors[key] && stepFor(key) === index);
       return <button key={label} type="button" className={unresolved ? 'stage-unresolved' : undefined} aria-current={step === index ? 'step' : undefined} aria-label={'0' + (index + 1) + ' ' + label + (unresolved ? ', needs attention' : '')} disabled={state === 'sending'} onClick={() => goTo(index)}>0{index + 1}<span>{label}</span>{unresolved && <em aria-hidden="true">!</em>}</button>;

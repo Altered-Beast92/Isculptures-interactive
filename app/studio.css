@@ -97,7 +97,6 @@ body:has(.enquiry-canvas) .site-header .nav-cta{background:#e6d4b1;color:#243128
 .route-step{font-size:10px;letter-spacing:.14em;margin:0 0 18px;color:#705831}
 .route-picker h2{font:400 clamp(27px,3vw,42px)/1.1 var(--font-manrope),Arial,sans-serif;letter-spacing:-.05em;margin:0 0 14px}
 .route-help{font-size:15px;line-height:1.7;color:#4b5545;margin:0 0 20px}
-.route-availability{font-size:13px;line-height:1.7;background:#fff8e044;border-left:2px solid #705831;padding:8px 12px;margin:0 0 20px;color:#535140}.route-availability a{text-decoration:underline;white-space:nowrap;text-underline-offset:3px}
 /* Four cube tabs: the starting points read as panels you hover and press. */
 .route-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .route-tab{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;text-align:left;min-width:0;aspect-ratio:1;min-height:230px;max-height:340px;padding:20px;background:linear-gradient(158deg,#f3e7cf,#ecdec2);color:#243128;border:1px solid #24312855;border-radius:2px;box-shadow:4px 4px 0 #24312814;transition:background .2s,color .2s,border-color .2s,box-shadow .2s,transform .2s}
@@ -127,7 +126,6 @@ body:has(.enquiry-canvas) .site-header .nav-cta{background:#e6d4b1;color:#243128
 .enquiry-canvas .enquiry-category-intro .section-tag{font-size:10px;letter-spacing:.13em;color:#705831}
 .enquiry-canvas .enquiry-category-intro p:last-child{font-size:14px;line-height:1.7;color:#4b5545}
 .enquiry-canvas .enquiry-form .change-category{left:0;right:auto;top:0;border:0;border-bottom:1px solid #24312855;padding:0 0 6px;border-radius:0;font-size:12px}
-.enquiry-canvas .form-notice{font-size:13px;line-height:1.7;background:#fff8e044;border:0;border-left:2px solid #705831;padding:12px;margin-bottom:20px}
 .enquiry-stages{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;height:auto;padding:0;border:0;margin:0 0 28px}
 .enquiry-stages button{display:flex;align-items:center;gap:10px;padding:12px 0;background:transparent;border:0;border-bottom:1px solid #24312840;font-size:11px;color:#655e49;text-align:left}
 .enquiry-stages button span{font-size:14px}.enquiry-stages button[aria-current]{border-bottom:2px solid #243128;color:#243128;font-weight:600}
