@@ -71,9 +71,9 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       <ul className="service-links">{services.filter(item => item.slug !== slug && item.slug !== 'about').map(item => <li key={item.slug}><a href={'/pages/' + item.slug}><span className="section-tag">{item.eyebrow}</span><b>{item.title}</b><span aria-hidden="true">→</span></a></li>)}</ul>
     </section>
 
-    <aside className="service-cta">
+    <section className="service-cta">
       <div><p className="section-tag">{about ? 'CONTACT' : 'GET A QUOTE'}</p><h2>{about ? 'Get in touch.' : 'Tell us what you need.'}</h2><p>Send what you know so far, like the quantity, size, finish and when you need it. We’ll get back to you with pricing and timing.</p></div>
       <div className="service-cta-actions"><a className="primary" href={enquiry}>{service.cta} <span aria-hidden="true">↗</span></a><a href={'mailto:' + CONTACT.email}>{CONTACT.email}</a><a href={'tel:' + CONTACT.tel}>{CONTACT.phone}</a></div>
-    </aside>
+    </section>
   </article><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }}/></main>;
 }
