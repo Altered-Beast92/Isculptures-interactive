@@ -12,10 +12,10 @@ type Ticket = { ticket: string; expires: string };
 type Upload = { slot: number; name: string; size: number; file: File; status: 'uploading' | 'done' | 'error'; progress: number; error?: string };
 const endpoint = process.env.NEXT_PUBLIC_ENQUIRY_ENDPOINT || '/api/enquiry';
 const categories: { route: EnquiryRoute; title: string; description: string; guidance: string; prompt: string; flag?: string }[] = [
-  { route: 'bulk', title: 'For an Event', description: 'Personalised gifts, bonbonniere and keepsakes for your guests.', guidance: 'Event batches start at 10 units.', prompt: 'Tell us about the occasion, number of guests, personalisation and event date.' },
-  { route: 'supply', title: 'Business & Ongoing Supply', description: 'Trade orders, retail stock and repeat batches for your business.', guidance: 'Business batches start at 10 units per order.', prompt: 'What does your business need? Include the quantity and whether this is a one-off order or repeat supply.' },
-  { route: 'design', title: 'Custom Design Enquiry', flag: 'FREE MOCKUP', description: 'Start with an idea, sketch or reference. We’ll review the design work needed.', guidance: 'Bulk production starts at 10 units. Design requirements and costs are confirmed with your quote.', prompt: 'Describe your idea, intended use, approximate size and any references you can share.' },
-  { route: 'file', title: 'I have a 3D File', description: 'Bring your model for a review of printing and production requirements.', guidance: 'Bulk production starts at 10 units. Prototype requirements are reviewed with your quote.', prompt: 'What is the model for? Include the quantity, dimensions, material preferences and any critical tolerances.' },
+  { route: 'bulk', title: 'Event favours & gifts', description: 'Bonbonniere, keepsakes and personalised gifts for weddings, christenings and other events.', guidance: 'Minimum 10 units.', prompt: 'What’s the occasion? Include the number of guests, any names or wording, and the event date.' },
+  { route: 'supply', title: 'Business & repeat orders', description: 'Stock for your shop, branded products or batches you’ll reorder.', guidance: 'Minimum 10 units per order.', prompt: 'What do you need made? Include the quantity and whether it’s a one-off or something you’ll reorder.' },
+  { route: 'design', title: 'Start from an idea', flag: 'FREE MOCKUP', description: 'No 3D file? Send a sketch, photo or description and we’ll work out the design.', guidance: 'Minimum 10 units. Any design costs are included in your quote.', prompt: 'Describe your idea: what it’s for, roughly how big, and any photos or references you like.' },
+  { route: 'file', title: 'I have a 3D file', description: 'Send an STL, OBJ or 3MF and we’ll check it’s ready to print.', guidance: 'Minimum 10 units. Tell us if you need a prototype first.', prompt: 'What’s the part for? Include the quantity, size, any material preference and the tolerances that matter.' },
 ];
 const STEPS = ['Project', 'Delivery', 'Contact'];
 // Which step owns each field, so an error can be shown where it can actually be fixed.
@@ -259,16 +259,16 @@ export default function EnquiryForm() {
       }
     }
   };
-  if (state === 'sent') return <div ref={feedback} tabIndex={-1} className="enquiry-success" role="status"><p className="section-tag">ENQUIRY RECEIVED</p><h2>Thank you. Your brief is saved.</h2><p>Keep your reference: <strong>{reference}</strong></p><p>The studio will review your requirements and reply to the email you provided. A submitted enquiry does not reserve production or confirm an order.</p><a className="primary" href="/">Back to the studio</a></div>;
+  if (state === 'sent') return <div ref={feedback} tabIndex={-1} className="enquiry-success" role="status"><p className="section-tag">ENQUIRY RECEIVED</p><h2>Thanks, we’ve got your enquiry.</h2><p>Your reference is <strong>{reference}</strong></p><p>We’ll read through it and reply to the email address you gave us. Sending an enquiry doesn’t lock in an order or a production slot.</p><a className="primary" href="/">Back to home</a></div>;
   return <>
     <section className="route-picker" aria-labelledby="category-heading" hidden={hasSelected}>
       <p className="route-step">01 / YOUR STARTING POINT</p>
-      <h2 id="category-heading" ref={categoryHeading} tabIndex={-1}>What are we making?</h2><p className="route-help">Choose a starting point. We’ll work through the details with you.</p>
+      <h2 id="category-heading" ref={categoryHeading} tabIndex={-1}>What do you need made?</h2><p className="route-help">Pick the closest option. You can explain the rest in the form.</p>
       <div className="route-grid">{categories.map(category => <button key={category.route} type="button" className="route-tab" aria-controls="project-enquiry-form" disabled={state === 'sending'} onClick={() => { setRoute(category.route); setHasSelected(true); setStep(0); setErrors({}); setMessage(''); }}>
         <span className="route-tab-top"><span className="route-icon" aria-hidden="true"><RouteIcon route={category.route}/></span><span className="route-arrow" aria-hidden="true">↗</span></span>
         <span className="route-title">{category.title}</span><span className="route-description">{category.description}</span><span className="route-foot">{category.flag && <span className="route-flag">{category.flag}</span>}<span className="route-minimum">BULK ORDERS / 10+ UNITS</span></span>
       </button>)}</div>
-      <p className="route-footnote">Your brief → A studio review → Your quote</p>
+      <p className="route-footnote">You send a brief → We review it → You get a quote</p>
     </section>
     <form id="project-enquiry-form" hidden={!hasSelected} ref={form} className="enquiry-form staged-enquiry" onSubmit={send}
       onInput={event => clearError(event.target)}
@@ -310,6 +310,6 @@ export default function EnquiryForm() {
     <div ref={feedback} tabIndex={-1} role={state === 'error' || Object.values(errors).some(Boolean) ? 'alert' : undefined}>{Object.values(errors).some(Boolean) && <p className="form-error">Please check the highlighted fields above.</p>}{message && <p className="form-error">{message} <a href="mailto:info@isculptures.com.au">Email the studio</a>.</p>}</div>
     <div className="enquiry-step-actions">{step > 0 && <button className="previous-step" type="button" disabled={state === 'sending'} onClick={() => goTo(step - 1)}>← Back</button>}{step < 2 && <button className="primary next-step" type="button" onClick={advance}>Continue to {step === 0 ? 'delivery' : 'contact'} ↗</button>}
     <button hidden={step !== 2} className="primary" type="submit" disabled={state === 'sending' || !config?.available || uploading || (!!config?.turnstileSiteKey && !ticket)}>{state === 'sending' ? 'Sending your enquiry…' : uploading ? 'Waiting for your files…' : 'Send project enquiry ↗'}</button></div>
-    <p className="fineprint">We confirm availability, materials, pricing and lead time after reviewing your brief. <a href="/policies/terms-of-service">About enquiries and orders</a>.</p>
+    <p className="fineprint">We’ll confirm materials, price and lead time once we’ve seen your brief. <a href="/policies/terms-of-service">How enquiries and orders work</a>.</p>
   </form></>;
 }

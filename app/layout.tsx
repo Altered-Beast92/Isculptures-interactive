@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import './studio.css';
+import './subpages.css';
 import SiteNav from './components/site-nav';
 import SiteFooter from './components/site-footer';
 import { INDEXABLE, CONTACT, SITE_URL, pageMetadata } from '../lib/site';
@@ -17,7 +18,7 @@ const mono = localFont({ src: [
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  ...pageMetadata('Custom & Bulk 3D Printing Sydney', 'Sydney studio for custom 3D printing, personalised event favours and corporate gifts. Bulk orders from 10 units, repeat production and Australia-wide delivery.', '/'),
+  ...pageMetadata('Custom 3D printing & bulk orders in Sydney', 'Sydney 3D printing studio making personalised favours, keepsakes, corporate gifts and custom parts. Bulk orders start at 10 units, delivered Australia-wide.', '/'),
   robots: { index: INDEXABLE, follow: INDEXABLE },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
