@@ -114,6 +114,15 @@ if (process.argv.includes('--expect-indexable')) assert.ok(indexable, 'Launch bu
 if (process.argv.includes('--expect-noindex')) assert.ok(!indexable, 'Draft build is indexable');
 assert.match(read(path.join(root, '404.html')), /name="robots" content="[^"]*noindex/, '404 must not be indexed');
 const redirects = JSON.parse(read('vercel.json')).redirects;
+const blogInventory = JSON.parse(read('docs/shopify-blog-inventory.json'));
+for (const entry of blogInventory) {
+  const source = new URL(entry.url).pathname;
+  const matches = redirects.filter(rule => rule.source === source);
+  assert.equal(matches.length, 1, `Expected one legacy blog redirect: ${source}`);
+  assert.equal(matches[0].destination, entry.destination, `Blog migration map drift: ${source}`);
+  assert.equal(matches[0].statusCode, entry.statusCode, `Blog migration status drift: ${source}`);
+  assert.equal(entry.statusCode, 301, `Blog consolidation must be permanent: ${source}`);
+}
 for (const rule of redirects) {
   assert.ok(!pages.has(rule.source), `Redirect hides a real page: ${rule.source}`);
   if (rule.destination.startsWith('/')) {

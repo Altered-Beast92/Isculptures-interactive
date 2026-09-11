@@ -2,266 +2,584 @@
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing",
     "lastModified": "2026-09-03T13:01:08+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Redirect blog index to guide index",
+    "destination": "/guides",
+    "statusCode": 301,
+    "reviewedTitle": "3D Printing Blog",
+    "sourceWordCount": 0,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-they-ll-treasure",
     "lastModified": "2026-03-25T21:08:47+11:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes They’ll Treasure",
+    "sourceWordCount": 2358,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-favours-that-guests-keep",
     "lastModified": "2026-03-25T21:11:37+11:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Favours That Guests Keep",
+    "sourceWordCount": 1535,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-for-modern-couples",
     "lastModified": "2026-03-25T21:14:14+11:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-wedding-bonbonniere",
+    "statusCode": 301,
+    "reviewedTitle": "Unique Wedding Bonbonniere Ideas for Modern Couples",
+    "sourceWordCount": 1751,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight-parents",
     "lastModified": "2026-03-25T21:21:55+11:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Delight Parents",
+    "sourceWordCount": 1922,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure",
     "lastModified": "2026-03-25T21:39:25+11:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes They'll Treasure",
+    "sourceWordCount": 1609,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-1",
     "lastModified": "2026-03-26T13:01:04+11:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes Guests Will Love",
+    "sourceWordCount": 1661,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love",
     "lastModified": "2026-03-30T13:00:43+11:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Guests Love",
+    "sourceWordCount": 1594,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-impress",
     "lastModified": "2026-04-02T13:00:57+11:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-wedding-bonbonniere",
+    "statusCode": 301,
+    "reviewedTitle": "Unique Wedding Bonbonniere Ideas That Impress",
+    "sourceWordCount": 1899,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-for-new-parents",
     "lastModified": "2026-04-06T13:00:52+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes for New Parents",
+    "sourceWordCount": 1397,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love",
     "lastModified": "2026-04-09T13:00:55+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes Guests Will Love",
+    "sourceWordCount": 1460,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/unique-baptism-keepsakes-that-parents-cherish",
     "lastModified": "2026-04-13T13:00:50+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/christening-baptism-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Unique Baptism Keepsakes That Parents Cherish",
+    "sourceWordCount": 1659,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love-1",
     "lastModified": "2026-04-16T13:00:57+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Guests Love",
+    "sourceWordCount": 1812,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight",
     "lastModified": "2026-04-20T13:06:58+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Delight",
+    "sourceWordCount": 1723,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-stand-out",
     "lastModified": "2026-04-23T13:00:54+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Stand Out",
+    "sourceWordCount": 1677,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-favors-guests-will-keep",
     "lastModified": "2026-04-27T13:00:58+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Favors Guests Will Keep",
+    "sourceWordCount": 1593,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-2",
     "lastModified": "2026-04-30T13:00:47+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes Guests Will Love",
+    "sourceWordCount": 1514,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-3",
     "lastModified": "2026-05-04T13:00:44+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes Guests Will Love",
+    "sourceWordCount": 1587,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-4",
     "lastModified": "2026-05-07T13:01:05+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes Guests Will Love",
+    "sourceWordCount": 1863,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love-2",
     "lastModified": "2026-05-11T13:00:56+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Guests Love",
+    "sourceWordCount": 1727,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight-1",
     "lastModified": "2026-05-14T13:01:02+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Delight",
+    "sourceWordCount": 1690,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure-1",
     "lastModified": "2026-05-18T13:00:55+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes They'll Treasure",
+    "sourceWordCount": 1749,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-they-ll-treasure-1",
     "lastModified": "2026-05-21T13:00:56+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes They’ll Treasure",
+    "sourceWordCount": 1654,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-5",
     "lastModified": "2026-05-25T13:00:52+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes Guests Will Love",
+    "sourceWordCount": 1666,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight-2",
     "lastModified": "2026-05-28T13:01:01+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Delight",
+    "sourceWordCount": 1867,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-6",
     "lastModified": "2026-06-01T13:00:53+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes Guests Will Love",
+    "sourceWordCount": 1450,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-christening-keepsakes-that-feel-timeless",
     "lastModified": "2026-06-04T13:00:45+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/christening-baptism-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Christening Keepsakes That Feel Timeless",
+    "sourceWordCount": 1349,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-wow",
     "lastModified": "2026-06-08T13:01:01+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Wow",
+    "sourceWordCount": 1757,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-guests-keep",
     "lastModified": "2026-06-11T13:00:52+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-wedding-bonbonniere",
+    "statusCode": 301,
+    "reviewedTitle": "Unique Wedding Bonbonniere Ideas That Guests Keep",
+    "sourceWordCount": 1699,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-7",
     "lastModified": "2026-06-15T13:01:13+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes Guests Will Love",
+    "sourceWordCount": 1649,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/elegant-wedding-bonbonniere-ideas-guests-will-keep",
     "lastModified": "2026-06-18T13:01:16+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-wedding-bonbonniere",
+    "statusCode": 301,
+    "reviewedTitle": "Elegant Wedding Bonbonniere Ideas Guests Will Keep",
+    "sourceWordCount": 1735,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-they-ll-treasure-2",
     "lastModified": "2026-06-22T13:01:23+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes They’ll Treasure",
+    "sourceWordCount": 1793,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-favours-that-guests-keep-1",
     "lastModified": "2026-06-25T13:01:07+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Favours That Guests Keep",
+    "sourceWordCount": 1503,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-wedding-bonbonniere-ideas-that-delight",
     "lastModified": "2026-06-29T13:01:13+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-wedding-bonbonniere",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Wedding Bonbonniere Ideas That Delight",
+    "sourceWordCount": 1629,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love-3",
     "lastModified": "2026-07-02T13:01:18+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Guests Love",
+    "sourceWordCount": 1567,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love-4",
     "lastModified": "2026-07-06T13:01:17+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Guests Love",
+    "sourceWordCount": 1596,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-christening-gifts-parents-will-treasure",
     "lastModified": "2026-07-09T13:01:11+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/christening-baptism-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Christening Gifts Parents Will Treasure",
+    "sourceWordCount": 1349,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/unique-3d-printed-baby-shower-keepsakes",
     "lastModified": "2026-07-13T13:01:23+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Unique 3D Printed Baby Shower Keepsakes",
+    "sourceWordCount": 1636,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-delight",
     "lastModified": "2026-07-16T13:01:08+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-wedding-bonbonniere",
+    "statusCode": 301,
+    "reviewedTitle": "Unique Wedding Bonbonniere Ideas That Delight",
+    "sourceWordCount": 1651,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure-2",
     "lastModified": "2026-07-20T13:01:09+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes They'll Treasure",
+    "sourceWordCount": 1769,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure-3",
     "lastModified": "2026-07-23T13:01:11+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes They'll Treasure",
+    "sourceWordCount": 1581,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-wow-guests",
     "lastModified": "2026-07-27T13:01:14+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Wow Guests",
+    "sourceWordCount": 1596,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-cherish",
     "lastModified": "2026-07-30T13:01:14+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes Guests Will Cherish",
+    "sourceWordCount": 1770,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love-5",
     "lastModified": "2026-08-03T13:01:15+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Guests Love",
+    "sourceWordCount": 1744,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight-3",
     "lastModified": "2026-08-06T13:01:20+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Delight",
+    "sourceWordCount": 1710,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/unique-bonbonniere-ideas-for-wedding-guests",
     "lastModified": "2026-08-10T13:01:10+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-wedding-bonbonniere",
+    "statusCode": 301,
+    "reviewedTitle": "Unique Bonbonniere Ideas for Wedding Guests",
+    "sourceWordCount": 1583,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-they-ll-treasure-3",
     "lastModified": "2026-08-13T13:01:07+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes They’ll Treasure",
+    "sourceWordCount": 1456,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight-4",
     "lastModified": "2026-08-17T13:01:21+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Delight",
+    "sourceWordCount": 1728,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-wow-guests-1",
     "lastModified": "2026-08-20T13:01:21+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Wow Guests",
+    "sourceWordCount": 1459,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-8",
     "lastModified": "2026-08-24T13:01:19+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes Guests Will Love",
+    "sourceWordCount": 1727,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-wow-1",
     "lastModified": "2026-08-27T13:00:58+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes That Wow",
+    "sourceWordCount": 1505,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure-4",
     "lastModified": "2026-08-31T13:01:11+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-baby-shower-keepsakes",
+    "statusCode": 301,
+    "reviewedTitle": "Personalised Baby Shower Keepsakes They'll Treasure",
+    "sourceWordCount": 1428,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   },
   {
     "url": "https://isculptures.com.au/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-feel-personal",
     "lastModified": "2026-09-03T13:01:08+10:00",
-    "migrationDecision": "Review content and Search Console data before cutover"
+    "migrationDecision": "Consolidate overlapping occasion advice into an original planning guide",
+    "destination": "/guides/personalised-wedding-bonbonniere",
+    "statusCode": 301,
+    "reviewedTitle": "Unique Wedding Bonbonniere Ideas That Feel Personal",
+    "sourceWordCount": 1772,
+    "checkedAt": "2026-09-10",
+    "searchConsoleReviewed": false
   }
 ]

@@ -69,3 +69,59 @@
 # Unknown product/collection URLs must return 404 rather than redirect to an
 # unrelated shop homepage. Add exact replacements after the catalogue review.
 /collections    https://www.etsy.com/au/shop/iSculptures 301
+
+# --- Blog migration: reviewed article topics, consolidated into original guides. ---
+# Exact decisions and pre-cutover Search Console caveat: docs/blog-migration-review.md
+/blogs/custom-3d-printing /guides 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-they-ll-treasure /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-favours-that-guests-keep /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-for-modern-couples /guides/personalised-wedding-bonbonniere 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight-parents /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-1 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-impress /guides/personalised-wedding-bonbonniere 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-for-new-parents /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/unique-baptism-keepsakes-that-parents-cherish /guides/christening-baptism-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love-1 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-stand-out /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-favors-guests-will-keep /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-2 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-3 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-4 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love-2 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight-1 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure-1 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-they-ll-treasure-1 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-5 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight-2 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-6 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-christening-keepsakes-that-feel-timeless /guides/christening-baptism-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-wow /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-guests-keep /guides/personalised-wedding-bonbonniere 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-7 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/elegant-wedding-bonbonniere-ideas-guests-will-keep /guides/personalised-wedding-bonbonniere 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-they-ll-treasure-2 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-favours-that-guests-keep-1 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-wedding-bonbonniere-ideas-that-delight /guides/personalised-wedding-bonbonniere 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love-3 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love-4 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-christening-gifts-parents-will-treasure /guides/christening-baptism-keepsakes 301
+/blogs/custom-3d-printing/unique-3d-printed-baby-shower-keepsakes /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-delight /guides/personalised-wedding-bonbonniere 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure-2 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure-3 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-wow-guests /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-cherish /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-guests-love-5 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight-3 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/unique-bonbonniere-ideas-for-wedding-guests /guides/personalised-wedding-bonbonniere 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-they-ll-treasure-3 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-delight-4 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-wow-guests-1 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-guests-will-love-8 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-wow-1 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure-4 /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-feel-personal /guides/personalised-wedding-bonbonniere 301

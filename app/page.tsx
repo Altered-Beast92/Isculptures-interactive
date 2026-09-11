@@ -2,6 +2,8 @@ import PrinterBackdrop from './components/printer-backdrop';
 import ChapterNavigation from './components/chapter-navigation';
 import GuideGrid from './components/guide-grid';
 import { guides } from '../content/guides';
+import { featuredTestimonials } from '../content/testimonials';
+import { SOURCE_LABELS } from '../content/types';
 import media from '../content/work-media.json';
 import { CONTACT, SITE_URL } from '../lib/site';
 
@@ -13,6 +15,7 @@ const gallery = [
 function Chapter({ number, label }: { number: string; label: string }) { return <div className="chapter-marker"><span>{number}</span><span>{label}</span></div>; }
 
 export default function Home() {
+  const reviews = featuredTestimonials();
   const website = { '@context': 'https://schema.org', '@type': 'WebSite', '@id': SITE_URL + '/#website', url: SITE_URL + '/', name: CONTACT.name, alternateName: 'iSculptures', inLanguage: 'en-AU', publisher: { '@id': SITE_URL + '/#organisation' } };
   return <main id="main-content" className="cinematic-home sculpture-story">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(website).replace(/</g, '\\u003c') }}/>
@@ -32,5 +35,6 @@ export default function Home() {
     <section className="floating-process block-solid" id="process"><Chapter number="06" label="THE NEXT STEPS"/><div className="process-layout"><h2>A clear way<br/><em>forward.</em></h2><ol className="studio-process"><li><span>01</span><h3>The brief</h3><p>Tell us the use, quantity and deadline. A finished design is optional.</p></li><li><span>02</span><h3>The details</h3><p>Agree the specification, pricing, timing and any design or sample costs.</p></li><li><span>03</span><h3>The batch</h3><p>Confirm the design and approval steps before production begins.</p></li></ol></div></section>
     <section className="floating-guides block-glass" id="guides"><Chapter number="07" label="PLAN YOUR PROJECT"/><div className="story-section-heading"><h2>Before<br/><em>we begin.</em></h2><a className="studio-text-link" href="/guides">All studio guides ↗</a></div><GuideGrid items={[guides[0], guides[3]]}/></section>
     <section className="story-stage faq-stage block-solid" id="faq"><Chapter number="08" label="A FEW USEFUL ANSWERS"/><div className="story-columns"><h2>Good<br/><em>questions.</em></h2><div className="faq-list"><details><summary>What is the minimum order?</summary><p>Bulk orders start at 10 units. Pricing depends on the product, size, finish and design work involved.</p></details><details><summary>Can you work to an event deadline?</summary><p>Tell us when you need the items delivered. We’ll review capacity, approvals and shipping before confirming a timeframe.</p></details><details><summary>Can I order the same design again?</summary><p>Repeat order and ongoing supply enquiries are welcome. Include your likely quantity per batch and estimated annual demand.</p></details><details><summary>Do I need a 3D file?</summary><p>No. Start with a description, dimensions and reference images. Design requirements and approval stages are confirmed with your quote.</p></details><details><summary>Do you deliver across Australia?</summary><p>Australia-wide delivery is available. Freight, packaging and timing are confirmed for your order and destination.</p></details></div></div></section>
+    <section className="story-stage testimonial-stage block-glass" id="testimonials"><Chapter number="09" label="CUSTOMER REVIEWS"/><div className="story-section-heading"><h2>Made with care.<br/><em>Remembered.</em></h2><p>Published reviews from customers of Impeccable Sculptures.</p></div><div className="testimonial-grid">{reviews.map(review => <figure className="testimonial-card" key={review.id}><div className="testimonial-rating" aria-label={`${review.rating} out of 5 stars`}><span aria-hidden="true">★★★★★</span></div><blockquote>“{review.quote}”</blockquote><figcaption><strong>{review.author}</strong><span>{review.role}</span><small>{SOURCE_LABELS[review.source]}</small></figcaption></figure>)}</div></section>
   </main>;
 }

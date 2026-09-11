@@ -5,6 +5,7 @@ const chapters = [
   ['top', 'The studio'], ['b2b', 'Bulk & trade'], ['work', 'Selected work'],
   ['events', 'Events'], ['supply', 'Ongoing supply'], ['printing', 'Parts & design'],
   ['process', 'The process'], ['guides', 'Guides'], ['faq', 'Questions'],
+  ['testimonials', 'Customer reviews'],
 ] as const;
 
 export default function ChapterNavigation() {

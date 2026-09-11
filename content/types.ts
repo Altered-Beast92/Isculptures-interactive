@@ -55,11 +55,12 @@ export type Project = {
 
 /** Where a testimonial came from. Shown as a badge — an attributed review from a
  *  named platform reads as evidence, an unattributed one reads as copywriting. */
-export type ReviewSource = 'google' | 'etsy' | 'shopify' | 'direct';
+export type ReviewSource = 'google' | 'etsy' | 'judgeme' | 'shopify' | 'direct';
 
 export const SOURCE_LABELS: Record<ReviewSource, string> = {
   google: 'via Google',
   etsy: 'via Etsy',
+  judgeme: 'via Judge.me',
   shopify: 'via Shopify',
   direct: 'Client',
 };
