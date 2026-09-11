@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
-const source = fs.readFileSync('public/models/homepage_print.glb');
+// The source model stays out of public/ so it is not deployed; only the prepared file below ships.
+const source = fs.readFileSync('assets/models/homepage_print.glb');
 const jsonLength = source.readUInt32LE(12);
 const document = JSON.parse(source.subarray(20, 20 + jsonLength).toString());
 const binary = source.subarray(28 + jsonLength);

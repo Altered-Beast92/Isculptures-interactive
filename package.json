@@ -15,20 +15,20 @@
     "check:seo": "node scripts/check-seo.mjs"
   },
   "dependencies": {
-    "@react-three/drei": "latest",
-    "@react-three/fiber": "latest",
-    "gsap": "latest",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "three": "latest"
+    "@react-three/drei": "10.7.8",
+    "@react-three/fiber": "9.7.0",
+    "gsap": "3.15.0",
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "three": "0.185.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260904.1",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/three": "latest",
-    "typescript": "latest",
+    "@types/node": "26.4.1",
+    "@types/react": "19.2.18",
+    "@types/three": "0.185.4",
+    "typescript": "7.0.2",
     "wrangler": "^4.129.0"
   }
 }
