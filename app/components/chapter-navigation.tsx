@@ -2,10 +2,10 @@
 import { useEffect, useState } from 'react';
 
 const chapters = [
-  ['top', 'The studio'], ['b2b', 'Bulk & trade'], ['work', 'Selected work'],
-  ['events', 'Events'], ['supply', 'Ongoing supply'], ['printing', 'Parts & design'],
-  ['process', 'The process'], ['guides', 'Guides'], ['faq', 'Questions'],
-  ['testimonials', 'Customer reviews'],
+  ['top', 'Home'], ['b2b', 'Bulk orders'], ['work', 'Our work'],
+  ['events', 'Events & keepsakes'], ['supply', 'Repeat orders'], ['printing', 'Parts & 3D files'],
+  ['process', 'How it works'], ['guides', 'Guides'], ['faq', 'FAQ'],
+  ['testimonials', 'Reviews'],
 ] as const;
 
 export default function ChapterNavigation() {
