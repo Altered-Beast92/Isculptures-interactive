@@ -76,20 +76,25 @@ async function sendEmail(env: Env, idempotency: string, to: string, subject: str
 }
 export async function notify(record: RecordData, env: Env, origin: string) {
   if (!env.RESEND_API_KEY || !env.ENQUIRY_TO || !env.ENQUIRY_FROM || !env.FILE_LINK_SECRET || !env.ENQUIRIES) return record;
+  // Unanswered fields are dropped, so the studio reads only what the visitor actually filled in. The full record stays in R2.
+  const filled = (entries: [string, string | number | null][]) => entries.filter(([, value]) => value !== '' && value !== null).map(([label, value]) => label + ': ' + value);
+  const delivery = record.requiredBy ? record.requiredBy + (record.deadlineFixed ? ' (fixed deadline)' : '') : record.deadlineFixed ? 'Not given — deadline is fixed' : '';
+  const utm: [string, string][] = [['source', record.campaign.source], ['medium', record.campaign.medium], ['campaign', record.campaign.campaign]];
+  const campaign = utm.filter(([, value]) => value).map(([label, value]) => label + '=' + value).join(' · ');
+  const attachments: string[] = [];
+  for (const file of record.attachments) attachments.push(file.name + ' (' + file.size + ' bytes): ' + await fileLink(env, origin, file.key));
+  // A group that loses every line loses its separator too, so no run of blank lines survives.
   const lines = [
-    'Reference: ' + record.id, 'Received: ' + record.receivedAt, 'Enquiry type: ' + record.route,
-    'Name: ' + record.contact.name, 'Email: ' + record.contact.email, 'Company: ' + record.contact.company,
-    'Phone: ' + record.contact.phone, 'Customer type: ' + record.contact.customerType, '',
-    'Brief: ' + record.brief, 'Quantity per order: ' + (record.quantity ?? 'Not sure'),
-    'Annual quantity: ' + (record.annualQuantity ?? 'Not specified'), 'Frequency: ' + record.frequency,
-    'Material: ' + record.material, 'Dimensions: ' + record.dimensions, 'Finish / branding: ' + record.finish,
-    'Packaging: ' + record.packaging, 'Budget (AUD): ' + record.budget,
-    'Required delivery: ' + record.requiredBy, 'Fixed deadline: ' + record.deadlineFixed,
-    'Postcode / suburb: ' + record.postcode, 'Delivery notes: ' + record.destinations, 'Other notes: ' + record.notes, '',
-    'Campaign: ' + JSON.stringify(record.campaign), 'Referrer host: ' + record.referrerHost,
-    'Private attachments (links expire in 7 days):'
-  ];
-  for (const file of record.attachments) lines.push(file.name + ' (' + file.size + ' bytes): ' + await fileLink(env, origin, file.key));
+    filled([['Reference', record.id], ['Received', record.receivedAt], ['Enquiry type', record.route]]),
+    filled([['Name', record.contact.name], ['Email', record.contact.email], ['Company', record.contact.company],
+      ['Phone', record.contact.phone], ['Customer type', record.contact.customerType]]),
+    filled([['Brief', record.brief], ['Quantity per order', record.quantity], ['Annual quantity', record.annualQuantity],
+      ['Frequency', record.frequency], ['Material', record.material], ['Dimensions', record.dimensions],
+      ['Finish / branding', record.finish], ['Packaging', record.packaging], ['Budget (AUD)', record.budget]]),
+    filled([['Required delivery', delivery], ['Postcode / suburb', record.postcode], ['Delivery notes', record.destinations], ['Other notes', record.notes]]),
+    filled([['Campaign', campaign], ['Referrer host', record.referrerHost]]),
+    attachments.length ? ['Private attachments (links expire in 7 days):', ...attachments] : []
+  ].filter(group => group.length).flatMap((group, index) => index ? ['', ...group] : group);
   if (record.notification !== 'sent') {
     try { await sendEmail(env, record.id + '-studio', env.ENQUIRY_TO, 'Project enquiry — ' + record.contact.name + ' — ' + record.id, lines.join('\n'), record.contact.email); record.notification = 'sent'; }
     catch { console.error('enquiry_notification_pending', record.id); }

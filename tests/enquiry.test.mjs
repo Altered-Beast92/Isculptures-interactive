@@ -181,6 +181,36 @@ test('storage failure cannot show success and email failure remains recoverable'
     assert.equal(retried.notification, 'sent'); assert.equal(retried.receipt, 'sent');
   } finally { globalThis.fetch = original; }
 });
+test('the studio email carries only answered fields and a readable campaign', async () => {
+  const original = globalThis.fetch; globalThis.fetch = fakeFetch();
+  try {
+    const environment = env();
+    const blank = payload({ contact: { name: 'Test Buyer', email: 'buyer@example.test', company: '', phone: '', customerType: '' },
+      quantity: null, annualQuantity: null, frequency: '', material: '', dimensions: '', finish: '', packaging: '', budget: '',
+      requiredBy: '', deadlineFixed: false, postcode: '', destinations: '', notes: '' });
+    const { body: held } = await claim(environment, blank.submissionId);
+    await upload(environment, blank.submissionId, held, 0, 'part.stl', 'solid part\nendsolid part');
+    let at = responses.length;
+    assert.equal((await handleEnquiry(submit(blank, held, [0]), environment)).status, 200);
+    const sparse = responses[at].text;
+    for (const label of ['Company', 'Phone', 'Customer type', 'Quantity per order', 'Annual quantity', 'Frequency', 'Material',
+      'Dimensions', 'Finish / branding', 'Packaging', 'Budget (AUD)', 'Required delivery', 'Fixed deadline', 'Postcode / suburb',
+      'Delivery notes', 'Other notes', 'Campaign', 'Referrer host'])
+      assert.ok(!sparse.includes(label + ':'), label + ' is left out when it was not answered');
+    assert.ok(!sparse.includes('\n\n\n'), 'a group that loses every line loses its separator too');
+    assert.ok(sparse.includes('Brief: ' + blank.brief) && sparse.includes('part.stl'), 'answers and attachments still arrive');
+
+    const tagged = payload({ campaign: { source: 'google', medium: 'cpc', campaign: 'spring-2026' } });
+    const { body: second } = await claim(environment, tagged.submissionId);
+    at = responses.length;
+    assert.equal((await handleEnquiry(submit(tagged, second), environment)).status, 200);
+    const complete = responses[at].text;
+    assert.ok(complete.includes('Campaign: source=google · medium=cpc · campaign=spring-2026'), 'the campaign reads as text, not JSON');
+    assert.ok(!complete.includes('{'), 'no raw JSON reaches the studio');
+    assert.ok(complete.includes('Required delivery: ' + tagged.requiredBy + ' (fixed deadline)'), 'a fixed deadline rides on the date it fixes');
+    assert.ok(!complete.includes('Private attachments'), 'an enquiry without files carries no attachment heading');
+  } finally { globalThis.fetch = original; }
+});
 test('administration stays authenticated', async () => {
   const environment = env();
   assert.equal((await handleAdmin(new Request(site + '/api/admin/enquiries'), environment)).status, 401);
