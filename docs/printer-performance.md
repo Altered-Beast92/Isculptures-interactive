@@ -1,5 +1,12 @@
 # Printer rendering and performance
 
+## 12 September 2026: restore the animated entrance
+
+The printer now eases into its opening pose automatically on desktop and mobile,
+instead of snapping to that pose on its first frame. Scroll movement, worker
+rendering and prepared assets are retained. Rendering pauses once the entrance
+or subsequent scroll movement has settled.
+
 The homepage automatically loads its live 3D printer. The prepared rig and
 Three.js renderer run in an OffscreenCanvas worker where supported, with a lazy
 main-thread fallback for other browsers. It keeps scroll-driven print
