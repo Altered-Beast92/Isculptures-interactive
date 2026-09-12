@@ -56,12 +56,13 @@ export function createPrinterRenderer(canvas: HTMLCanvasElement | OffscreenCanva
       let moving = isScrolling;
       target.set(3.9-p*2.15,.45+p*.25,5.8-p*1.8);
       if (initial || isScrolling) headTarget = -.38 + (Math.floor(p*44)%11)*.076;
-      rig.rotation.y = initial ? rotation : THREE.MathUtils.damp(rig.rotation.y,rotation,4,delta);
+      // Ease into the opening pose on load as well as after scrolling.
+      rig.rotation.y = THREE.MathUtils.damp(rig.rotation.y,rotation,4,delta);
       if (Math.abs(rig.rotation.y-rotation)<.001) rig.rotation.y=rotation; else moving=true;
       gantry.position.y=.04+p*PRINT_HEIGHT;
-      head.position.x=initial?headTarget:THREE.MathUtils.damp(head.position.x,headTarget,22,delta);
+      head.position.x=THREE.MathUtils.damp(head.position.x,headTarget,22,delta);
       if(Math.abs(head.position.x-headTarget)<.001)head.position.x=headTarget;else moving=true;
-      if(initial)camera.position.copy(target);else camera.position.lerp(target,1-Math.exp(-delta*2.1));
+      camera.position.lerp(target,1-Math.exp(-delta*2.1));
       if(camera.position.distanceToSquared(target)<1e-6)camera.position.copy(target);else moving=true;
       camera.lookAt(.15+p*.28+(compact ? .46 : 0),-.1+p*.3,0);
       clip.constant=-.91+Math.max(.01,p)*PRINT_HEIGHT;
