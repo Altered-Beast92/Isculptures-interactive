@@ -14,6 +14,9 @@ const htmlPath = pathname => path.join(root, pathname === '/' ? 'index.html' : p
 const sitemap = read(path.join(root, 'sitemap.xml'));
 const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(([, url]) => decode(url));
 assert.ok(urls.length > 0, 'Sitemap must contain pages');
+const entries = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, block]) => block);
+assert.equal(entries.length, urls.length, 'Sitemap entry count mismatch');
+for (const entry of entries) assert.match(entry, /<lastmod>\d{4}-\d{2}-\d{2}/, `Sitemap entry has no lastmod: ${entry.match(/<loc>(.*?)<\/loc>/)?.[1]}`);
 assert.equal(new Set(urls).size, urls.length, 'Duplicate sitemap URL');
 for (const file of fs.readdirSync(root, { recursive: true }).filter(file => file.endsWith('.html'))) {
   const relative = file.replaceAll('\\', '/');
@@ -55,8 +58,22 @@ for (const url of urls) {
   const pageIndexable = !field('robots').includes('noindex');
   indexable ??= pageIndexable;
   assert.equal(pageIndexable, indexable, `Inconsistent indexing policy: ${url}`);
-  const schemas = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(([, json]) => JSON.parse(json));
-  assert.ok(schemas.some(schema => schema['@type'] === 'Organization'), `Missing organisation: ${url}`);
+  const schemas = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].flatMap(([, json]) => [JSON.parse(json)].flat());
+  const business = schemas.find(schema => schema['@type'] === 'LocalBusiness' && schema.address);
+  assert.ok(business, `Missing business: ${url}`);
+  assert.equal(business['@id'], origin + '/#organisation', `Business identity must be stable: ${url}`);
+  assert.ok(business.address.addressLocality && business.address.addressRegion, `Business needs a locality: ${url}`);
+  assert.ok(!business.address.streetAddress, `Service-area listing must not publish a street address: ${url}`);
+  assert.ok(business.areaServed?.length, `Business needs a service area: ${url}`);
+  // Reviews are only ever marked up where a visitor can read them on the same page.
+  for (const node of schemas.filter(schema => schema.review || schema.aggregateRating)) {
+    assert.equal(node['@id'], origin + '/#organisation', `Ratings must attach to the business: ${url}`);
+    for (const review of node.review || []) {
+      assert.ok(visible.includes(review.reviewBody.slice(0, 40).replace(/&/g, '&amp;')), `Marked-up review is not visible: ${url}`);
+      assert.ok(review.author?.name && review.publisher?.name, `Review needs an author and a source: ${url}`);
+    }
+    if (node.aggregateRating) assert.ok(node.aggregateRating.reviewCount > 0 && node.aggregateRating.ratingValue <= 5, `Bad rating: ${url}`);
+  }
   const crumbs = schemas.find(schema => schema['@type'] === 'BreadcrumbList');
   if (/^\/(work|guides)\//.test(location.pathname) || location.pathname.startsWith('/pages/')) {
     assert.ok(crumbs, `Missing breadcrumbs: ${url}`);
@@ -71,8 +88,22 @@ for (const url of urls) {
     assert.ok(schemas.some(schema => schema['@type'] === 'Service' && schema.url === url), `Missing service schema: ${url}`);
     serviceCount++;
   }
-  if (location.pathname === '/') assert.ok(schemas.some(schema => schema['@type'] === 'WebSite'), 'Missing website name schema');
-  if (location.pathname.startsWith('/guides/')) assert.ok(schemas.some(schema => schema['@type'] === 'Article'), `Missing article: ${url}`);
+  if (location.pathname === '/') {
+    assert.ok(schemas.some(schema => schema['@type'] === 'WebSite'), 'Missing website name schema');
+    const faq = schemas.find(schema => schema['@type'] === 'FAQPage');
+    assert.ok(faq?.mainEntity.length, 'Missing FAQ schema');
+    for (const question of faq.mainEntity) {
+      assert.ok(visible.includes(question.name.replace(/&/g, '&amp;')), `FAQ question not visible: ${question.name}`);
+      assert.ok(visible.includes(question.acceptedAnswer.text.slice(0, 40).replace(/&/g, '&amp;')), `FAQ answer not visible: ${question.name}`);
+    }
+  }
+  if (location.pathname.startsWith('/guides/')) {
+    const article = schemas.find(schema => schema['@type'] === 'Article');
+    assert.ok(article, `Missing article: ${url}`);
+    assert.match(article.datePublished || '', /^\d{4}-\d{2}-\d{2}$/, `Article needs a publish date: ${url}`);
+    assert.match(article.dateModified || '', /^\d{4}-\d{2}-\d{2}$/, `Article needs a modified date: ${url}`);
+    assert.ok(article.dateModified >= article.datePublished, `Article modified before published: ${url}`);
+  }
   for (const [tag] of visible.matchAll(/<img\b[^>]*>/g)) {
     const image = attrs(tag);
     assert.ok('alt' in image, `Missing image alt: ${url}`);
@@ -132,4 +163,4 @@ for (const rule of redirects) {
   }
 }
 execFileSync(process.execPath, ['scripts/sync-redirects.mjs', '--check'], { stdio: 'inherit' });
-console.log(`SEO checks passed: ${pages.size} pages, ${links} internal links, ${breadcrumbCount} breadcrumb trails, ${serviceCount} services; ${indexable ? 'indexable' : 'noindex draft'}.`);
+console.log(`SEO checks passed: ${pages.size} pages, ${links} internal links, ${breadcrumbCount} breadcrumb trails, ${serviceCount} services, ${entries.length} dated sitemap entries; ${indexable ? 'indexable' : 'noindex draft'}.`);

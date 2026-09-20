@@ -5,7 +5,8 @@ import './studio.css';
 import './subpages.css';
 import SiteNav from './components/site-nav';
 import SiteFooter from './components/site-footer';
-import { INDEXABLE, CONTACT, SITE_URL, pageMetadata } from '../lib/site';
+import SiteAnalytics from './components/site-analytics';
+import { INDEXABLE, CONTACT, SITE_URL, pageMetadata, businessSchema } from '../lib/site';
 const manrope = localFont({ src: '../public/fonts/manrope-latin.woff2', weight: '200 800', variable: '--font-manrope', display: 'swap' });
 const playfair = localFont({ src: [
   { path: '../public/fonts/playfair-display-latin.woff2', weight: '500 600', style: 'normal' },
@@ -23,7 +24,11 @@ export const metadata: Metadata = {
   publisher: CONTACT.name,
   robots: { index: INDEXABLE, follow: INDEXABLE },
 };
+// Inlined at build time, so an unset id drops the tag from the static export entirely.
+const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID;
+const clarityTag = CLARITY_ID && `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script",${JSON.stringify(CLARITY_ID)});`;
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const organisation = { '@context': 'https://schema.org', '@type': 'Organization', '@id': SITE_URL + '/#organisation', name: CONTACT.name, alternateName: 'iSculptures', logo: SITE_URL + '/brand/impeccable-sculptures-logo.webp', url: SITE_URL, email: CONTACT.email, telephone: CONTACT.tel, areaServed: 'Australia', sameAs: ['https://www.etsy.com/au/shop/iSculptures', 'https://www.instagram.com/impeccablesculptures/'] };
-  return <html lang="en-AU" className={`${manrope.variable} ${playfair.variable} ${mono.variable}`}><body><a className="skip-link" href="#main-content">Skip to content</a><SiteNav/>{children}<SiteFooter/><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organisation).replace(/</g, '\\u003c') }}/></body></html>;
+  const organisation = businessSchema();
+  return <html lang="en-AU" className={`${manrope.variable} ${playfair.variable} ${mono.variable}`}><body>{clarityTag && <script dangerouslySetInnerHTML={{ __html: clarityTag }}/>}<a className="skip-link" href="#main-content">Skip to content</a><SiteNav/>{children}<SiteFooter/><SiteAnalytics/><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organisation).replace(/</g, '\\u003c') }}/></body></html>;
 }

@@ -5,6 +5,7 @@ import { guides } from '../../../content/guides';
 import { testimonials } from '../../../content/testimonials';
 import { SOURCE_LABELS } from '../../../content/types';
 import { CONTACT, SITE_URL, pageMetadata } from '../../../lib/site';
+import { reviewedBusiness } from '../../../lib/reviews';
 import Breadcrumbs from '../../components/breadcrumbs';
 import WorkGrid from '../../components/work-grid';
 import GuideGrid from '../../components/guide-grid';
@@ -75,5 +76,5 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       <div><p className="section-tag">{about ? 'CONTACT' : 'GET A QUOTE'}</p><h2>{about ? 'Get in touch.' : 'Tell us what you need.'}</h2><p>Send what you know so far, like the quantity, size, finish and when you need it. We’ll get back to you with pricing and timing.</p></div>
       <div className="service-cta-actions"><a className="primary" href={enquiry}>{service.cta} <span aria-hidden="true">↗</span></a><a href={'mailto:' + CONTACT.email}>{CONTACT.email}</a><a href={'tel:' + CONTACT.tel}>{CONTACT.phone}</a></div>
     </section>
-  </article><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }}/></main>;
+  </article><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviews.length ? [schema, reviewedBusiness(reviews)] : schema).replace(/</g, '\\u003c') }}/></main>;
 }

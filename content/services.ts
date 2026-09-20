@@ -1,4 +1,4 @@
-export type Service = { slug: string; title: string; description: string; eyebrow: string; intro: string; sections: { title: string; text: string; points?: string[] }[]; cta: string; route?: string;
+export type Service = { slug: string; published?: string; updated?: string; title: string; description: string; eyebrow: string; intro: string; sections: { title: string; text: string; points?: string[] }[]; cta: string; route?: string;
   /** Visible H1 when the search title is kept short enough to show in full. */
   heading?: string;
   /** Short, confirmed facts for the page's quick-facts panel. */
