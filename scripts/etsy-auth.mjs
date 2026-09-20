@@ -3,13 +3,25 @@
 //
 // Etsy issues a 1-hour access token and a 90-day refresh token. Nothing here prints a
 // credential: the tokens go straight into .env, which is gitignored.
-import http from 'node:http';
+import https from 'node:https';
 import crypto from 'node:crypto';
-import { spawn } from 'node:child_process';
+import { spawn, execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { readEnv, writeEnv, required } from './etsy-env.mjs';
 
-const REDIRECT_URI = 'http://localhost:3003/oauth/redirect';
-const SCOPES = ['listings_r', 'listings_w', 'shops_r'];
+// Two Etsy constraints shape this callback. The OAuth request requires an https URL, so
+// the listener below terminates TLS with a certificate generated on the spot. And the app
+// settings reject a bare host or an IP: "Host must be a domain name." lvh.me is a real
+// registered domain whose DNS resolves to 127.0.0.1, so it satisfies Etsy while still
+// reaching this machine. Nothing leaves the loopback interface.
+const CALLBACK_HOST = 'lvh.me';
+const REDIRECT_URI = `https://${CALLBACK_HOST}:3003/oauth/redirect`;
+// Overridable so a failing consent screen can be narrowed down one scope at a time:
+//   npm run etsy:auth -- --scopes shops_r
+const scopeArg = process.argv.indexOf('--scopes');
+const SCOPES = scopeArg > -1 ? process.argv[scopeArg + 1].split(/[ ,]+/) : ['listings_r', 'listings_w', 'shops_r'];
 const TOKEN_URL = 'https://api.etsy.com/v3/public/oauth/token';
 const base64url = buffer => buffer.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
@@ -53,8 +65,8 @@ async function authorise() {
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
 
   const tokens = await new Promise((resolve, reject) => {
-    const server = http.createServer(async (request, response) => {
-      const incoming = new URL(request.url, 'http://localhost:3003');
+    const server = https.createServer(selfSigned(), async (request, response) => {
+      const incoming = new URL(request.url, REDIRECT_URI);
       if (incoming.pathname !== '/oauth/redirect') return response.writeHead(404).end();
       const finish = (status, message) => {
         response.writeHead(status, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -84,16 +96,48 @@ async function authorise() {
       }
     });
     server.listen(3003, () => {
-      console.log('Waiting for Etsy approval on http://localhost:3003 ...');
+      console.log(`Waiting for Etsy approval on https://${CALLBACK_HOST}:3003 ...`);
+      console.log('Scopes requested: ' + SCOPES.join(' '));
+      // Safe to paste into a chat or an issue: the key is the only secret in the URL.
+      console.log('Shareable (key redacted):');
+      console.log(url.replace(keystring, 'REDACTED'));
+      console.log('The certificate is self-signed, so accept the browser warning once.');
       console.log('If your browser does not open, paste this into it:\n' + url + '\n');
       // Best effort; the printed URL above is the fallback on any platform.
       const opener = process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]]
         : process.platform === 'darwin' ? ['open', [url]] : ['xdg-open', [url]];
       try { spawn(opener[0], opener[1], { stdio: 'ignore', detached: true }).unref(); } catch {}
     });
-    server.on('error', reject);
+    // A previous run that was never approved leaves its listener behind holding the port.
+    server.on('error', error => reject(error.code === 'EADDRINUSE'
+      ? new Error('Port 3003 is already in use, most likely by an earlier run of this script that is still waiting for approval. Close it and try again.')
+      : error));
   });
   store(tokens);
+}
+
+/** A throwaway certificate for localhost, valid for this run only. Node can generate an
+ *  X.509 key pair but cannot sign a certificate, so this shells out to OpenSSL. On Windows
+ *  OpenSSL ships with Git but is not on PATH outside Git Bash, so look there before giving up. */
+function openssl() {
+  const candidates = ['openssl',
+    'C:/Program Files/Git/usr/bin/openssl.exe',
+    'C:/Program Files/Git/mingw64/bin/openssl.exe',
+    'C:/Program Files (x86)/Git/usr/bin/openssl.exe'];
+  for (const candidate of candidates) {
+    try { execFileSync(candidate, ['version'], { stdio: 'ignore' }); return candidate; } catch {}
+  }
+  throw new Error('OpenSSL was not found. It is needed to create the local certificate Etsy requires for the callback. On Windows it ships with Git for Windows; otherwise install OpenSSL and re-run.');
+}
+
+function selfSigned() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'etsy-oauth-'));
+  const key = path.join(dir, 'key.pem');
+  const cert = path.join(dir, 'cert.pem');
+  execFileSync(openssl(), ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', key,
+    '-out', cert, '-days', '1', '-subj', `/CN=${CALLBACK_HOST}`,
+    '-addext', `subjectAltName=DNS:${CALLBACK_HOST},DNS:localhost,IP:127.0.0.1`], { stdio: 'ignore' });
+  return { key: fs.readFileSync(key), cert: fs.readFileSync(cert) };
 }
 
 const run = process.argv.includes('--refresh') ? refresh : authorise;
