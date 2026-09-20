@@ -108,168 +108,118 @@
       "statusCode": 301
     },
     {
-      "source": "/products/jesus-christ-sacred-heart",
-      "destination": "https://www.etsy.com/au/listing/1893943095/jesus-christ-sacred-heart-statue",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/saint-charbel-statue",
-      "destination": "https://www.etsy.com/au/listing/1893943073/saint-charbel-revered-statue",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/saint-charbel",
-      "destination": "https://www.etsy.com/au/listing/4432941364/saint-charbel-sitting-under-tree-statue",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/saint-michael-statue",
-      "destination": "https://www.etsy.com/au/listing/1760361490/saint-michael-archangel-michael",
-      "statusCode": 301
-    },
-    {
       "source": "/products/saint-michael-full-body",
-      "destination": "https://www.etsy.com/au/listing/1760361490/saint-michael-archangel-michael",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/saint-michael-the-archangel-defender-of-faith-icon",
-      "destination": "https://www.etsy.com/au/listing/1893949429/saint-michael-the-archangel-icon",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/saint-george-the-victorious",
-      "destination": "https://www.etsy.com/au/listing/1879775206/saint-george-the-victorious-icon",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/divine-jesus-christ-icon",
-      "destination": "https://www.etsy.com/au/listing/1879773522/divine-jesus-christ-icon",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/virgin-mary-and-jesus-icon",
-      "destination": "https://www.etsy.com/au/listing/1879771208/virgin-mary-and-jesus-icon",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/saint-nicholas-the-wonderworker",
-      "destination": "https://www.etsy.com/au/listing/1879769792/saint-nicholas-the-wonderworker-icon",
+      "destination": "/products/saint-michael-statue",
       "statusCode": 301
     },
     {
       "source": "/st-charbel-full-body-statue",
-      "destination": "https://www.etsy.com/au/listing/4432941364/saint-charbel-sitting-under-tree-statue",
+      "destination": "/products/saint-charbel",
       "statusCode": 301
     },
     {
       "source": "/st-michael-killing-beast-statue",
-      "destination": "https://www.etsy.com/au/listing/1760361490/saint-michael-archangel-michael",
+      "destination": "/products/saint-michael-statue",
       "statusCode": 301
     },
     {
       "source": "/jesus-christ-full-body-statue",
-      "destination": "https://www.etsy.com/au/listing/1893943095/jesus-christ-sacred-heart-statue",
+      "destination": "/products/jesus-christ-sacred-heart",
       "statusCode": 301
     },
     {
       "source": "/virgin-mary-killing-snake-statue",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=virgin+mary",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/virgin-mary-statue",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=virgin+mary",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/virgin-mary-full-body-statue",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=virgin+mary",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/saint-dominic-de-guzman-statue",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=saint+statue",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/saint-paisios",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=icon",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/saint-peter-keeper-of-keys",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=saint+statue",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/holy-family-statue-jesus-mary-and-joseph",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=statue",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/jesus-bust",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=jesus",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/jesus-christ-full-body-statue",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=jesus",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/rear-mirror-orthodox-cross",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=cross",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/personalised-rear-view-mirror-thorns-of-jesus-cross",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=cross",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/christmas-twist-off-tree",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=christmas",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/products/valentines-chocolate-personalised-gift-box",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=personalised",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/collections/orthodox-icons",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=icon",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/collections/catholic-maronite",
-      "destination": "https://www.etsy.com/au/shop/iSculptures?search_query=saint",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/collections",
-      "destination": "https://www.etsy.com/au/shop/iSculptures",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/collections/all",
-      "destination": "https://www.etsy.com/au/shop/iSculptures",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/collections/frontpage",
-      "destination": "https://www.etsy.com/au/shop/iSculptures",
-      "statusCode": 301
-    },
-    {
-      "source": "/products",
-      "destination": "https://www.etsy.com/au/shop/iSculptures",
+      "destination": "/products",
       "statusCode": 301
     },
     {
       "source": "/cart",
-      "destination": "https://www.etsy.com/au/shop/iSculptures",
+      "destination": "/products",
       "statusCode": 301
     },
     {

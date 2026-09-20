@@ -48,3 +48,18 @@ export const reviewedBusiness = (shown: Testimonial[]) => ({
   aggregateRating,
   review: shown.map(reviewSchema),
 });
+
+/** A rating for one product, computed only from reviews that name that piece. The
+ *  business-wide aggregate above would misrepresent a product it does not describe,
+ *  and unlike the business node, a Product rating is eligible for a rich result. */
+export function productRating(shown: Testimonial[]) {
+  const rated = shown.filter((review): review is Testimonial & { rating: number } => typeof review.rating === 'number');
+  if (!rated.length) return undefined;
+  return {
+    '@type': 'AggregateRating',
+    ratingValue: Number((rated.reduce((total, review) => total + review.rating, 0) / rated.length).toFixed(1)),
+    reviewCount: rated.length,
+    bestRating: 5,
+    worstRating: 1,
+  };
+}
