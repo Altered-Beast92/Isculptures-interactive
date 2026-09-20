@@ -51,6 +51,10 @@ export type Project = {
   featured?: boolean;
   /** Where to buy it, now that commerce lives on Etsy rather than Shopify. */
   etsyUrl?: string;
+  /** ISO dates. Optional: CONTENT_DATES supplies the collection default. Set these
+   *  per entry once individual pieces start being revised on their own schedule. */
+  published?: string;
+  updated?: string;
 };
 
 /** Where a testimonial came from. Shown as a badge — an attributed review from a

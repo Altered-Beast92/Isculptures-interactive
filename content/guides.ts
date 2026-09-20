@@ -1,5 +1,6 @@
 export type Guide = {
   slug: string; title: string; summary: string; category: string;
+  published?: string; updated?: string;
   image: string; project: string; service: string; serviceLabel: string; enquiryRoute?: string;
   sections: { id: string; title: string; paragraphs: string[]; points?: string[] }[];
 };
