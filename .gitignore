@@ -41,3 +41,5 @@ next-env.d.ts
 /.wrangler
 .dev.vars
 .dev.vars.*
+
+etsy-oauth-test.html

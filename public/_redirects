@@ -30,52 +30,42 @@
 # still beats an undifferentiated landing page.
 
 # Existing listing mappings: recheck availability before live cutover.
-/products/jesus-christ-sacred-heart                              https://www.etsy.com/au/listing/1893943095/jesus-christ-sacred-heart-statue 301
-/products/saint-charbel-statue                                   https://www.etsy.com/au/listing/1893943073/saint-charbel-revered-statue 301
-/products/saint-charbel                                          https://www.etsy.com/au/listing/4432941364/saint-charbel-sitting-under-tree-statue 301
-/products/saint-michael-statue                                   https://www.etsy.com/au/listing/1760361490/saint-michael-archangel-michael 301
-/products/saint-michael-full-body                                https://www.etsy.com/au/listing/1760361490/saint-michael-archangel-michael 301
-/products/saint-michael-the-archangel-defender-of-faith-icon     https://www.etsy.com/au/listing/1893949429/saint-michael-the-archangel-icon 301
-/products/saint-george-the-victorious                            https://www.etsy.com/au/listing/1879775206/saint-george-the-victorious-icon 301
-/products/divine-jesus-christ-icon                               https://www.etsy.com/au/listing/1879773522/divine-jesus-christ-icon 301
-/products/virgin-mary-and-jesus-icon                             https://www.etsy.com/au/listing/1879771208/virgin-mary-and-jesus-icon 301
-/products/saint-nicholas-the-wonderworker                        https://www.etsy.com/au/listing/1879769792/saint-nicholas-the-wonderworker-icon 301
+/products/saint-michael-full-body                                /products/saint-michael-statue 301
 
 # Legacy flat URLs from the pre-Shopify site
-/st-charbel-full-body-statue/       https://www.etsy.com/au/listing/4432941364/saint-charbel-sitting-under-tree-statue 301
-/st-michael-killing-beast-statue/   https://www.etsy.com/au/listing/1760361490/saint-michael-archangel-michael 301
-/jesus-christ-full-body-statue/     https://www.etsy.com/au/listing/1893943095/jesus-christ-sacred-heart-statue 301
-/virgin-mary-killing-snake-statue/  https://www.etsy.com/au/shop/iSculptures?search_query=virgin+mary 301
+/st-charbel-full-body-statue/       /products/saint-charbel 301
+/st-michael-killing-beast-statue/   /products/saint-michael-statue 301
+/jesus-christ-full-body-statue/     /products/jesus-christ-sacred-heart 301
+/virgin-mary-killing-snake-statue/  /products 301
 
 # Discontinued on Etsy — search fallbacks keep the intent alive.
 # TODO: relist these on Etsy and repoint, or let them 410 rather than redirect.
-/products/virgin-mary-statue                                     https://www.etsy.com/au/shop/iSculptures?search_query=virgin+mary 301
-/products/virgin-mary-full-body-statue                           https://www.etsy.com/au/shop/iSculptures?search_query=virgin+mary 301
-/products/saint-dominic-de-guzman-statue                         https://www.etsy.com/au/shop/iSculptures?search_query=saint+statue 301
-/products/saint-paisios                                          https://www.etsy.com/au/shop/iSculptures?search_query=icon 301
-/products/saint-peter-keeper-of-keys                             https://www.etsy.com/au/shop/iSculptures?search_query=saint+statue 301
-/products/holy-family-statue-jesus-mary-and-joseph               https://www.etsy.com/au/shop/iSculptures?search_query=statue 301
-/products/jesus-bust                                             https://www.etsy.com/au/shop/iSculptures?search_query=jesus 301
-/products/jesus-christ-full-body-statue                          https://www.etsy.com/au/shop/iSculptures?search_query=jesus 301
-/products/rear-mirror-orthodox-cross                             https://www.etsy.com/au/shop/iSculptures?search_query=cross 301
-/products/personalised-rear-view-mirror-thorns-of-jesus-cross    https://www.etsy.com/au/shop/iSculptures?search_query=cross 301
-/products/christmas-twist-off-tree                               https://www.etsy.com/au/shop/iSculptures?search_query=christmas 301
-/products/valentines-chocolate-personalised-gift-box             https://www.etsy.com/au/shop/iSculptures?search_query=personalised 301
+/products/virgin-mary-statue                                     /products 301
+/products/virgin-mary-full-body-statue                           /products 301
+/products/saint-dominic-de-guzman-statue                         /products 301
+/products/saint-paisios                                          /products 301
+/products/saint-peter-keeper-of-keys                             /products 301
+/products/holy-family-statue-jesus-mary-and-joseph               /products 301
+/products/jesus-bust                                             /products 301
+/products/jesus-christ-full-body-statue                          /products 301
+/products/rear-mirror-orthodox-cross                             /products 301
+/products/personalised-rear-view-mirror-thorns-of-jesus-cross    /products 301
+/products/christmas-twist-off-tree                               /products 301
+/products/valentines-chocolate-personalised-gift-box             /products 301
 
 # Collections -> closest Etsy view
-/collections/orthodox-icons     https://www.etsy.com/au/shop/iSculptures?search_query=icon 301
-/collections/catholic-maronite  https://www.etsy.com/au/shop/iSculptures?search_query=saint 301
+/collections/orthodox-icons     /products 301
+/collections/catholic-maronite  /products 301
 
 # Unknown product/collection URLs must return 404 rather than redirect to an
 # unrelated shop homepage. Add exact replacements after the catalogue review.
-/collections    https://www.etsy.com/au/shop/iSculptures 301
+/collections    /products 301
 
 # --- Shopify's built-in addresses: exact equivalents on the new site or Etsy. ---
 # The store-wide catalogue and cart go to the Etsy shop front; accounts and search no longer exist.
-/collections/all        https://www.etsy.com/au/shop/iSculptures 301
-/collections/frontpage  https://www.etsy.com/au/shop/iSculptures 301
-/products               https://www.etsy.com/au/shop/iSculptures 301
-/cart                   https://www.etsy.com/au/shop/iSculptures 301
+/collections/all        /products 301
+/collections/frontpage  /products 301
+/cart                   /products 301
 /search                 /             301
 /account                /             301
 /account/login          /             301

@@ -30,6 +30,7 @@ const descriptions = new Set();
 let indexable;
 let breadcrumbCount = 0;
 let serviceCount = 0;
+let productCount = 0;
 for (const url of urls) {
   const location = new URL(url);
   assert.equal(location.origin, origin, `Wrong sitemap origin: ${url}`);
@@ -67,7 +68,8 @@ for (const url of urls) {
   assert.ok(business.areaServed?.length, `Business needs a service area: ${url}`);
   // Reviews are only ever marked up where a visitor can read them on the same page.
   for (const node of schemas.filter(schema => schema.review || schema.aggregateRating)) {
-    assert.equal(node['@id'], origin + '/#organisation', `Ratings must attach to the business: ${url}`);
+    // A rating belongs either to the business as a whole or to one product, never floating free.
+    assert.ok(node['@id'] === origin + '/#organisation' || node['@type'] === 'Product', `Ratings must attach to the business or a product: ${url}`);
     for (const review of node.review || []) {
       assert.ok(visible.includes(review.reviewBody.slice(0, 40).replace(/&/g, '&amp;')), `Marked-up review is not visible: ${url}`);
       assert.ok(review.author?.name && review.publisher?.name, `Review needs an author and a source: ${url}`);
@@ -96,6 +98,20 @@ for (const url of urls) {
       assert.ok(visible.includes(question.name.replace(/&/g, '&amp;')), `FAQ question not visible: ${question.name}`);
       assert.ok(visible.includes(question.acceptedAnswer.text.slice(0, 40).replace(/&/g, '&amp;')), `FAQ answer not visible: ${question.name}`);
     }
+  }
+  if (/^\/products\/.+/.test(location.pathname)) {
+    const item = schemas.find(schema => schema['@type'] === 'Product');
+    assert.ok(item, `Missing product schema: ${url}`);
+    assert.ok(item.image?.length, `Product needs a photograph: ${url}`);
+    const offers = item.offers;
+    assert.equal(offers?.['@type'], 'AggregateOffer', `Product needs an aggregate offer: ${url}`);
+    assert.equal(offers.priceCurrency, 'AUD', `Product prices must be in AUD: ${url}`);
+    assert.ok(offers.lowPrice > 0 && offers.highPrice >= offers.lowPrice, `Bad price range: ${url}`);
+    // A price is a promise to a buyer, so it has to appear on the page, not only in markup.
+    assert.ok(visible.includes(`AU$${offers.lowPrice}`), `Low price not shown to visitors: ${url}`);
+    assert.ok(visible.includes(`AU$${offers.highPrice}`), `High price not shown to visitors: ${url}`);
+    assert.ok(/etsy\.com\/au\/listing\/\d+/.test(offers.url), `Product must link to its listing: ${url}`);
+    productCount++;
   }
   if (location.pathname.startsWith('/guides/')) {
     const article = schemas.find(schema => schema['@type'] === 'Article');
@@ -155,6 +171,7 @@ for (const entry of blogInventory) {
   assert.equal(entry.statusCode, 301, `Blog consolidation must be permanent: ${source}`);
 }
 for (const rule of redirects) {
+  assert.ok(!/etsy\.com/.test(rule.destination), `Redirect still leaves the site for Etsy: ${rule.source}`);
   assert.ok(!pages.has(rule.source), `Redirect hides a real page: ${rule.source}`);
   if (rule.destination.startsWith('/')) {
     const target = new URL(rule.destination, origin);
@@ -163,4 +180,4 @@ for (const rule of redirects) {
   }
 }
 execFileSync(process.execPath, ['scripts/sync-redirects.mjs', '--check'], { stdio: 'inherit' });
-console.log(`SEO checks passed: ${pages.size} pages, ${links} internal links, ${breadcrumbCount} breadcrumb trails, ${serviceCount} services, ${entries.length} dated sitemap entries; ${indexable ? 'indexable' : 'noindex draft'}.`);
+console.log(`SEO checks passed: ${pages.size} pages, ${links} internal links, ${breadcrumbCount} breadcrumb trails, ${serviceCount} services, ${productCount} products, ${entries.length} dated sitemap entries; ${indexable ? 'indexable' : 'noindex draft'}.`);

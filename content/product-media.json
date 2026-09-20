@@ -1,0 +1,136 @@
+{
+  "saint-charbel-statue": [
+    {
+      "src": "/products/saint-charbel-statue.webp",
+      "alt": "Saint Charbel “Revered” statue in white, standing with hands clasped",
+      "width": 1080,
+      "height": 1329,
+      "smallWidth": 640
+    },
+    {
+      "src": "/products/saint-charbel-statue-2.webp",
+      "alt": "Saint Charbel “Revered” statue in white, standing with hands clasped",
+      "width": 1125,
+      "height": 1500,
+      "smallWidth": 600
+    }
+  ],
+  "jesus-christ-sacred-heart": [
+    {
+      "src": "/products/jesus-christ-sacred-heart.webp",
+      "alt": "Jesus Christ “Sacred Heart” statue with arms outstretched",
+      "width": 1089,
+      "height": 1500,
+      "smallWidth": 581
+    },
+    {
+      "src": "/products/jesus-christ-sacred-heart-2.webp",
+      "alt": "Jesus Christ “Sacred Heart” statue with arms outstretched",
+      "width": 1125,
+      "height": 1500,
+      "smallWidth": 600
+    }
+  ],
+  "saint-charbel": [
+    {
+      "src": "/products/saint-charbel.webp",
+      "alt": "Saint Charbel seated under a tree, reading an open book",
+      "width": 720,
+      "height": 1080,
+      "smallWidth": 533
+    },
+    {
+      "src": "/products/saint-charbel-2.webp",
+      "alt": "Saint Charbel seated under a tree, reading an open book",
+      "width": 1000,
+      "height": 1500,
+      "smallWidth": 533
+    }
+  ],
+  "saint-michael-statue": [
+    {
+      "src": "/products/saint-michael-statue.webp",
+      "alt": "Saint Michael the Archangel statue defeating the devil",
+      "width": 907,
+      "height": 1500,
+      "smallWidth": 484
+    }
+  ],
+  "saint-michael-the-archangel-defender-of-faith-icon": [
+    {
+      "src": "/products/saint-michael-the-archangel-defender-of-faith-icon.webp",
+      "alt": "Arched icon of Saint Michael the Archangel",
+      "width": 871,
+      "height": 1197,
+      "smallWidth": 582
+    }
+  ],
+  "saint-george-the-victorious": [
+    {
+      "src": "/products/saint-george-the-victorious.webp",
+      "alt": "Arched icon of Saint George on horseback defeating the dragon",
+      "width": 1074,
+      "height": 1500,
+      "smallWidth": 573
+    }
+  ],
+  "divine-jesus-christ-icon": [
+    {
+      "src": "/products/divine-jesus-christ-icon.webp",
+      "alt": "Arched icon of Jesus Christ holding a book",
+      "width": 901,
+      "height": 1500,
+      "smallWidth": 480
+    }
+  ],
+  "virgin-mary-and-jesus-icon": [
+    {
+      "src": "/products/virgin-mary-and-jesus-icon.webp",
+      "alt": "Arched icon of the Virgin Mary holding the infant Jesus",
+      "width": 1017,
+      "height": 1500,
+      "smallWidth": 543
+    }
+  ],
+  "saint-nicholas-the-wonderworker": [
+    {
+      "src": "/products/saint-nicholas-the-wonderworker.webp",
+      "alt": "Arched icon of Saint Nicholas the Wonderworker in gold",
+      "width": 971,
+      "height": 1500,
+      "smallWidth": 518
+    }
+  ],
+  "st-michael-icon-bonbonniere": [
+    {
+      "src": "/products/st-michael-icon-bonbonniere.webp",
+      "alt": "Boxed Saint Michael icon favours finished with ribbon",
+      "width": 1200,
+      "height": 800,
+      "smallWidth": 640
+    },
+    {
+      "src": "/products/st-michael-icon-bonbonniere-2.webp",
+      "alt": "Boxed Saint Michael icon favours finished with ribbon",
+      "width": 1080,
+      "height": 721,
+      "smallWidth": 640
+    }
+  ],
+  "christening-coaster-bonbonniere": [
+    {
+      "src": "/products/christening-coaster-bonbonniere.webp",
+      "alt": "Personalised white christening coaster with a cross and dove",
+      "width": 1125,
+      "height": 1500,
+      "smallWidth": 600
+    },
+    {
+      "src": "/products/christening-coaster-bonbonniere-2.webp",
+      "alt": "Personalised white christening coaster with a cross and dove",
+      "width": 1125,
+      "height": 1500,
+      "smallWidth": 600
+    }
+  ]
+}
