@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { products, getProduct, etsyUrl, priceRange, aud } from '../../../content/products';
+import { products, getProduct, etsyUrl, etsyListingUrl, priceRange, aud } from '../../../content/products';
 import { testimonials } from '../../../content/testimonials';
 import { SOURCE_LABELS } from '../../../content/types';
 import media from '../../../content/product-media.json';
@@ -27,6 +27,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const rating = productRating(reviews);
   const updated = product.updated ?? CONTENT_DATES.site.updated;
   const buy = etsyUrl(product);
+  // Schema names the canonical listing; the visible links carry the campaign tags.
+  const canonicalBuy = etsyListingUrl(product);
   const enquiry = '/enquiry?route=' + product.enquiryRoute;
 
   const schema = {
@@ -43,7 +45,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     // on the listing this page links to. A piece sold at one price is a plain Offer:
     // an AggregateOffer whose low and high match is a weaker signal than a real price.
     offers: low === high
-      ? { '@type': 'Offer', priceCurrency: 'AUD', price: low, availability: 'https://schema.org/InStock', url: buy, seller: { '@id': SITE_URL + '/#organisation' } }
+      ? { '@type': 'Offer', priceCurrency: 'AUD', price: low, availability: 'https://schema.org/InStock', url: canonicalBuy, seller: { '@id': SITE_URL + '/#organisation' } }
       : {
           '@type': 'AggregateOffer',
           priceCurrency: 'AUD',
@@ -51,7 +53,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           highPrice: high,
           offerCount: product.sizes.length,
           availability: 'https://schema.org/InStock',
-          url: buy,
+          url: canonicalBuy,
           seller: { '@id': SITE_URL + '/#organisation' },
         },
     ...(rating ? { aggregateRating: rating, review: reviews.map(reviewSchema) } : {}),
@@ -70,10 +72,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           {product.bulkFirst
             ? <>
                 <a className="primary" href={enquiry}>Order 10+ for your event <span aria-hidden="true">↗</span></a>
-                <a className="secondary" href={buy} target="_blank" rel="noreferrer">Buy a single set on Etsy ↗</a>
+                <a className="secondary" href={buy} target="_blank" rel="noopener">Buy a single set on Etsy ↗</a>
               </>
             : <>
-                <a className="primary" href={buy} target="_blank" rel="noreferrer">Buy on Etsy <span aria-hidden="true">↗</span></a>
+                <a className="primary" href={buy} target="_blank" rel="noopener">Buy on Etsy <span aria-hidden="true">↗</span></a>
                 <a className="secondary" href={enquiry}>Order 10+ for your event or parish ↗</a>
               </>}
         </div>

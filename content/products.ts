@@ -259,7 +259,18 @@ export const products: Product[] = [
 
 export const aud = (amount: number) => `AU$${amount}`;
 export const getProduct = (slug: string) => products.find(product => product.slug === slug);
-export const etsyUrl = (product: Product) => `https://www.etsy.com/au/listing/${product.listingId}/`;
+/** Deep link to the listing itself, never the shop front: a visitor who has just read
+ *  about one piece should not have to find it again among two dozen others.
+ *
+ *  The campaign parameters are what make the click measurable. Etsy reports traffic by
+ *  source and content, so `utm_content` carrying the slug is the only way to see which
+ *  of these pages actually sends buyers rather than merely ranking. */
+export const etsyUrl = (product: Product) =>
+  `${etsyListingUrl(product)}?utm_source=isculptures&utm_medium=referral&utm_campaign=product-page&utm_content=${product.slug}`;
+
+/** The same destination without campaign parameters, for schema.org `offers.url`.
+ *  Structured data should name the canonical place to buy, not a tagged copy of it. */
+export const etsyListingUrl = (product: Product) => `https://www.etsy.com/au/listing/${product.listingId}/`;
 export const priceRange = (product: Product) => {
   const prices = product.sizes.map(size => size.price);
   return { low: Math.min(...prices), high: Math.max(...prices) };

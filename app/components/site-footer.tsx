@@ -52,7 +52,7 @@ export default function SiteFooter() {
       <small>© {new Date().getFullYear()} {CONTACT.name} · Sydney, Australia</small>
       <ul className="footer-social">
         <li><a href="https://www.instagram.com/impeccablesculptures/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span></a></li>
-        <li><a href="https://www.etsy.com/au/shop/iSculptures" target="_blank" rel="noreferrer">Shop Single Pieces on Etsy <span aria-hidden="true">↗</span></a></li>
+        <li><a href="https://www.etsy.com/au/shop/iSculptures?utm_source=isculptures&amp;utm_medium=referral&amp;utm_campaign=footer" target="_blank" rel="noopener">Shop Single Pieces on Etsy <span aria-hidden="true">↗</span></a></li>
       </ul>
     </div>
   </footer>;
