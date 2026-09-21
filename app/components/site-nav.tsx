@@ -16,9 +16,21 @@ export default function SiteNav() {
         sessionStorage.setItem('isculptures-attribution', JSON.stringify({ referrerHost, campaign: { source: query.get('utm_source') || '', medium: query.get('utm_medium') || '', campaign: query.get('utm_campaign') || '' } }));
       }
     } catch { /* Attribution is optional when browser storage is unavailable. */ }
-    const contactClick = (event: MouseEvent) => { const link = event.target instanceof Element ? event.target.closest('a') : null; const href = link?.getAttribute('href') || ''; if (/^(mailto:|tel:)/.test(href)) track('contact_click', href.startsWith('tel:') ? 'phone' : 'email'); };
-    document.addEventListener('click', contactClick);
-    return () => document.removeEventListener('click', contactClick);
+    // Delegated from the document so static product pages stay server-rendered: a click
+    // handler on every buy button would make each of them a client component.
+    const outboundClick = (event: MouseEvent) => {
+      const link = event.target instanceof Element ? event.target.closest('a') : null;
+      const href = link?.getAttribute('href') || '';
+      if (/^(mailto:|tel:)/.test(href)) return track('contact_click', href.startsWith('tel:') ? 'phone' : 'email');
+      // Which product page sent the click matters more than the click itself, so the
+      // slug is read back off the campaign tag the link already carries.
+      if (/^https:\/\/www\.etsy\.com\/au\/listing\//.test(href)) {
+        const slug = new URLSearchParams(href.split('?')[1] || '').get('utm_content') || 'unknown';
+        track('etsy_click', slug);
+      }
+    };
+    document.addEventListener('click', outboundClick);
+    return () => document.removeEventListener('click', outboundClick);
   }, []);
   useEffect(() => {
     const legacy = () => { if (window.location.hash === '#project') window.location.replace('/enquiry' + window.location.search); };

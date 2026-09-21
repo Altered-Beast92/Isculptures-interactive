@@ -1,8 +1,10 @@
 'use client';
 import { track as vercelTrack } from '@vercel/analytics';
 
-type Event = 'enquiry_started' | 'enquiry_submitted' | 'enquiry_error' | 'contact_click';
+type Event = 'enquiry_started' | 'enquiry_submitted' | 'enquiry_error' | 'contact_click' | 'etsy_click';
 
+/** `detail` carries the enquiry route for enquiry events and the product slug for an
+ *  etsy_click, which is what makes it possible to tell which pages send buyers. */
 export function track(event: Event, route?: string) {
   const detail = { event, ...(route ? { enquiry_type: route } : {}) };
   const target = window as Window & { dataLayer?: Record<string, unknown>[]; clarity?: (...args: unknown[]) => void };

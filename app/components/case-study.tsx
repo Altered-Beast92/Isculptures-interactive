@@ -62,7 +62,7 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
 
       <div className="study-cta">
         <a className="primary" href={enquiryUrl}>Get a quote <span>↗</span></a>
-        {project.etsyUrl && <a className="secondary" href={project.etsyUrl} target="_blank" rel="noreferrer">Buy on Etsy <span>↗</span></a>}
+        {project.etsyUrl && <a className="secondary" href={project.etsyUrl} target="_blank" rel="noopener">Buy on Etsy <span>↗</span></a>}
       </div>
     </article>
   </main>;
