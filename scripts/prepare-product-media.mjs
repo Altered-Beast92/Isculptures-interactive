@@ -42,8 +42,6 @@ const sources = {
   // other product image here. Replace the part below once a full-size photograph exists.
   'saint-paisios': ['Arched Orthodox icon of Saint Paisios of Mount Athos in white', [
     '071e3e/8553780746/il_794xN.8553780746_ke4h']],
-  'jesus-christ-pantocrator': ['Arched Orthodox icon of Christ Pantocrator blessing, holding an open Gospel book', [
-    '1363b4/8553802946/il_794xN.8553802946_f5hj']],
   'saint-joseph-icon': ['Arched icon of Saint Joseph holding the child Jesus, with a lily', [
     '75b2d2/8601670013/il_794xN.8601670013_kjdl']],
   'orthodox-cross-car-hanger': ['Black and gold budded Orthodox cross hanging from a cord', [

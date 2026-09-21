@@ -67,17 +67,24 @@ const reviews = (await get(`/shops/${shop}/reviews?limit=100`)).results;
 const { products } = await import('../content/products.ts');
 
 const problems = [];
+const regional = [];
 const decode = value => value.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
 
 for (const product of products) {
   const entry = live.get(product.listingId);
   if (!entry) { problems.push(`${product.slug}: listingId ${product.listingId} is not in the shop at all`); continue; }
   if (entry.state !== 'active') problems.push(`${product.slug}: listing ${product.listingId} is ${entry.state} on Etsy, but the page links to it as a live product`);
-  const siteLadder = product.sizes.map(size => size.price).join('/');
+  // A listing with regional pricing is checked against its recorded base ladder, because
+  // that is the only figure this API returns. The Australian price the page publishes is
+  // set per market and is invisible here, so it can only be confirmed in Shop Manager.
+  const expected = product.etsyBaseSizes ?? product.sizes;
+  const siteLadder = expected.map(size => size.price).join('/');
   const liveLadder = entry.ladder.map(size => size.price).join('/');
   if (siteLadder !== liveLadder) {
-    problems.push(`${product.slug}: price ladder differs\n      site: ${product.sizes.map(s => `${s.label}=$${s.price}`).join('  ')}\n      etsy: ${entry.ladder.map(s => `${s.label}=$${s.price}`).join('  ')}`);
+    const which = product.etsyBaseSizes ? 'etsyBaseSizes' : 'site';
+    problems.push(`${product.slug}: price ladder differs\n      ${which}: ${expected.map(s => `${s.label}=$${s.price}`).join('  ')}\n      etsy: ${entry.ladder.map(s => `${s.label}=$${s.price}`).join('  ')}`);
   }
+  if (product.etsyBaseSizes) regional.push(product.slug);
 }
 
 const onSite = new Set(products.map(product => product.listingId));
@@ -104,6 +111,14 @@ for (const [id, count] of byListing) {
   const where = product ? product.slug : '(no page on this site)';
   const flag = product && shown < count ? '  <- site shows fewer than Etsy has' : '';
   console.log(`  ${id}  etsy=${count}  site=${shown}  ${where}${flag}`);
+}
+
+if (regional.length) {
+  console.log(`
+${regional.length} listing(s) carry regional pricing. The API only returns the base price,`);
+  console.log('so the Australian figure these pages publish cannot be verified here — read it off');
+  console.log('the listing in Shop Manager:');
+  for (const slug of regional) console.log('  ' + slug);
 }
 
 const unlinked = testimonials.filter(review => !linked.has(review.id) && review.source === 'etsy');

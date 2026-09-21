@@ -18,6 +18,11 @@ export type Product = {
   intro: string;
   listingId: string;
   sizes: ProductSize[];
+  /** Only for a listing with regional pricing: the base ladder the Etsy API reports,
+   *  which is what buyers outside Australia pay. `sizes` above stays the Australian
+   *  price this site publishes; this field exists so scripts/etsy-sync.mjs still has
+   *  something real to check the listing against instead of reporting false drift. */
+  etsyBaseSizes?: ProductSize[];
   colours: string[];
   /** Ribbon or finish choices offered alongside colour, where the listing has them. */
   finishes?: string[];
@@ -35,9 +40,23 @@ const ICON_COLOURS = ['Marble', 'Wood', 'Black', 'Brown', 'Grey', 'Pink', 'Red',
 const STATUE_COLOURS = ['Marble', 'White', 'Grey', 'Silk Bronze', 'Silk White', 'Silk Black', 'Silk Gold', 'Beige', 'Light Blue', 'Pink', 'Brown', 'Mint Green', 'Wood', 'Black'];
 const LARGE_COLOURS = ['Marble', 'Wood', 'Silk Gold', 'Silk White', 'Silk Bronze', 'Grey', 'Blue', 'White', 'Green', 'Red'];
 
-// Verified against the live listings by scripts/etsy-sync.mjs. Four of the five icons
-// share this ladder; the Virgin Mary icon is priced on its own curve and has its own.
-const ICON_SIZES: ProductSize[] = [{ label: '15cm', price: 45 }, { label: '20cm', price: 65 }, { label: '25cm', price: 95 }];
+// These are the AUSTRALIAN prices, which is what this site must publish: the domain,
+// the currency and the delivery promise are all Australian.
+//
+// They do not match what the Etsy API reports. Those listings carry regional pricing,
+// and /listings/{id}/inventory returns only the base price charged everywhere else
+// (45/65/95 here). The Australian figure is set per market and is not exposed by the
+// v3 API at all, so it cannot be verified programmatically — check it against the
+// listing's Australian view in Shop Manager before changing anything below.
+const ICON_SIZES: ProductSize[] = [{ label: '15cm', price: 35 }, { label: '20cm', price: 55 }, { label: '25cm', price: 85 }];
+const ICON_BASE_SIZES: ProductSize[] = [{ label: '15cm', price: 45 }, { label: '20cm', price: 65 }, { label: '25cm', price: 95 }];
+// The icons added in September 2026 have no regional pricing set, so Australian buyers
+// pay the base price on those listings. Same format and finishes as ICON_SIZES above,
+// $10 dearer here. Set an Australian price on the listings to bring the range in line.
+const NEW_ICON_SIZES: ProductSize[] = [{ label: '15cm', price: 45 }, { label: '20cm', price: 65 }, { label: '25cm', price: 95 }];
+// Unverified: this is the ladder the API reports, and no Australian price has been read
+// off Shop Manager for this piece. If it also carries a regional price, `sizes` here is
+// wrong in the same way the four icons above were.
 const MARY_ICON_SIZES: ProductSize[] = [{ label: '15cm', price: 35 }, { label: '20cm', price: 60 }, { label: '25cm', price: 105 }];
 const STATUE_SIZES: ProductSize[] = [{ label: '15cm', price: 20 }, { label: '20cm', price: 45 }, { label: '25cm', price: 70 }, { label: '30cm', price: 95 }];
 const LARGE_SIZES: ProductSize[] = [{ label: '15cm', price: 50 }, { label: '20cm', price: 90 }, { label: '25cm', price: 120 }, { label: '30cm', price: 140 }];
@@ -77,14 +96,14 @@ export const products: Product[] = [
     slug: 'saint-michael-the-archangel-defender-of-faith-icon', title: 'Saint Michael the Archangel icon', listingId: '1893949429',
     summary: 'An arched relief icon of Saint Michael, 15cm to 25cm, in twelve finishes.',
     intro: 'A wall or shelf icon in arched relief, showing Saint Michael as protector. The relief is cut deep enough to hold a shadow, so the detail stays readable across the room rather than only up close.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
   },
   {
     slug: 'saint-george-the-victorious', title: 'Saint George the Victorious icon', listingId: '1879775206',
     summary: 'An arched relief icon of Saint George on horseback defeating the dragon, 15cm to 25cm.',
     intro: 'Saint George mounted, spear lowered, with the dragon beneath. A traditional subject for baptisms, confirmations and house blessings, and one that suits the deeper relief of the icon format.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     reviews: ['etsy-estelle-2026-03-03'],
     updated: '2026-09-21',
   },
@@ -92,7 +111,7 @@ export const products: Product[] = [
     slug: 'divine-jesus-christ-icon', title: 'Divine Jesus Christ icon', listingId: '1879773522',
     summary: 'An arched relief icon of Christ holding a book, 15cm to 25cm, in twelve finishes.',
     intro: 'Christ shown in blessing with a book in hand, in the Pantocrator tradition. Often ordered as a pair with the Virgin Mary icon, which shares the same arch and sizes so the two sit together.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
   },
   {
@@ -106,28 +125,21 @@ export const products: Product[] = [
     slug: 'saint-nicholas-the-wonderworker', title: 'Saint Nicholas the Wonderworker icon', listingId: '1879769792',
     summary: 'An arched relief icon of Saint Nicholas the Wonderworker, 15cm to 25cm, in twelve finishes.',
     intro: 'Saint Nicholas shown in blessing, vested as a bishop. Part of the same arched icon range, so it matches the others in size, depth and finish if you are building a set.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
   },
   {
     slug: 'saint-paisios', title: 'Saint Paisios of Mount Athos icon', listingId: '4579336997',
     summary: 'An arched Orthodox icon of Saint Paisios of Mount Athos, 15cm to 25cm, in twelve finishes.',
     intro: 'Saint Paisios in his monastic habit, hands folded, set within an arched frame with traditional Orthodox knotwork around the border. A modern Athonite elder, and a subject asked for far more often than the range previously covered.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
-    published: '2026-09-21', updated: '2026-09-21',
-  },
-  {
-    slug: 'jesus-christ-pantocrator', title: 'Jesus Christ Pantocrator icon', listingId: '4579340391',
-    summary: 'An arched Orthodox icon of Christ Pantocrator, 15cm to 25cm, in twelve finishes.',
-    intro: 'Christ shown raising His hand in blessing with an open Gospel book, in the Pantocrator tradition. The arch carries a knotwork border and a finely hatched ground, so the relief holds its detail at every size.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: NEW_ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     published: '2026-09-21', updated: '2026-09-21',
   },
   {
     slug: 'saint-joseph-icon', title: 'Saint Joseph and the child Jesus icon', listingId: '4579357288',
     summary: 'An arched icon of Saint Joseph holding the child Jesus, 15cm to 25cm, in twelve finishes.',
     intro: 'Saint Joseph holding the child Christ, a lily in his hand. The arch is cut deep enough to hold a shadow across the figures, which is what keeps the relief readable from across a room.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: NEW_ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     published: '2026-09-21', updated: '2026-09-21',
   },
   {
