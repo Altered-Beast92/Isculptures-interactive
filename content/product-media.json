@@ -132,5 +132,112 @@
       "height": 1500,
       "smallWidth": 600
     }
+  ],
+  "saint-dominic-de-guzman-statue": [
+    {
+      "src": "/products/saint-dominic-de-guzman-statue.webp",
+      "alt": "Saint Dominic de Guzmán statue in white, holding a book and lily",
+      "width": 1071,
+      "height": 1500,
+      "smallWidth": 571
+    }
+  ],
+  "immaculate-mary-statue": [
+    {
+      "src": "/products/immaculate-mary-statue.webp",
+      "alt": "Immaculate Mary statue standing over the serpent, hands open in blessing",
+      "width": 967,
+      "height": 1354,
+      "smallWidth": 571
+    },
+    {
+      "src": "/products/immaculate-mary-statue-2.webp",
+      "alt": "Immaculate Mary statue standing over the serpent, hands open in blessing",
+      "width": 937,
+      "height": 1311,
+      "smallWidth": 572
+    },
+    {
+      "src": "/products/immaculate-mary-statue-3.webp",
+      "alt": "Immaculate Mary statue standing over the serpent, hands open in blessing",
+      "width": 1125,
+      "height": 1500,
+      "smallWidth": 600
+    }
+  ],
+  "saint-peter-keeper-of-keys": [
+    {
+      "src": "/products/saint-peter-keeper-of-keys.webp",
+      "alt": "Saint Peter statue holding the keys of heaven",
+      "width": 1200,
+      "height": 1500,
+      "smallWidth": 640
+    },
+    {
+      "src": "/products/saint-peter-keeper-of-keys-2.webp",
+      "alt": "Saint Peter statue holding the keys of heaven",
+      "width": 1200,
+      "height": 1091,
+      "smallWidth": 640
+    }
+  ],
+  "saint-paisios": [
+    {
+      "src": "/products/saint-paisios.webp",
+      "alt": "Arched Orthodox icon of Saint Paisios of Mount Athos in white",
+      "width": 500,
+      "height": 500,
+      "smallWidth": 500
+    }
+  ],
+  "jesus-christ-pantocrator": [
+    {
+      "src": "/products/jesus-christ-pantocrator.webp",
+      "alt": "Arched Orthodox icon of Christ Pantocrator blessing, holding an open Gospel book",
+      "width": 901,
+      "height": 1500,
+      "smallWidth": 480
+    }
+  ],
+  "saint-joseph-icon": [
+    {
+      "src": "/products/saint-joseph-icon.webp",
+      "alt": "Arched icon of Saint Joseph holding the child Jesus, with a lily",
+      "width": 894,
+      "height": 1147,
+      "smallWidth": 624
+    }
+  ],
+  "orthodox-cross-car-hanger": [
+    {
+      "src": "/products/orthodox-cross-car-hanger.webp",
+      "alt": "Black and gold budded Orthodox cross hanging from a cord",
+      "width": 1125,
+      "height": 1500,
+      "smallWidth": 600
+    }
+  ],
+  "personalised-christmas-tree": [
+    {
+      "src": "/products/personalised-christmas-tree.webp",
+      "alt": "Personalised tiered Christmas trees in green and white with red bases and name stars",
+      "width": 864,
+      "height": 1184,
+      "smallWidth": 584
+    },
+    {
+      "src": "/products/personalised-christmas-tree-2.webp",
+      "alt": "Personalised tiered Christmas trees in green and white with red bases and name stars",
+      "width": 937,
+      "height": 1500,
+      "smallWidth": 500
+    },
+    {
+      "src": "/products/personalised-christmas-tree-3.webp",
+      "alt": "Personalised tiered Christmas trees in green and white with red bases and name stars",
+      "width": 858,
+      "height": 1500,
+      "smallWidth": 458
+    }
   ]
 }

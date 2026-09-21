@@ -33,21 +33,18 @@
 /products/saint-michael-full-body                                /products/saint-michael-statue 301
 
 # Legacy flat URLs from the pre-Shopify site
-/st-charbel-full-body-statue/       /products/saint-charbel 301
+/st-charbel-full-body-statue/       /products/saint-charbel-statue 301
 /st-michael-killing-beast-statue/   /products/saint-michael-statue 301
 /jesus-christ-full-body-statue/     /products/jesus-christ-sacred-heart 301
-/virgin-mary-killing-snake-statue/  /products 301
+/virgin-mary-killing-snake-statue/  /products/immaculate-mary-statue 301
 
 # Discontinued on Etsy — search fallbacks keep the intent alive.
 # TODO: relist these on Etsy and repoint, or let them 410 rather than redirect.
-/products/virgin-mary-statue                                     /products 301
-/products/virgin-mary-full-body-statue                           /products 301
-/products/saint-dominic-de-guzman-statue                         /products 301
-/products/saint-paisios                                          /products 301
-/products/saint-peter-keeper-of-keys                             /products 301
+/products/virgin-mary-statue                                     /products/immaculate-mary-statue 301
+/products/virgin-mary-full-body-statue                           /products/immaculate-mary-statue 301
 /products/holy-family-statue-jesus-mary-and-joseph               /products 301
 /products/jesus-bust                                             /products 301
-/products/jesus-christ-full-body-statue                          /products 301
+/products/jesus-christ-full-body-statue                          /products/jesus-christ-sacred-heart 301
 /products/rear-mirror-orthodox-cross                             /products 301
 /products/personalised-rear-view-mirror-thorns-of-jesus-cross    /products 301
 /products/christmas-twist-off-tree                               /products 301

@@ -114,7 +114,7 @@
     },
     {
       "source": "/st-charbel-full-body-statue",
-      "destination": "/products/saint-charbel",
+      "destination": "/products/saint-charbel-statue",
       "statusCode": 301
     },
     {
@@ -129,32 +129,17 @@
     },
     {
       "source": "/virgin-mary-killing-snake-statue",
-      "destination": "/products",
+      "destination": "/products/immaculate-mary-statue",
       "statusCode": 301
     },
     {
       "source": "/products/virgin-mary-statue",
-      "destination": "/products",
+      "destination": "/products/immaculate-mary-statue",
       "statusCode": 301
     },
     {
       "source": "/products/virgin-mary-full-body-statue",
-      "destination": "/products",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/saint-dominic-de-guzman-statue",
-      "destination": "/products",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/saint-paisios",
-      "destination": "/products",
-      "statusCode": 301
-    },
-    {
-      "source": "/products/saint-peter-keeper-of-keys",
-      "destination": "/products",
+      "destination": "/products/immaculate-mary-statue",
       "statusCode": 301
     },
     {
@@ -169,7 +154,7 @@
     },
     {
       "source": "/products/jesus-christ-full-body-statue",
-      "destination": "/products",
+      "destination": "/products/jesus-christ-sacred-heart",
       "statusCode": 301
     },
     {

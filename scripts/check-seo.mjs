@@ -104,12 +104,16 @@ for (const url of urls) {
     assert.ok(item, `Missing product schema: ${url}`);
     assert.ok(item.image?.length, `Product needs a photograph: ${url}`);
     const offers = item.offers;
-    assert.equal(offers?.['@type'], 'AggregateOffer', `Product needs an aggregate offer: ${url}`);
+    // A piece sold across a size range carries an AggregateOffer; one sold at a single
+    // price carries a plain Offer, because an aggregate whose bounds are equal is a
+    // weaker signal than a real price. Both shapes are checked, neither is optional.
+    assert.ok(['AggregateOffer', 'Offer'].includes(offers?.['@type']), `Product needs an offer: ${url}`);
     assert.equal(offers.priceCurrency, 'AUD', `Product prices must be in AUD: ${url}`);
-    assert.ok(offers.lowPrice > 0 && offers.highPrice >= offers.lowPrice, `Bad price range: ${url}`);
+    const shown = offers['@type'] === 'Offer' ? [offers.price] : [offers.lowPrice, offers.highPrice];
+    assert.ok(shown.every(price => price > 0), `Bad price: ${url}`);
+    if (offers['@type'] === 'AggregateOffer') assert.ok(offers.highPrice >= offers.lowPrice, `Bad price range: ${url}`);
     // A price is a promise to a buyer, so it has to appear on the page, not only in markup.
-    assert.ok(visible.includes(`AU$${offers.lowPrice}`), `Low price not shown to visitors: ${url}`);
-    assert.ok(visible.includes(`AU$${offers.highPrice}`), `High price not shown to visitors: ${url}`);
+    for (const price of shown) assert.ok(visible.includes(`AU$${price}`), `Price not shown to visitors: AU$${price} on ${url}`);
     assert.ok(/etsy\.com\/au\/listing\/\d+/.test(offers.url), `Product must link to its listing: ${url}`);
     productCount++;
   }
