@@ -34,7 +34,7 @@ export default function ProductsPage() {
         <div className="product-card-body">
           <h2>{product.title}</h2>
           <p>{product.summary}</p>
-          <span className="product-card-price">{`${aud(low)} – ${aud(high)}`}</span>
+          <span className="product-card-price">{low === high ? aud(low) : `${aud(low)} – ${aud(high)}`}</span>
         </div>
       </a>;
     })}</div>

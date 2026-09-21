@@ -39,18 +39,21 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     brand: { '@type': 'Brand', name: CONTACT.name },
     manufacturer: { '@id': SITE_URL + '/#organisation' },
     material: 'PLA',
-    // One offer covering the size range rather than a single price, because every size
-    // is a separate variant on the listing this page links to.
-    offers: {
-      '@type': 'AggregateOffer',
-      priceCurrency: 'AUD',
-      lowPrice: low,
-      highPrice: high,
-      offerCount: product.sizes.length,
-      availability: 'https://schema.org/InStock',
-      url: buy,
-      seller: { '@id': SITE_URL + '/#organisation' },
-    },
+    // An AggregateOffer covers the size range, because every size is a separate variant
+    // on the listing this page links to. A piece sold at one price is a plain Offer:
+    // an AggregateOffer whose low and high match is a weaker signal than a real price.
+    offers: low === high
+      ? { '@type': 'Offer', priceCurrency: 'AUD', price: low, availability: 'https://schema.org/InStock', url: buy, seller: { '@id': SITE_URL + '/#organisation' } }
+      : {
+          '@type': 'AggregateOffer',
+          priceCurrency: 'AUD',
+          lowPrice: low,
+          highPrice: high,
+          offerCount: product.sizes.length,
+          availability: 'https://schema.org/InStock',
+          url: buy,
+          seller: { '@id': SITE_URL + '/#organisation' },
+        },
     ...(rating ? { aggregateRating: rating, review: reviews.map(reviewSchema) } : {}),
   };
 
@@ -62,7 +65,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <p className="section-tag">{product.bulkFirst ? 'FAVOURS & BONBONNIERE' : 'STATUES & ICONS'}</p>
         <h1>{product.title}</h1>
         <p className="document-lede">{product.intro}</p>
-        <p className="product-price">{aud(low)}<span>{` – ${aud(high)}`}</span> <small>depending on size</small></p>
+        <p className="product-price">{aud(low)}{low !== high && <><span>{` – ${aud(high)}`}</span> <small>depending on size</small></>}</p>
         <div className="product-actions">
           {product.bulkFirst
             ? <>
@@ -83,11 +86,18 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
     <section className="product-options">
       <div>
-        <h2>Sizes and prices</h2>
-        <table className="product-sizes">
-          <thead><tr><th scope="col">Size</th><th scope="col">Price</th></tr></thead>
-          <tbody>{product.sizes.map(size => <tr key={size.label}><th scope="row">{size.label}</th><td>{aud(size.price)}</td></tr>)}</tbody>
-        </table>
+        {/* A piece made in one size only gets a plain price line: a two-column table
+            with a single row reads as though options are missing. */}
+        {product.sizes.length > 1 ? <>
+          <h2>Sizes and prices</h2>
+          <table className="product-sizes">
+            <thead><tr><th scope="col">Size</th><th scope="col">Price</th></tr></thead>
+            <tbody>{product.sizes.map(size => <tr key={size.label}><th scope="row">{size.label}</th><td>{aud(size.price)}</td></tr>)}</tbody>
+          </table>
+        </> : <>
+          <h2>Price</h2>
+          <p className="product-single-price">{aud(product.sizes[0].price)} <small>{product.sizes[0].label}</small></p>
+        </>}
         <p className="product-note">Prices are per piece as listed on Etsy. Batches of ten or more are quoted separately.</p>
       </div>
       <div>
