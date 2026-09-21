@@ -42,8 +42,6 @@ const sources = {
   // other product image here. Replace the part below once a full-size photograph exists.
   'saint-paisios': ['Arched Orthodox icon of Saint Paisios of Mount Athos in white', [
     '071e3e/8553780746/il_794xN.8553780746_ke4h']],
-  'jesus-christ-pantocrator': ['Arched Orthodox icon of Christ Pantocrator blessing, holding an open Gospel book', [
-    '1363b4/8553802946/il_794xN.8553802946_f5hj']],
   'saint-joseph-icon': ['Arched icon of Saint Joseph holding the child Jesus, with a lily', [
     '75b2d2/8601670013/il_794xN.8601670013_kjdl']],
   'orthodox-cross-car-hanger': ['Black and gold budded Orthodox cross hanging from a cord', [
@@ -51,6 +49,17 @@ const sources = {
   'personalised-christmas-tree': ['Personalised tiered Christmas trees in green and white with red bases and name stars', [
     '84c7eb/8553831864/il_794xN.8553831864_cijg', '97e9dc/8553831932/il_794xN.8553831932_i61m',
     '430a6d/8553832018/il_794xN.8553832018_foo8']],
+  'saint-anthony-of-padua-statue': ['Saint Anthony of Padua statues in four finishes, each on an inscribed base', [
+    '9e03d0/8601710183/il_794xN.8601710183_jtzl', '8031df/8601710239/il_794xN.8601710239_1pna',
+    'f6608a/8553844934/il_794xN.8553844934_9g64']],
+  'saint-arnold-janssen-statue': ['Saint Arnold Janssen statue in speckled marble on an inscribed base', [
+    'c07880/8601711509/il_794xN.8601711509_ducb']],
+  'first-tooth-favour-tag': ['Tooth-shaped personalised tags in white and purple, tied to favour jars with lace ribbon', [
+    'bd3da2/8553919004/il_794xN.8553919004_3c3v']],
+  'pantocrator-icon-bonbonniere': ['A boxed Christ Pantocrator icon favour with a personalised name on the base and a white ribbon', [
+    '17461c/8601807765/il_794xN.8601807765_97hg']],
+  'personalised-rose-sculpture': ['Yellow rose sculptures on black bases cut with a personalised inscription', [
+    '1d995b/8553946988/il_794xN.8553946988_6wi7']],
 };
 
 // il_794xN is what the page renders; il_fullxfull is the original upload.

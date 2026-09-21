@@ -18,6 +18,11 @@ export type Product = {
   intro: string;
   listingId: string;
   sizes: ProductSize[];
+  /** Only for a listing with regional pricing: the base ladder the Etsy API reports,
+   *  which is what buyers outside Australia pay. `sizes` above stays the Australian
+   *  price this site publishes; this field exists so scripts/etsy-sync.mjs still has
+   *  something real to check the listing against instead of reporting false drift. */
+  etsyBaseSizes?: ProductSize[];
   colours: string[];
   /** Ribbon or finish choices offered alongside colour, where the listing has them. */
   finishes?: string[];
@@ -35,9 +40,19 @@ const ICON_COLOURS = ['Marble', 'Wood', 'Black', 'Brown', 'Grey', 'Pink', 'Red',
 const STATUE_COLOURS = ['Marble', 'White', 'Grey', 'Silk Bronze', 'Silk White', 'Silk Black', 'Silk Gold', 'Beige', 'Light Blue', 'Pink', 'Brown', 'Mint Green', 'Wood', 'Black'];
 const LARGE_COLOURS = ['Marble', 'Wood', 'Silk Gold', 'Silk White', 'Silk Bronze', 'Grey', 'Blue', 'White', 'Green', 'Red'];
 
-// Verified against the live listings by scripts/etsy-sync.mjs. Four of the five icons
-// share this ladder; the Virgin Mary icon is priced on its own curve and has its own.
-const ICON_SIZES: ProductSize[] = [{ label: '15cm', price: 45 }, { label: '20cm', price: 65 }, { label: '25cm', price: 95 }];
+// These are the AUSTRALIAN prices, which is what this site must publish: the domain,
+// the currency and the delivery promise are all Australian.
+//
+// They do not match what the Etsy API reports. Those listings carry regional pricing,
+// and /listings/{id}/inventory returns only the base price charged everywhere else
+// (45/65/95 here). The Australian figure is set per market and is not exposed by the
+// v3 API at all, so it cannot be verified programmatically — check it against the
+// listing's Australian view in Shop Manager before changing anything below.
+const ICON_SIZES: ProductSize[] = [{ label: '15cm', price: 35 }, { label: '20cm', price: 55 }, { label: '25cm', price: 85 }];
+const ICON_BASE_SIZES: ProductSize[] = [{ label: '15cm', price: 45 }, { label: '20cm', price: 65 }, { label: '25cm', price: 95 }];
+// Unverified: this is the ladder the API reports, and no Australian price has been read
+// off Shop Manager for this piece. If it also carries a regional price, `sizes` here is
+// wrong in the same way the four icons above were.
 const MARY_ICON_SIZES: ProductSize[] = [{ label: '15cm', price: 35 }, { label: '20cm', price: 60 }, { label: '25cm', price: 105 }];
 const STATUE_SIZES: ProductSize[] = [{ label: '15cm', price: 20 }, { label: '20cm', price: 45 }, { label: '25cm', price: 70 }, { label: '30cm', price: 95 }];
 const LARGE_SIZES: ProductSize[] = [{ label: '15cm', price: 50 }, { label: '20cm', price: 90 }, { label: '25cm', price: 120 }, { label: '30cm', price: 140 }];
@@ -77,14 +92,14 @@ export const products: Product[] = [
     slug: 'saint-michael-the-archangel-defender-of-faith-icon', title: 'Saint Michael the Archangel icon', listingId: '1893949429',
     summary: 'An arched relief icon of Saint Michael, 15cm to 25cm, in twelve finishes.',
     intro: 'A wall or shelf icon in arched relief, showing Saint Michael as protector. The relief is cut deep enough to hold a shadow, so the detail stays readable across the room rather than only up close.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
   },
   {
     slug: 'saint-george-the-victorious', title: 'Saint George the Victorious icon', listingId: '1879775206',
     summary: 'An arched relief icon of Saint George on horseback defeating the dragon, 15cm to 25cm.',
     intro: 'Saint George mounted, spear lowered, with the dragon beneath. A traditional subject for baptisms, confirmations and house blessings, and one that suits the deeper relief of the icon format.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     reviews: ['etsy-estelle-2026-03-03'],
     updated: '2026-09-21',
   },
@@ -92,7 +107,7 @@ export const products: Product[] = [
     slug: 'divine-jesus-christ-icon', title: 'Divine Jesus Christ icon', listingId: '1879773522',
     summary: 'An arched relief icon of Christ holding a book, 15cm to 25cm, in twelve finishes.',
     intro: 'Christ shown in blessing with a book in hand, in the Pantocrator tradition. Often ordered as a pair with the Virgin Mary icon, which shares the same arch and sizes so the two sit together.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
   },
   {
@@ -106,20 +121,13 @@ export const products: Product[] = [
     slug: 'saint-nicholas-the-wonderworker', title: 'Saint Nicholas the Wonderworker icon', listingId: '1879769792',
     summary: 'An arched relief icon of Saint Nicholas the Wonderworker, 15cm to 25cm, in twelve finishes.',
     intro: 'Saint Nicholas shown in blessing, vested as a bishop. Part of the same arched icon range, so it matches the others in size, depth and finish if you are building a set.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
   },
   {
     slug: 'saint-paisios', title: 'Saint Paisios of Mount Athos icon', listingId: '4579336997',
     summary: 'An arched Orthodox icon of Saint Paisios of Mount Athos, 15cm to 25cm, in twelve finishes.',
     intro: 'Saint Paisios in his monastic habit, hands folded, set within an arched frame with traditional Orthodox knotwork around the border. A modern Athonite elder, and a subject asked for far more often than the range previously covered.',
-    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
-    published: '2026-09-21', updated: '2026-09-21',
-  },
-  {
-    slug: 'jesus-christ-pantocrator', title: 'Jesus Christ Pantocrator icon', listingId: '4579340391',
-    summary: 'An arched Orthodox icon of Christ Pantocrator, 15cm to 25cm, in twelve finishes.',
-    intro: 'Christ shown raising His hand in blessing with an open Gospel book, in the Pantocrator tradition. The arch carries a knotwork border and a finely hatched ground, so the relief holds its detail at every size.',
     sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     published: '2026-09-21', updated: '2026-09-21',
   },
@@ -134,9 +142,11 @@ export const products: Product[] = [
     slug: 'st-michael-icon-bonbonniere', title: 'Personalised Saint Michael icon bonbonniere', listingId: '4544225986',
     summary: 'Saint Michael icon favours for weddings, christenings and baptisms. Boxed with ribbon and personalised with a name and date.',
     intro: 'A small Saint Michael icon made as a guest favour. Each piece can carry a name, and a date if you want one. Choose it boxed with ribbon for handing out on the day, or unboxed if you are packaging it yourself.',
+    // Sold in fives. Etsy has no minimum order quantity, so the set is the unit and the
+    // per-piece price ($15/$25/$20/$30) is unchanged; a buyer wanting twenty orders four.
     sizes: [
-      { label: '12cm, no box', price: 15 }, { label: '12cm, boxed with ribbon', price: 25 },
-      { label: '15cm, no box', price: 20 }, { label: '15cm, boxed with ribbon', price: 30 },
+      { label: '12cm, no box, set of 5', price: 75 }, { label: '12cm, boxed with ribbon, set of 5', price: 125 },
+      { label: '15cm, no box, set of 5', price: 100 }, { label: '15cm, boxed with ribbon, set of 5', price: 150 },
     ],
     colours: ['Marble', 'White', 'Grey', 'Beige/Bone', 'Sky Blue', 'Wood', 'Pink', 'Silk Gold', 'Silk White', 'Silk Bronze', 'Silk Black', 'Black', 'Matte Gold', 'Mint Green', 'Light Green', 'Dark Blue', 'Chocolate', 'Red', 'Orange', 'Purple', 'Yellow'],
     finishes: ['Light Blue', 'Light Pink', 'Light Green', 'Grey', 'Dark Blue', 'Dark Green', 'White', 'Black'],
@@ -169,6 +179,51 @@ export const products: Product[] = [
     sizes: [{ label: '15cm', price: 25 }, { label: '20cm', price: 60 }, { label: '25cm', price: 75 }, { label: '30cm', price: 95 }],
     colours: STATUE_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
+  },
+  {
+    slug: 'saint-anthony-of-padua-statue', title: 'Saint Anthony of Padua statue', listingId: '4579346739',
+    summary: 'Saint Anthony holding the child Jesus, on a base that can carry an inscription. 15cm to 30cm.',
+    intro: 'Saint Anthony of Padua with the child Christ, a lily in his hand and a rosary at his side. The plinth is the point of this one: it can be cut with a name, a year or a dedication, so a set printed for a parish, a school or a feast day all matches.',
+    sizes: [{ label: '15cm', price: 30 }, { label: '20cm', price: 55 }, { label: '25cm', price: 85 }, { label: '30cm', price: 105 }],
+    colours: STATUE_COLOURS, enquiryRoute: 'bulk',
+    published: '2026-09-21', updated: '2026-09-21',
+  },
+  {
+    slug: 'saint-arnold-janssen-statue', title: 'Saint Arnold Janssen statue', listingId: '4579363684',
+    summary: 'The founder of the Society of the Divine Word, on an inscribed base. 15cm to 30cm.',
+    intro: 'Saint Arnold Janssen standing in his habit, hands folded, on a plinth that can carry a dedication. Rarely available as a statue at all, and asked for by Divine Word parishes, SVD communities and the schools attached to them.',
+    sizes: STATUE_SIZES, colours: STATUE_COLOURS, enquiryRoute: 'bulk',
+    published: '2026-09-21', updated: '2026-09-21',
+  },
+  // Sold in sets because they are ordered for a guest list. Etsy has no minimum order
+  // quantity, so the set is the unit: the smallest purchase is five.
+  {
+    slug: 'first-tooth-favour-tag', title: 'Personalised first tooth favour tag', listingId: '4579373618',
+    summary: 'A tooth-shaped tag cut with a child’s name, for a first tooth celebration. Sets from 5.',
+    intro: 'A tooth-shaped tag carrying the child’s name, printed in two colours so the trim outlines the tooth and the lettering. Made to tie onto a jar, a favour box or a snoubar bag. Tell us the wording and the two colours and we will print the set to match your table.',
+    sizes: [{ label: 'Set of 5', price: 20 }, { label: 'Set of 10', price: 40 }, { label: 'Set of 20', price: 80 }, { label: 'Set of 50', price: 200 }],
+    colours: ['White', 'Beige', 'Pink', 'Blue', 'Purple', 'Gold'],
+    enquiryRoute: 'bulk', bulkFirst: true,
+    published: '2026-09-21', updated: '2026-09-21',
+  },
+  {
+    slug: 'pantocrator-icon-bonbonniere', title: 'Personalised Christ Pantocrator icon bonbonniere', listingId: '4579376840',
+    summary: 'An arched Pantocrator icon favour with a name on the base, boxed with ribbon. Sets from 5.',
+    intro: 'The Pantocrator icon made as a baptism or christening favour, with the child’s name cut into the base. Choose 12cm or 15cm, boxed with ribbon for handing out on the day or unboxed if you are packaging them yourself.',
+    sizes: [{ label: '12cm, no box, set of 5', price: 75 }, { label: '12cm, boxed with ribbon, set of 5', price: 125 },
+      { label: '15cm, no box, set of 5', price: 100 }, { label: '15cm, boxed with ribbon, set of 5', price: 150 }],
+    colours: ['White', 'Beige', 'Gold', 'Silver', 'Pink', 'Blue'],
+    enquiryRoute: 'bulk', bulkFirst: true,
+    published: '2026-09-21', updated: '2026-09-21',
+  },
+  {
+    slug: 'personalised-rose-sculpture', title: 'Personalised rose sculpture', listingId: '4579360791',
+    summary: 'A long-stem rose on a base cut with your wording, for a table setting or a corporate gift. Sets from 5.',
+    intro: 'A single long-stem rose with leaves, standing on a round base cut with your wording. Every piece in a set can carry the same line or a different name, which is what makes it work as a place setting or a thank-you for a room full of people.',
+    sizes: [{ label: 'Set of 5', price: 30 }, { label: 'Set of 10', price: 60 }, { label: 'Set of 20', price: 120 }, { label: 'Set of 50', price: 300 }],
+    colours: ['Yellow', 'Red', 'White', 'Pink', 'Gold', 'Purple'],
+    enquiryRoute: 'bulk', bulkFirst: true,
+    published: '2026-09-21', updated: '2026-09-21',
   },
   // Sold at one price rather than a size ladder, so `sizes` carries a single entry and
   // the page drops the size table and the "depending on size" qualifier.

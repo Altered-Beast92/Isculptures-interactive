@@ -190,15 +190,6 @@
       "smallWidth": 500
     }
   ],
-  "jesus-christ-pantocrator": [
-    {
-      "src": "/products/jesus-christ-pantocrator.webp",
-      "alt": "Arched Orthodox icon of Christ Pantocrator blessing, holding an open Gospel book",
-      "width": 901,
-      "height": 1500,
-      "smallWidth": 480
-    }
-  ],
   "saint-joseph-icon": [
     {
       "src": "/products/saint-joseph-icon.webp",
@@ -238,6 +229,65 @@
       "width": 858,
       "height": 1500,
       "smallWidth": 458
+    }
+  ],
+  "saint-anthony-of-padua-statue": [
+    {
+      "src": "/products/saint-anthony-of-padua-statue.webp",
+      "alt": "Saint Anthony of Padua statues in four finishes, each on an inscribed base",
+      "width": 1200,
+      "height": 750,
+      "smallWidth": 640
+    },
+    {
+      "src": "/products/saint-anthony-of-padua-statue-2.webp",
+      "alt": "Saint Anthony of Padua statues in four finishes, each on an inscribed base",
+      "width": 996,
+      "height": 1500,
+      "smallWidth": 531
+    },
+    {
+      "src": "/products/saint-anthony-of-padua-statue-3.webp",
+      "alt": "Saint Anthony of Padua statues in four finishes, each on an inscribed base",
+      "width": 996,
+      "height": 1500,
+      "smallWidth": 531
+    }
+  ],
+  "saint-arnold-janssen-statue": [
+    {
+      "src": "/products/saint-arnold-janssen-statue.webp",
+      "alt": "Saint Arnold Janssen statue in speckled marble on an inscribed base",
+      "width": 841,
+      "height": 1487,
+      "smallWidth": 452
+    }
+  ],
+  "first-tooth-favour-tag": [
+    {
+      "src": "/products/first-tooth-favour-tag.webp",
+      "alt": "Tooth-shaped personalised tags in white and purple, tied to favour jars with lace ribbon",
+      "width": 1196,
+      "height": 900,
+      "smallWidth": 640
+    }
+  ],
+  "pantocrator-icon-bonbonniere": [
+    {
+      "src": "/products/pantocrator-icon-bonbonniere.webp",
+      "alt": "A boxed Christ Pantocrator icon favour with a personalised name on the base and a white ribbon",
+      "width": 682,
+      "height": 716,
+      "smallWidth": 640
+    }
+  ],
+  "personalised-rose-sculpture": [
+    {
+      "src": "/products/personalised-rose-sculpture.webp",
+      "alt": "Yellow rose sculptures on black bases cut with a personalised inscription",
+      "width": 1080,
+      "height": 712,
+      "smallWidth": 640
     }
   ]
 }

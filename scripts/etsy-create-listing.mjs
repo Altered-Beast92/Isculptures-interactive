@@ -40,6 +40,14 @@ async function call(path, { method = 'GET', body, json, form } = {}) {
   return text ? JSON.parse(text) : null;
 }
 
+// Etsy caps a tag at 20 characters and rejects the whole PATCH if one is over, after
+// the draft has already been created. Failing here keeps a half-built listing off the shop.
+for (const tag of spec.tags ?? []) {
+  if (tag.length > 20) throw new Error(`Tag is ${tag.length} characters, Etsy allows 20: "${tag}"`);
+}
+if ((spec.tags?.length ?? 0) > 13) throw new Error(`Etsy allows 13 tags, spec has ${spec.tags.length}.`);
+if (spec.title && spec.title.length > 140) throw new Error(`Title is ${spec.title.length} characters, Etsy allows 140.`);
+
 const settings = { ...DEFAULTS, ...(spec.settings ?? {}) };
 const basePrice = spec.ladder ? Math.min(...Object.values(spec.ladder)) : spec.price;
 if (!basePrice) throw new Error('Spec needs either `price` or `ladder`.');
