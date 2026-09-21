@@ -262,5 +262,32 @@
       "height": 1487,
       "smallWidth": 452
     }
+  ],
+  "first-tooth-favour-tag": [
+    {
+      "src": "/products/first-tooth-favour-tag.webp",
+      "alt": "Tooth-shaped personalised tags in white and purple, tied to favour jars with lace ribbon",
+      "width": 1196,
+      "height": 900,
+      "smallWidth": 640
+    }
+  ],
+  "pantocrator-icon-bonbonniere": [
+    {
+      "src": "/products/pantocrator-icon-bonbonniere.webp",
+      "alt": "A boxed Christ Pantocrator icon favour with a personalised name on the base and a white ribbon",
+      "width": 682,
+      "height": 716,
+      "smallWidth": 640
+    }
+  ],
+  "personalised-rose-sculpture": [
+    {
+      "src": "/products/personalised-rose-sculpture.webp",
+      "alt": "Yellow rose sculptures on black bases cut with a personalised inscription",
+      "width": 1080,
+      "height": 712,
+      "smallWidth": 640
+    }
   ]
 }

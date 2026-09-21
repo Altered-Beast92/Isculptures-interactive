@@ -54,6 +54,12 @@ const sources = {
     'f6608a/8553844934/il_794xN.8553844934_9g64']],
   'saint-arnold-janssen-statue': ['Saint Arnold Janssen statue in speckled marble on an inscribed base', [
     'c07880/8601711509/il_794xN.8601711509_ducb']],
+  'first-tooth-favour-tag': ['Tooth-shaped personalised tags in white and purple, tied to favour jars with lace ribbon', [
+    'bd3da2/8553919004/il_794xN.8553919004_3c3v']],
+  'pantocrator-icon-bonbonniere': ['A boxed Christ Pantocrator icon favour with a personalised name on the base and a white ribbon', [
+    '17461c/8601807765/il_794xN.8601807765_97hg']],
+  'personalised-rose-sculpture': ['Yellow rose sculptures on black bases cut with a personalised inscription', [
+    '1d995b/8553946988/il_794xN.8553946988_6wi7']],
 };
 
 // il_794xN is what the page renders; il_fullxfull is the original upload.

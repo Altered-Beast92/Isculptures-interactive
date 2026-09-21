@@ -195,6 +195,36 @@ export const products: Product[] = [
     sizes: STATUE_SIZES, colours: STATUE_COLOURS, enquiryRoute: 'bulk',
     published: '2026-09-21', updated: '2026-09-21',
   },
+  // Sold in sets because they are ordered for a guest list. Etsy has no minimum order
+  // quantity, so the set is the unit: the smallest purchase is five.
+  {
+    slug: 'first-tooth-favour-tag', title: 'Personalised first tooth favour tag', listingId: '4579373618',
+    summary: 'A tooth-shaped tag cut with a child’s name, for a first tooth celebration. Sets from 5.',
+    intro: 'A tooth-shaped tag carrying the child’s name, printed in two colours so the trim outlines the tooth and the lettering. Made to tie onto a jar, a favour box or a snoubar bag. Tell us the wording and the two colours and we will print the set to match your table.',
+    sizes: [{ label: 'Set of 5', price: 20 }, { label: 'Set of 10', price: 40 }, { label: 'Set of 20', price: 80 }, { label: 'Set of 50', price: 200 }],
+    colours: ['White', 'Beige', 'Pink', 'Blue', 'Purple', 'Gold'],
+    enquiryRoute: 'bulk', bulkFirst: true,
+    published: '2026-09-21', updated: '2026-09-21',
+  },
+  {
+    slug: 'pantocrator-icon-bonbonniere', title: 'Personalised Christ Pantocrator icon bonbonniere', listingId: '4579376840',
+    summary: 'An arched Pantocrator icon favour with a name on the base, boxed with ribbon. Sets from 5.',
+    intro: 'The Pantocrator icon made as a baptism or christening favour, with the child’s name cut into the base. Choose 12cm or 15cm, boxed with ribbon for handing out on the day or unboxed if you are packaging them yourself.',
+    sizes: [{ label: '12cm, no box, set of 5', price: 75 }, { label: '12cm, boxed with ribbon, set of 5', price: 125 },
+      { label: '15cm, no box, set of 5', price: 100 }, { label: '15cm, boxed with ribbon, set of 5', price: 150 }],
+    colours: ['White', 'Beige', 'Gold', 'Silver', 'Pink', 'Blue'],
+    enquiryRoute: 'bulk', bulkFirst: true,
+    published: '2026-09-21', updated: '2026-09-21',
+  },
+  {
+    slug: 'personalised-rose-sculpture', title: 'Personalised rose sculpture', listingId: '4579360791',
+    summary: 'A long-stem rose on a base cut with your wording, for a table setting or a corporate gift. Sets from 5.',
+    intro: 'A single long-stem rose with leaves, standing on a round base cut with your wording. Every piece in a set can carry the same line or a different name, which is what makes it work as a place setting or a thank-you for a room full of people.',
+    sizes: [{ label: 'Set of 5', price: 30 }, { label: 'Set of 10', price: 60 }, { label: 'Set of 20', price: 120 }, { label: 'Set of 50', price: 300 }],
+    colours: ['Yellow', 'Red', 'White', 'Pink', 'Gold', 'Purple'],
+    enquiryRoute: 'bulk', bulkFirst: true,
+    published: '2026-09-21', updated: '2026-09-21',
+  },
   // Sold at one price rather than a size ladder, so `sizes` carries a single entry and
   // the page drops the size table and the "depending on size" qualifier.
   {
