@@ -230,5 +230,37 @@
       "height": 1500,
       "smallWidth": 458
     }
+  ],
+  "saint-anthony-of-padua-statue": [
+    {
+      "src": "/products/saint-anthony-of-padua-statue.webp",
+      "alt": "Saint Anthony of Padua statues in four finishes, each on an inscribed base",
+      "width": 1200,
+      "height": 750,
+      "smallWidth": 640
+    },
+    {
+      "src": "/products/saint-anthony-of-padua-statue-2.webp",
+      "alt": "Saint Anthony of Padua statues in four finishes, each on an inscribed base",
+      "width": 996,
+      "height": 1500,
+      "smallWidth": 531
+    },
+    {
+      "src": "/products/saint-anthony-of-padua-statue-3.webp",
+      "alt": "Saint Anthony of Padua statues in four finishes, each on an inscribed base",
+      "width": 996,
+      "height": 1500,
+      "smallWidth": 531
+    }
+  ],
+  "saint-arnold-janssen-statue": [
+    {
+      "src": "/products/saint-arnold-janssen-statue.webp",
+      "alt": "Saint Arnold Janssen statue in speckled marble on an inscribed base",
+      "width": 841,
+      "height": 1487,
+      "smallWidth": 452
+    }
   ]
 }

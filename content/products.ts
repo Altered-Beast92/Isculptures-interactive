@@ -50,10 +50,6 @@ const LARGE_COLOURS = ['Marble', 'Wood', 'Silk Gold', 'Silk White', 'Silk Bronze
 // listing's Australian view in Shop Manager before changing anything below.
 const ICON_SIZES: ProductSize[] = [{ label: '15cm', price: 35 }, { label: '20cm', price: 55 }, { label: '25cm', price: 85 }];
 const ICON_BASE_SIZES: ProductSize[] = [{ label: '15cm', price: 45 }, { label: '20cm', price: 65 }, { label: '25cm', price: 95 }];
-// The icons added in September 2026 have no regional pricing set, so Australian buyers
-// pay the base price on those listings. Same format and finishes as ICON_SIZES above,
-// $10 dearer here. Set an Australian price on the listings to bring the range in line.
-const NEW_ICON_SIZES: ProductSize[] = [{ label: '15cm', price: 45 }, { label: '20cm', price: 65 }, { label: '25cm', price: 95 }];
 // Unverified: this is the ladder the API reports, and no Australian price has been read
 // off Shop Manager for this piece. If it also carries a regional price, `sizes` here is
 // wrong in the same way the four icons above were.
@@ -132,23 +128,25 @@ export const products: Product[] = [
     slug: 'saint-paisios', title: 'Saint Paisios of Mount Athos icon', listingId: '4579336997',
     summary: 'An arched Orthodox icon of Saint Paisios of Mount Athos, 15cm to 25cm, in twelve finishes.',
     intro: 'Saint Paisios in his monastic habit, hands folded, set within an arched frame with traditional Orthodox knotwork around the border. A modern Athonite elder, and a subject asked for far more often than the range previously covered.',
-    sizes: NEW_ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     published: '2026-09-21', updated: '2026-09-21',
   },
   {
     slug: 'saint-joseph-icon', title: 'Saint Joseph and the child Jesus icon', listingId: '4579357288',
     summary: 'An arched icon of Saint Joseph holding the child Jesus, 15cm to 25cm, in twelve finishes.',
     intro: 'Saint Joseph holding the child Christ, a lily in his hand. The arch is cut deep enough to hold a shadow across the figures, which is what keeps the relief readable from across a room.',
-    sizes: NEW_ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
+    sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     published: '2026-09-21', updated: '2026-09-21',
   },
   {
     slug: 'st-michael-icon-bonbonniere', title: 'Personalised Saint Michael icon bonbonniere', listingId: '4544225986',
     summary: 'Saint Michael icon favours for weddings, christenings and baptisms. Boxed with ribbon and personalised with a name and date.',
     intro: 'A small Saint Michael icon made as a guest favour. Each piece can carry a name, and a date if you want one. Choose it boxed with ribbon for handing out on the day, or unboxed if you are packaging it yourself.',
+    // Sold in fives. Etsy has no minimum order quantity, so the set is the unit and the
+    // per-piece price ($15/$25/$20/$30) is unchanged; a buyer wanting twenty orders four.
     sizes: [
-      { label: '12cm, no box', price: 15 }, { label: '12cm, boxed with ribbon', price: 25 },
-      { label: '15cm, no box', price: 20 }, { label: '15cm, boxed with ribbon', price: 30 },
+      { label: '12cm, no box, set of 5', price: 75 }, { label: '12cm, boxed with ribbon, set of 5', price: 125 },
+      { label: '15cm, no box, set of 5', price: 100 }, { label: '15cm, boxed with ribbon, set of 5', price: 150 },
     ],
     colours: ['Marble', 'White', 'Grey', 'Beige/Bone', 'Sky Blue', 'Wood', 'Pink', 'Silk Gold', 'Silk White', 'Silk Bronze', 'Silk Black', 'Black', 'Matte Gold', 'Mint Green', 'Light Green', 'Dark Blue', 'Chocolate', 'Red', 'Orange', 'Purple', 'Yellow'],
     finishes: ['Light Blue', 'Light Pink', 'Light Green', 'Grey', 'Dark Blue', 'Dark Green', 'White', 'Black'],
@@ -181,6 +179,21 @@ export const products: Product[] = [
     sizes: [{ label: '15cm', price: 25 }, { label: '20cm', price: 60 }, { label: '25cm', price: 75 }, { label: '30cm', price: 95 }],
     colours: STATUE_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
+  },
+  {
+    slug: 'saint-anthony-of-padua-statue', title: 'Saint Anthony of Padua statue', listingId: '4579346739',
+    summary: 'Saint Anthony holding the child Jesus, on a base that can carry an inscription. 15cm to 30cm.',
+    intro: 'Saint Anthony of Padua with the child Christ, a lily in his hand and a rosary at his side. The plinth is the point of this one: it can be cut with a name, a year or a dedication, so a set printed for a parish, a school or a feast day all matches.',
+    sizes: [{ label: '15cm', price: 30 }, { label: '20cm', price: 55 }, { label: '25cm', price: 85 }, { label: '30cm', price: 105 }],
+    colours: STATUE_COLOURS, enquiryRoute: 'bulk',
+    published: '2026-09-21', updated: '2026-09-21',
+  },
+  {
+    slug: 'saint-arnold-janssen-statue', title: 'Saint Arnold Janssen statue', listingId: '4579363684',
+    summary: 'The founder of the Society of the Divine Word, on an inscribed base. 15cm to 30cm.',
+    intro: 'Saint Arnold Janssen standing in his habit, hands folded, on a plinth that can carry a dedication. Rarely available as a statue at all, and asked for by Divine Word parishes, SVD communities and the schools attached to them.',
+    sizes: STATUE_SIZES, colours: STATUE_COLOURS, enquiryRoute: 'bulk',
+    published: '2026-09-21', updated: '2026-09-21',
   },
   // Sold at one price rather than a size ladder, so `sizes` carries a single entry and
   // the page drops the size table and the "depending on size" qualifier.

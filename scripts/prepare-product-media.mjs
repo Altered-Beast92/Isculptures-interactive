@@ -49,6 +49,11 @@ const sources = {
   'personalised-christmas-tree': ['Personalised tiered Christmas trees in green and white with red bases and name stars', [
     '84c7eb/8553831864/il_794xN.8553831864_cijg', '97e9dc/8553831932/il_794xN.8553831932_i61m',
     '430a6d/8553832018/il_794xN.8553832018_foo8']],
+  'saint-anthony-of-padua-statue': ['Saint Anthony of Padua statues in four finishes, each on an inscribed base', [
+    '9e03d0/8601710183/il_794xN.8601710183_jtzl', '8031df/8601710239/il_794xN.8601710239_1pna',
+    'f6608a/8553844934/il_794xN.8553844934_9g64']],
+  'saint-arnold-janssen-statue': ['Saint Arnold Janssen statue in speckled marble on an inscribed base', [
+    'c07880/8601711509/il_794xN.8601711509_ducb']],
 };
 
 // il_794xN is what the page renders; il_fullxfull is the original upload.
