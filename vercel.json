@@ -58,6 +58,11 @@
   ],
   "redirects": [
     {
+      "source": "/products/st-michael-icon-bonbonniere",
+      "destination": "/products/st-gabriel-icon-bonbonniere",
+      "statusCode": 301
+    },
+    {
       "source": "/pages/events-custom",
       "destination": "/pages/events-custom-gifts",
       "statusCode": 301

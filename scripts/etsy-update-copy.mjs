@@ -99,9 +99,9 @@ const updates = {
     tags: ['Saint Charbel', 'Saint Charbel Statue', 'St Charbel Statue', 'St Charbel Sitting', 'Saint Charbel Tree', 'St Charbel Tree', 'Saint Charbel Art', 'St Charbel Lebanon', 'Maronite Saint', 'St Charbel Gift', 'Charbel Tree Statue', 'Catholic Statue', 'Maronite Gift'],
   },
   4544225986: {
-    title: 'Saint Michael Icon Bonbonniere | Personalised 15cm Baptism Favour | Boxed or Unboxed Set of 5',
-    description: 'A 15cm Saint Michael icon made as a wedding, baptism or christening favour. Sold in sets of five: AU$100 unboxed or AU$150 boxed.\n\nChoose the icon colour and add up to 16 characters of base text if you wish. Text can be embossed/engraved or printed in a chosen colour. Boxed pieces come in individual clear boxes with a gold or silver base; choose a ribbon colour. Made to order in Sydney.',
-    tags: ['st michael icon', 'saint michael icon', 'archangel michael', 'michael icon favour', 'baptism bonbonniere', 'christening favour', 'wedding bonbonniere', 'orthodox bonbonniere', 'personalised icon', 'boxed baptism favour', 'st michael baptism', 'custom name icon', 'religious wedding'],
+    title: 'Saint Gabriel Icon Bonbonniere | Personalised 15cm Baptism Favour | Boxed or Unboxed Set of 5',
+    description: 'A 15cm Saint Gabriel icon made as a wedding, baptism or christening favour. Sold in sets of five: AU$100 unboxed or AU$150 boxed.\n\nChoose the icon colour and add up to 16 characters of base text if you wish. Text can be embossed/engraved or printed in a chosen colour.\n\nBoxed pieces come in individual clear boxes with a gold or silver base; choose a ribbon colour.\n\nMade to order in Sydney.',
+    tags: ['st gabriel icon', 'saint gabriel icon', 'archangel gabriel', 'gabriel icon favour', 'baptism bonbonniere', 'christening favour', 'wedding bonbonniere', 'orthodox bonbonniere', 'personalised icon', 'boxed baptism favour', 'st gabriel baptism', 'custom name icon', 'religious wedding'],
   },
   4579364231: {
     title: 'Saint Elias Icon Bonbonniere | Personalised 15cm Baptism Favour, Set of 5',

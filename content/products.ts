@@ -143,9 +143,9 @@ export const products: Product[] = [
     published: '2026-09-21', updated: '2026-09-21',
   },
   {
-    slug: 'st-michael-icon-bonbonniere', title: 'Personalised Saint Michael icon bonbonniere', listingId: '4544225986',
-    summary: '15cm Saint Michael icon favours for weddings and baptisms, sold in sets of five with optional text and boxing.',
-    intro: 'A 15cm Saint Michael icon made as a guest favour. Add a name or date to the base if you wish. Choose an individual clear box with a gold or silver base and ribbon, or order the set unboxed.',
+    slug: 'st-gabriel-icon-bonbonniere', title: 'Personalised Saint Gabriel icon bonbonniere', listingId: '4544225986',
+    summary: '15cm Saint Gabriel icon favours for weddings and baptisms, sold in sets of five with optional text and boxing.',
+    intro: 'A 15cm Saint Gabriel icon made as a guest favour. Add a name or date to the base if you wish. Choose an individual clear box with a gold or silver base and ribbon, or order the set unboxed.',
     // Sold in fives. Etsy has no minimum order quantity, so the set is the unit.
     sizes: [
       { label: '15cm, no box, set of 5', price: 100 }, { label: '15cm, boxed with ribbon, set of 5', price: 150 },

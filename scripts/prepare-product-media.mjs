@@ -24,7 +24,10 @@ const sources = {
     '64d5df/6793678775/il_794xN.6793678775_6okz']],
   'saint-nicholas-the-wonderworker': ['Arched icon of Saint Nicholas the Wonderworker in gold', [
     '1207f1/6793670009/il_794xN.6793670009_suxs']],
-  'st-michael-icon-bonbonniere': ['Boxed Saint Michael icon favours finished with ribbon', [
+  'st-gabriel-icon-bonbonniere': [[
+    'Boxed Saint Gabriel icon bonbonnieres finished with pale blue ribbon',
+    'Close-up of personalised lettering on a Saint Gabriel icon base',
+  ], [
     '840503/8298859290/il_794xN.8298859290_eyok', 'fee7ec/8298857128/il_794xN.8298857128_ezb0']],
   'christening-coaster-bonbonniere': ['Personalised white christening coaster with a cross and dove', [
     '1eb3df/6943184013/il_794xN.6943184013_iqcx', '55be3f/6895199414/il_794xN.6895199414_oq2r']],
@@ -79,7 +82,7 @@ for (const [slug, [alt, parts]] of Object.entries(sources)) {
     const pipeline = () => sharp(buffer).rotate();
     const full = await pipeline().resize({ width: 1200, height: 1500, fit: 'inside', withoutEnlargement: true }).webp({ quality: 82 }).toFile(`public/products/${name}.webp`);
     const small = await pipeline().resize({ width: 640, height: 800, fit: 'inside', withoutEnlargement: true }).webp({ quality: 80 }).toFile(`public/products/${name}-small.webp`);
-    images.push({ src: `/products/${name}.webp`, alt, width: full.width, height: full.height, smallWidth: small.width });
+    images.push({ src: `/products/${name}.webp`, alt: Array.isArray(alt) ? alt[index] : alt, width: full.width, height: full.height, smallWidth: small.width });
   }
   media[slug] = images;
   console.log(slug.padEnd(52), images.map(i => `${i.width}x${i.height}`).join(' '));

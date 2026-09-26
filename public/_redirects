@@ -4,6 +4,9 @@
 # Migration map. Verify retail destinations and compare against Search Console before cutover.
 # Existing /pages/wholesale, /pages/industrial and event service URLs are retained as real pages.
 
+# The icon favour was identified as Saint Gabriel after the original page went live.
+/products/st-michael-icon-bonbonniere /products/st-gabriel-icon-bonbonniere 301
+
 # --- Bulk, events and wholesale: the pages that match the new positioning ---
 /pages/events-custom         /pages/events-custom-gifts    301
 /products/wholesale          /enquiry   301

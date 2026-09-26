@@ -15,7 +15,7 @@ const groups = new Map([
   [4579376840, [2, 2, 1, 1]], // Pantocrator favour
   [4579373618, [1, 2, 1]], // First-tooth tag
   [4579361528, [2, 2, 1]], // Christmas tree
-  [4544225986, [2, 2, 1, 1]], // Saint Michael favour
+  [4544225986, [2, 2, 1, 1]], // Saint Gabriel favour
   [4311901365, [2, 2, 1]], // Coaster, already spaced
   [4579363684, [1, 2, 1]], // Saint Arnold
   [4579346739, [1, 2, 1]], // Saint Anthony
