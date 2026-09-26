@@ -37,9 +37,12 @@ export type Product = {
   updated?: string;
 };
 
-const ICON_COLOURS = ['Marble', 'Wood', 'Black', 'Brown', 'Grey', 'Pink', 'Red', 'White', 'Silk Gold', 'Silk White', 'Silk Bronze', 'Silk Black'];
-const STATUE_COLOURS = ['Marble', 'White', 'Grey', 'Silk Bronze', 'Silk White', 'Silk Black', 'Silk Gold', 'Beige', 'Light Blue', 'Pink', 'Brown', 'Mint Green', 'Wood', 'Black'];
-const LARGE_COLOURS = ['Marble', 'Wood', 'Silk Gold', 'Silk White', 'Silk Bronze', 'Grey', 'Blue', 'White', 'Green', 'Red'];
+const CORE_COLOURS = ['White', 'Marble', 'Grey', 'Bone White/Beige', 'Silk Gold', 'Silk White', 'Silk Bronze', 'Matte Gold', 'Pink', 'Sky Blue', 'Dark Blue', 'Black', 'Mint Green', 'Light Green', 'Olive Green'];
+const ICON_COLOURS = [...CORE_COLOURS, 'Wood', 'Brown', 'Red', 'Silk Black'];
+const STATUE_COLOURS = [...CORE_COLOURS, 'Silk Black', 'Light Blue', 'Brown', 'Wood'];
+const LARGE_COLOURS = [...CORE_COLOURS, 'Wood', 'Blue', 'Green', 'Red'];
+const BONBONNIERE_COLOURS = [...CORE_COLOURS, 'Gold', 'Silver', 'Blue'];
+const MICHAEL_BONBONNIERE_COLOURS = [...CORE_COLOURS, 'Wood', 'Silk Black', 'Chocolate', 'Red', 'Orange', 'Purple', 'Yellow'];
 
 // These are the AUSTRALIAN prices, which is what this site must publish: the domain,
 // the currency and the delivery promise are all Australian.
@@ -61,15 +64,15 @@ const LARGE_SIZES: ProductSize[] = [{ label: '15cm', price: 50 }, { label: '20cm
 export const products: Product[] = [
   {
     slug: 'saint-charbel-statue', title: 'Saint Charbel statue', listingId: '1893943073',
-    summary: 'A standing Saint Charbel statue, 3D printed in Sydney in fourteen finishes, from 15cm to 30cm.',
+    summary: 'A standing Saint Charbel statue, 3D printed in Sydney in a range of colours, from 15cm to 30cm.',
     intro: 'Saint Charbel stands in prayer with hands clasped and head bowed. Choose a 15cm to 30cm size and a marble, solid or silk finish.',
     sizes: STATUE_SIZES, colours: STATUE_COLOURS, enquiryRoute: 'bulk',
     reviews: ['judgeme-anika-dahdah'],
   },
   {
     slug: 'jesus-christ-sacred-heart', title: 'Jesus Christ “Sacred Heart” statue', listingId: '1893943095',
-    summary: 'A standing Sacred Heart statue with arms outstretched, printed to order in fourteen finishes.',
-    intro: 'Jesus stands with arms open and the Sacred Heart shown at the centre of the robe. Choose a 15cm to 30cm size and one of fourteen finishes.',
+    summary: 'A standing Sacred Heart statue with arms outstretched, printed to order in a range of colours.',
+    intro: 'Jesus stands with arms open and the Sacred Heart shown at the centre of the robe. Choose a 15cm to 30cm size and a colour.',
     sizes: STATUE_SIZES, colours: STATUE_COLOURS, enquiryRoute: 'bulk',
     reviews: ['judgeme-anthony-j', 'judgeme-nicole-s'],
   },
@@ -82,7 +85,7 @@ export const products: Product[] = [
   {
     slug: 'saint-michael-statue', title: 'Saint Michael the Archangel, defeating the devil', listingId: '1760361490',
     summary: 'A full-figure Saint Michael statue in armour, subduing the serpent. Printed in PLA, 15cm to 30cm.',
-    intro: 'Saint Michael stands in armour with raised wings over the defeated serpent. Choose a 15cm to 30cm size and one of ten finishes.',
+    intro: 'Saint Michael stands in armour with raised wings over the defeated serpent. Choose a 15cm to 30cm size and a colour.',
     sizes: LARGE_SIZES, colours: LARGE_COLOURS, enquiryRoute: 'bulk',
     // Every Etsy review left on listing 1760361490, matched by listing id rather than by
     // reading the prose. scripts/etsy-sync.mjs reports any that are left unattached.
@@ -91,7 +94,7 @@ export const products: Product[] = [
   },
   {
     slug: 'saint-michael-the-archangel-defender-of-faith-icon', title: 'Saint Michael the Archangel icon', listingId: '1893949429',
-    summary: 'An arched relief icon of Saint Michael, 15cm to 25cm, in twelve finishes.',
+    summary: 'An arched relief icon of Saint Michael, 15cm to 25cm, in a range of colours.',
     intro: 'A wall or shelf icon in arched relief, showing Saint Michael as protector. The relief is cut deep enough to hold a shadow, so the detail stays readable across the room rather than only up close.',
     sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
@@ -106,7 +109,7 @@ export const products: Product[] = [
   },
   {
     slug: 'divine-jesus-christ-icon', title: 'Christ Pantocrator icon', listingId: '1879773522',
-    summary: 'An arched relief icon of Christ holding a book, 15cm to 25cm, in twelve finishes.',
+    summary: 'An arched relief icon of Christ holding a book, 15cm to 25cm, in a range of colours.',
     intro: 'Christ is shown in blessing with a book in hand, in the Pantocrator tradition. This icon shares its arched shape and sizes with the Virgin Mary icon.',
     sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
@@ -120,21 +123,21 @@ export const products: Product[] = [
   },
   {
     slug: 'saint-nicholas-the-wonderworker', title: 'Saint Nicholas the Wonderworker icon', listingId: '1879769792',
-    summary: 'An arched relief icon of Saint Nicholas the Wonderworker, 15cm to 25cm, in twelve finishes.',
+    summary: 'An arched relief icon of Saint Nicholas the Wonderworker, 15cm to 25cm, in a range of colours.',
     intro: 'Saint Nicholas shown in blessing, vested as a bishop. Part of the same arched icon range, so it matches the others in size, depth and finish if you are building a set.',
     sizes: ICON_SIZES, etsyBaseSizes: ICON_BASE_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
   },
   {
     slug: 'saint-paisios', title: 'Saint Paisios of Mount Athos icon', listingId: '4579336997',
-    summary: 'An arched Orthodox icon of Saint Paisios of Mount Athos, 15cm to 25cm, in twelve finishes.',
+    summary: 'An arched Orthodox icon of Saint Paisios of Mount Athos, 15cm to 25cm, in a range of colours.',
     intro: 'Saint Paisios stands in his monastic habit with hands folded, framed by an arch with Orthodox knotwork around the border.',
     sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     published: '2026-09-21', updated: '2026-09-21',
   },
   {
     slug: 'saint-joseph-icon', title: 'Saint Joseph and the child Jesus icon', listingId: '4579357288',
-    summary: 'An arched icon of Saint Joseph holding the child Jesus, 15cm to 25cm, in twelve finishes.',
+    summary: 'An arched icon of Saint Joseph holding the child Jesus, 15cm to 25cm, in a range of colours.',
     intro: 'Saint Joseph holding the child Christ, a lily in his hand. The arch is cut deep enough to hold a shadow across the figures, which is what keeps the relief readable from across a room.',
     sizes: ICON_SIZES, colours: ICON_COLOURS, enquiryRoute: 'bulk',
     published: '2026-09-21', updated: '2026-09-21',
@@ -147,7 +150,7 @@ export const products: Product[] = [
     sizes: [
       { label: '15cm, no box, set of 5', price: 100 }, { label: '15cm, boxed with ribbon, set of 5', price: 150 },
     ],
-    colours: ['Marble', 'White', 'Grey', 'Beige/Bone', 'Sky Blue', 'Wood', 'Pink', 'Silk Gold', 'Silk White', 'Silk Bronze', 'Silk Black', 'Black', 'Matte Gold', 'Mint Green', 'Light Green', 'Dark Blue', 'Chocolate', 'Red', 'Orange', 'Purple', 'Yellow'],
+    colours: MICHAEL_BONBONNIERE_COLOURS,
     finishes: ['Light Blue', 'Light Pink', 'Light Green', 'Grey', 'Dark Blue', 'Dark Green', 'White', 'Black'],
     enquiryRoute: 'bulk', bulkFirst: true, soldAsSet: true,
     reviews: ['google-fadia-awad'],
@@ -158,7 +161,7 @@ export const products: Product[] = [
   // of them matches STATUE_SIZES. Verified against the listings by scripts/etsy-sync.mjs.
   {
     slug: 'saint-peter-keeper-of-keys', title: 'Saint Peter “Keeper of Keys” statue', listingId: '1891536208',
-    summary: 'Saint Peter holding the keys of heaven, 3D printed in Sydney from 15cm to 30cm in fourteen finishes.',
+    summary: 'Saint Peter holding the keys of heaven, 3D printed in Sydney from 15cm to 30cm in a range of colours.',
     intro: 'Saint Peter shown holding the keys, the emblem of his role as gatekeeper. A steady, upright composition that reads well on a shelf or altar table, and one that suits a confirmation or a parish gift.',
     sizes: [{ label: '15cm', price: 25 }, { label: '20cm', price: 60 }, { label: '25cm', price: 85 }, { label: '30cm', price: 110 }],
     colours: STATUE_COLOURS, enquiryRoute: 'bulk',
@@ -167,15 +170,15 @@ export const products: Product[] = [
   {
     slug: 'saint-dominic-de-guzman-statue', title: 'Saint Dominic de Guzmán statue', listingId: '1887372006',
     summary: 'The founder of the Dominican Order in contemplation, printed to order from 15cm to 30cm.',
-    intro: 'Saint Dominic, founder of the Dominican Order, is shown in his friar’s habit. Choose a 15cm to 30cm size and one of fourteen finishes.',
+    intro: 'Saint Dominic, founder of the Dominican Order, is shown in his friar’s habit. Choose a 15cm to 30cm size and a colour.',
     sizes: [{ label: '15cm', price: 30 }, { label: '20cm', price: 55 }, { label: '25cm', price: 85 }, { label: '30cm', price: 105 }],
     colours: STATUE_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
   },
   {
     slug: 'immaculate-mary-statue', title: 'Immaculate Mary statue, defeating the serpent', listingId: '1901591525',
-    summary: 'The Virgin Mary standing victorious over the serpent, 15cm to 30cm in fourteen finishes.',
-    intro: 'The Virgin Mary stands over the serpent with hands open, in the Immaculate Conception tradition. Choose a 15cm to 30cm size and one of fourteen finishes.',
+    summary: 'The Virgin Mary standing victorious over the serpent, 15cm to 30cm in a range of colours.',
+    intro: 'The Virgin Mary stands over the serpent with hands open, in the Immaculate Conception tradition. Choose a 15cm to 30cm size and a colour.',
     sizes: [{ label: '15cm', price: 25 }, { label: '20cm', price: 60 }, { label: '25cm', price: 75 }, { label: '30cm', price: 95 }],
     colours: STATUE_COLOURS, enquiryRoute: 'bulk',
     updated: '2026-09-21',
@@ -211,7 +214,7 @@ export const products: Product[] = [
     summary: 'A 15cm Christ Pantocrator icon favour with optional base text and boxing. Sold in sets of five.',
     intro: 'A 15cm Christ Pantocrator icon made as a baptism or christening favour. Add a name to the base if you wish. Choose an individual clear box with a gold or silver base and ribbon, or order the set unboxed.',
     sizes: [{ label: '15cm, no box, set of 5', price: 100 }, { label: '15cm, boxed with ribbon, set of 5', price: 150 }],
-    colours: ['White', 'Beige', 'Gold', 'Silver', 'Pink', 'Blue'],
+    colours: BONBONNIERE_COLOURS,
     enquiryRoute: 'bulk', bulkFirst: true, soldAsSet: true,
     published: '2026-09-21', updated: '2026-09-26',
   },
@@ -220,14 +223,14 @@ export const products: Product[] = [
     summary: 'A 15cm Saint Elias icon favour for baptisms and name days. Sold in sets of five, boxed or unboxed.',
     intro: 'Saint Elias shown raising a sword in an arched icon. Add a name to the base if you wish. Each favour is 15cm high; choose individual clear boxes with a gold or silver base and ribbon, or order the set unboxed.',
     sizes: [{ label: '15cm, no box, set of 5', price: 100 }, { label: '15cm, boxed with ribbon, set of 5', price: 150 }],
-    colours: ['White', 'Beige', 'Gold', 'Silver', 'Pink', 'Blue', 'Marble', 'Gray'],
+    colours: BONBONNIERE_COLOURS,
     enquiryRoute: 'bulk', bulkFirst: true, soldAsSet: true,
     published: '2026-09-21', updated: '2026-09-26',
   },
   {
     slug: 'personalised-rose-sculpture', title: 'Personalised rose sculpture', listingId: '4579360791',
     summary: 'Long-stem rose favours with optional base text and individual gift boxes. Sets of five to fifty.',
-    intro: 'A long-stem rose with leaves on a round base. Add a name or short line if you wish, and choose individual clear boxes with ribbon or order the set unboxed.',
+    intro: 'A long-stem rose with leaves on a round base. Choose the rose and base colours separately. Add a name or short line if you wish, and choose individual clear boxes with ribbon or order the set unboxed.',
     sizes: [
       { label: 'Set of 5, no box', price: 30 }, { label: 'Set of 5, boxed', price: 55 },
       { label: 'Set of 10, no box', price: 60 }, { label: 'Set of 10, boxed', price: 110 },
@@ -250,10 +253,10 @@ export const products: Product[] = [
   },
   {
     slug: 'personalised-christmas-tree', title: 'Personalised Christmas tree place setting', listingId: '4579361528',
-    summary: 'A tiered Christmas tree with a name star topper, in Silk White, Mint Green or Silk Gold.',
-    intro: 'A tiered Christmas tree with a name star topper. The tiers twist apart. Choose Silk White, Mint Green or Silk Gold, and add a name if you wish.',
+    summary: 'A tiered Christmas tree with a name star topper in a choice of colours.',
+    intro: 'A tiered Christmas tree with a name star topper. The tiers twist apart. Choose a colour and add a name if you wish.',
     sizes: [{ label: 'One size', price: 40 }],
-    colours: ['Silk White', 'Mint Green', 'Silk Gold'],
+    colours: CORE_COLOURS,
     enquiryRoute: 'bulk', bulkFirst: true,
     published: '2026-09-21', updated: '2026-09-21',
   },

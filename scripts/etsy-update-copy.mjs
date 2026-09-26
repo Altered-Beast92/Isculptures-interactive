@@ -7,7 +7,7 @@ if (!process.argv.includes('--apply')) throw new Error('Pass --apply to update t
 const updates = {
   4579360791: {
     title: 'Personalised Rose Sculpture Favours | Optional Name Base | Sets of 5–50',
-    description: 'A long-stem rose with leaves on a round base. Order a set of 5, 10, 20 or 50 and choose the rose colour. Base text is optional; choose embossed/engraved lettering or a text colour if you add it.\n\nIndividual clear boxes add AU$5 per rose. For boxed orders, choose a gold or silver box base and ribbon colour. Made to order in Sydney.',
+    description: 'A long-stem rose with leaves on a round base. Order a set of 5, 10, 20 or 50 and choose the rose and base colours separately. Base text is optional; choose embossed/engraved lettering or a text colour if you add it.\n\nIndividual clear boxes add AU$5 per rose. For boxed orders, choose a gold or silver box base and ribbon colour. Made to order in Sydney.',
   },
   4579376840: {
     title: 'Christ Pantocrator Icon Bonbonniere | Personalised 15cm Baptism Favour, Set of 5',
@@ -19,15 +19,15 @@ const updates = {
   },
   4579363684: {
     title: 'Saint Arnold Janssen Statue | Catholic SVD Divine Word Gift, 15–30cm',
-    description: 'Saint Arnold Janssen, founder of the Society of the Divine Word, stands in his habit with hands folded. The base can carry a name, year or dedication. Choose one of fourteen finishes and a 15cm, 20cm, 25cm or 30cm size. Made to order in Sydney.',
+    description: 'Saint Arnold Janssen, founder of the Society of the Divine Word, stands in his habit with hands folded. The base can carry a name, year or dedication. Choose a colour and a 15cm, 20cm, 25cm or 30cm size. Made to order in Sydney.',
   },
   4579346739: {
     title: 'Saint Anthony of Padua Statue with Child Jesus | Personalised Base, 15–30cm',
-    description: 'Saint Anthony of Padua holds the child Jesus, with a lily and rosary. Add a name, year or dedication to the base if you wish. Choose one of fourteen finishes and a 15cm, 20cm, 25cm or 30cm size. Made to order in Sydney.',
+    description: 'Saint Anthony of Padua holds the child Jesus, with a lily and rosary. Add a name, year or dedication to the base if you wish. Choose a colour and a 15cm, 20cm, 25cm or 30cm size. Made to order in Sydney.',
   },
   4579361528: {
     title: 'Personalised Christmas Tree Place Setting | Name Star Topper',
-    description: 'A tiered Christmas tree with a star topper that can carry a name. The tiers twist apart. Choose Silk White, Mint Green or Silk Gold. Text is optional; choose embossed/engraved lettering or a text colour if you add it. Made to order in Sydney.',
+    description: 'A tiered Christmas tree with a star topper that can carry a name. The tiers twist apart. Choose a colour from the available finishes. Text is optional; choose embossed/engraved lettering or a text colour if you add it. Made to order in Sydney.',
   },
   4579344605: {
     title: 'Orthodox Cross Car Hanger | Budded Rear-View Mirror Charm',
@@ -35,39 +35,39 @@ const updates = {
   },
   1891536208: {
     title: 'Saint Peter Statue with Keys | Catholic Figure, 15–30cm',
-    description: 'Saint Peter stands holding the keys of heaven. Choose one of fourteen finishes and a 15cm, 20cm, 25cm or 30cm size. 3D printed and made to order in Sydney.',
+    description: 'Saint Peter stands holding the keys of heaven. Choose a colour and a 15cm, 20cm, 25cm or 30cm size. 3D printed and made to order in Sydney.',
   },
   1901591525: {
     title: 'Immaculate Mary Statue | Our Lady over the Serpent, 15–30cm',
-    description: 'The Virgin Mary stands over the serpent with hands open in this Immaculate Conception statue. Choose one of fourteen finishes and a 15cm, 20cm, 25cm or 30cm size. 3D printed and made to order in Sydney.',
+    description: 'The Virgin Mary stands over the serpent with hands open in this Immaculate Conception statue. Choose a colour and a 15cm, 20cm, 25cm or 30cm size. 3D printed and made to order in Sydney.',
   },
   1887372006: {
     title: 'Saint Dominic de Guzmán Statue | Dominican Catholic Figure, 15–30cm',
-    description: 'Saint Dominic de Guzmán, founder of the Dominican Order, is shown in his friar’s habit. Add a name, year or dedication to the base if you wish. Choose one of fourteen finishes and a 15cm, 20cm, 25cm or 30cm size. Made to order in Sydney.',
+    description: 'Saint Dominic de Guzmán, founder of the Dominican Order, is shown in his friar’s habit. Add a name, year or dedication to the base if you wish. Choose a colour and a 15cm, 20cm, 25cm or 30cm size. Made to order in Sydney.',
   },
   1893943073: {
     title: 'Saint Charbel Statue | Maronite Catholic Figure, 15–30cm',
-    description: 'Saint Charbel stands in prayer with hands clasped and head bowed, wearing his Maronite habit. Choose one of fourteen finishes and a 15cm, 20cm, 25cm or 30cm size. 3D printed and made to order in Sydney.',
+    description: 'Saint Charbel stands in prayer with hands clasped and head bowed, wearing his Maronite habit. Choose a colour and a 15cm, 20cm, 25cm or 30cm size. 3D printed and made to order in Sydney.',
   },
   1879775206: {
     title: 'Saint George and Dragon Icon | Arched Orthodox Relief, 15–25cm',
-    description: 'Saint George rides with his spear lowered toward the dragon in this arched relief icon. Choose one of twelve finishes and a 15cm, 20cm or 25cm size. 3D printed and made to order in Sydney.',
+    description: 'Saint George rides with his spear lowered toward the dragon in this arched relief icon. Choose a colour and a 15cm, 20cm or 25cm size. 3D printed and made to order in Sydney.',
   },
   1893943095: {
     title: 'Sacred Heart of Jesus Statue | Catholic Figure, 15–30cm',
-    description: 'The Sacred Heart of Jesus stands with arms open and the heart shown at the centre of the robe. Choose one of fourteen finishes and a 15cm, 20cm, 25cm or 30cm size. 3D printed and made to order in Sydney.',
+    description: 'The Sacred Heart of Jesus stands with arms open and the heart shown at the centre of the robe. Choose a colour and a 15cm, 20cm, 25cm or 30cm size. 3D printed and made to order in Sydney.',
   },
   1879771208: {
     title: 'Virgin Mary and Child Jesus Icon | Arched Theotokos Relief, 15–25cm',
-    description: 'The Virgin Mary holds the infant Jesus in an arched relief icon. Choose one of twelve finishes and a 15cm, 20cm or 25cm size. Made to order in Sydney; it shares its arch and sizes with the Christ Pantocrator icon.',
+    description: 'The Virgin Mary holds the infant Jesus in an arched relief icon. Choose a colour and a 15cm, 20cm or 25cm size. Made to order in Sydney.',
   },
   1879769792: {
     title: 'Saint Nicholas the Wonderworker Icon | Orthodox Relief, 15–25cm',
-    description: 'Saint Nicholas the Wonderworker is shown in blessing, vested as a bishop, in an arched relief icon. Choose one of twelve finishes and a 15cm, 20cm or 25cm size. 3D printed and made to order in Sydney.',
+    description: 'Saint Nicholas the Wonderworker is shown in blessing, vested as a bishop, in an arched relief icon. Choose a colour and a 15cm, 20cm or 25cm size. 3D printed and made to order in Sydney.',
   },
   1893949429: {
     title: 'Saint Michael the Archangel Icon | Arched Relief, 15–25cm',
-    description: 'Saint Michael the Archangel shown as protector in an arched relief icon. Choose one of twelve finishes and a 15cm, 20cm or 25cm size. 3D printed and made to order in Sydney.',
+    description: 'Saint Michael the Archangel shown as protector in an arched relief icon. Choose a colour and a 15cm, 20cm or 25cm size. 3D printed and made to order in Sydney.',
   },
   4311901365: {
     title: 'Personalised Christening Coasters, 10cm | Baptism Favour with Name & Date | Sets of 5–20',
