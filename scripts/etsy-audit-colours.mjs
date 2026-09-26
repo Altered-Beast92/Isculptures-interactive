@@ -20,9 +20,8 @@ for (const listing of listings) {
   const id = listing.listing_id;
   const inventory = await get(`/listings/${id}/inventory`);
   const colours = [...new Set(inventory.products.map(product => product.property_values.find(v => v.property_id === 200)?.values[0]).filter(Boolean))];
-  const normalized = colours.map(c => c === 'Gray' ? 'Grey' : c);
   const applicable = colours.length > 0 && !special.has(id);
-  const ordered = !applicable || core.every((colour, index) => normalized[index] === colour);
+  const ordered = !applicable || core.every((colour, index) => colours[index] === colour);
   if (!ordered) failures++;
   const description = listing.description ?? '';
   console.log(JSON.stringify({ id, title: listing.title, colours, ordered, staleCopy: /one of (?:twelve|fourteen|ten) finishes|Choose Silk White, Mint Green or Silk Gold/i.test(description), description }));
