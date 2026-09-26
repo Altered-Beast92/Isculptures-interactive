@@ -2,14 +2,14 @@
   "saint-charbel-statue": [
     {
       "src": "/products/saint-charbel-statue.webp",
-      "alt": "Saint Charbel “Revered” statue in white, standing with hands clasped",
+      "alt": "Saint Charbel statue in white, standing with hands clasped",
       "width": 1080,
       "height": 1329,
       "smallWidth": 640
     },
     {
       "src": "/products/saint-charbel-statue-2.webp",
-      "alt": "Saint Charbel “Revered” statue in white, standing with hands clasped",
+      "alt": "Saint Charbel statue in white, standing with hands clasped",
       "width": 1125,
       "height": 1500,
       "smallWidth": 600
@@ -288,6 +288,15 @@
       "width": 1080,
       "height": 712,
       "smallWidth": 640
+    }
+  ],
+  "saint-elias-icon-bonbonniere": [
+    {
+      "src": "/products/saint-elias-icon-bonbonniere.webp",
+      "alt": "White arched Saint Elias icon favour with an inscription on the base",
+      "width": 761,
+      "height": 974,
+      "smallWidth": 625
     }
   ]
 }

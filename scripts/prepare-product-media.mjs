@@ -6,7 +6,7 @@ import sharp from 'sharp';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const sources = {
-  'saint-charbel-statue': ['Saint Charbel “Revered” statue in white, standing with hands clasped', [
+  'saint-charbel-statue': ['Saint Charbel statue in white, standing with hands clasped', [
     '840503/6832152845/il_794xN.6832152845_5rdm', 'c44d6a/6783047012/il_794xN.6783047012_n1ew']],
   'jesus-christ-sacred-heart': ['Jesus Christ “Sacred Heart” statue with arms outstretched', [
     'bc612d/6784158058/il_794xN.6784158058_jfkt', '2f2672/6783050276/il_794xN.6783050276_eh8k']],
@@ -58,6 +58,8 @@ const sources = {
     'bd3da2/8553919004/il_794xN.8553919004_3c3v']],
   'pantocrator-icon-bonbonniere': ['A boxed Christ Pantocrator icon favour with a personalised name on the base and a white ribbon', [
     '17461c/8601807765/il_794xN.8601807765_97hg']],
+  'saint-elias-icon-bonbonniere': ['White arched Saint Elias icon favour with an inscription on the base', [
+    '13c0f4/8603573829/il_794xN.8603573829_knnf']],
   'personalised-rose-sculpture': ['Yellow rose sculptures on black bases cut with a personalised inscription', [
     '1d995b/8553946988/il_794xN.8553946988_6wi7']],
 };

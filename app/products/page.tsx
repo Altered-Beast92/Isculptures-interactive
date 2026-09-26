@@ -5,7 +5,7 @@ import Breadcrumbs from '../components/breadcrumbs';
 
 export const metadata = pageMetadata(
   'Statues, icons and bonbonniere',
-  'Ready-made 3D printed statues, religious icons and personalised bonbonniere from our Sydney studio. Buy a single piece, or order a batch of ten or more.',
+  'Shop 3D printed statues, religious icons and personalised bonbonniere made in Sydney. View current prices and options, or ask about a custom batch.',
   '/products',
 );
 
@@ -24,7 +24,7 @@ export default function ProductsPage() {
     <Breadcrumbs items={[{ name: 'Products', path: '/products' }]}/>
     <p className="section-tag">STATUES, ICONS &amp; BONBONNIERE</p>
     <h1>Pieces we make</h1>
-    <p className="document-lede">Designs we already print and can make again. Buy a single piece through our Etsy shop, or order a batch of ten or more with your own names, dates and colours.</p>
+    <p className="document-lede">Statues, icons and favours made in our Sydney studio. View sizes, colours and prices here, then buy on Etsy or ask us about a custom batch.</p>
 
     <div className="product-grid">{products.map(product => {
       const photo = media[product.slug as keyof typeof media][0];
@@ -40,8 +40,8 @@ export default function ProductsPage() {
     })}</div>
 
     <section className="product-enquiry">
-      <h2>Need a batch rather than one?</h2>
-      <p>Every piece here can be made in quantity, personalised with names or dates, and packaged for an event. Our minimum is 10 units. Tell us what you need and when you need it.</p>
+      <h2>Ordering for an event?</h2>
+      <p>For a custom batch of ten or more pieces, tell us which design you want, how many you need and the date of your event.</p>
       <div className="portfolio-actions">
         <a className="primary" href="/enquiry?route=bulk">Get a bulk quote ↗</a>
         <a href="/pages/bonbonniere-custom">Bonbonniere &amp; keepsakes →</a>

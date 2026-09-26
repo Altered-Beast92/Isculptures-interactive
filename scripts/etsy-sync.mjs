@@ -28,9 +28,7 @@ async function get(path) {
 /** Etsy prices are integer minor units plus a divisor, never a float. */
 const money = price => price.amount / price.divisor;
 
-/** The cheapest offering per size, which is what the site's size ladder records. A
- *  listing prices every size/colour combination separately, but colour does not change
- *  the price in this shop, so collapsing to the minimum per size is lossless here. */
+/** Collapse colour variants, but preserve size and boxing when each changes the price. */
 function ladder(inventory) {
   const priced = inventory.products.filter(product => product.offerings[0]?.price);
   // The size property is named inconsistently across this shop's listings: "Size",
@@ -48,8 +46,10 @@ function ladder(inventory) {
   for (const product of priced) {
     const size = product.property_values.find(sized)?.values?.[0]
       ?? product.property_values.map(value => value.values[0]).join(' / ');
+    const boxing = product.property_values.find(value => /^boxing$/i.test(value.property_name))?.values?.[0];
+    const option = boxing ? `${size}, ${boxing === 'Boxed' ? 'boxed' : 'no box'}` : size;
     const amount = money(product.offerings[0].price);
-    if (!sizes.has(size) || sizes.get(size) > amount) sizes.set(size, amount);
+    if (!sizes.has(option) || sizes.get(option) > amount) sizes.set(option, amount);
   }
   return [...sizes.entries()].map(([label, price]) => ({ label, price }));
 }

@@ -23,6 +23,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   const photos = media[slug as keyof typeof media];
   const { low, high } = priceRange(product);
+  const hasBoxing = product.sizes.some(size => size.label.includes('boxed'));
   const reviews = (product.reviews ?? []).flatMap(id => testimonials.filter(review => review.id === id));
   const rating = productRating(reviews);
   const updated = product.updated ?? CONTENT_DATES.site.updated;
@@ -67,12 +68,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <p className="section-tag">{product.bulkFirst ? 'FAVOURS & BONBONNIERE' : 'STATUES & ICONS'}</p>
         <h1>{product.title}</h1>
         <p className="document-lede">{product.intro}</p>
-        <p className="product-price">{aud(low)}{low !== high && <><span>{` – ${aud(high)}`}</span> <small>depending on size</small></>}</p>
+        <p className="product-price">{aud(low)}{low !== high && <><span>{` – ${aud(high)}`}</span> <small>{product.soldAsSet ? (hasBoxing ? 'depending on set and packaging' : 'depending on set size') : 'depending on size'}</small></>}</p>
         <div className="product-actions">
           {product.bulkFirst
             ? <>
                 <a className="primary" href={enquiry}>Order 10+ for your event <span aria-hidden="true">↗</span></a>
-                <a className="secondary" href={buy} target="_blank" rel="noopener">Buy a single set on Etsy ↗</a>
+                <a className="secondary" href={buy} target="_blank" rel="noopener">Buy on Etsy ↗</a>
               </>
             : <>
                 <a className="primary" href={buy} target="_blank" rel="noopener">Buy on Etsy <span aria-hidden="true">↗</span></a>
@@ -91,16 +92,16 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         {/* A piece made in one size only gets a plain price line: a two-column table
             with a single row reads as though options are missing. */}
         {product.sizes.length > 1 ? <>
-          <h2>Sizes and prices</h2>
+          <h2>{product.soldAsSet ? 'Options and set prices' : 'Sizes and prices'}</h2>
           <table className="product-sizes">
-            <thead><tr><th scope="col">Size</th><th scope="col">Price</th></tr></thead>
+            <thead><tr><th scope="col">{product.soldAsSet ? 'Option' : 'Size'}</th><th scope="col">Price</th></tr></thead>
             <tbody>{product.sizes.map(size => <tr key={size.label}><th scope="row">{size.label}</th><td>{aud(size.price)}</td></tr>)}</tbody>
           </table>
         </> : <>
           <h2>Price</h2>
           <p className="product-single-price">{aud(product.sizes[0].price)} <small>{product.sizes[0].label}</small></p>
         </>}
-        <p className="product-note">Prices are per piece as listed on Etsy. Batches of ten or more are quoted separately.</p>
+        <p className="product-note">Prices are per {product.soldAsSet ? 'set' : 'piece'} as listed on Etsy. For a custom batch of ten or more pieces, ask us for a quote.</p>
       </div>
       <div>
         <h2>Finishes</h2>
