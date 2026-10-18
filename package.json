@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && node scripts/build-worker.mjs",
-    "build:web": "node scripts/sync-redirects.mjs --check && next build && node scripts/check-seo.mjs",
+    "build:web": "node scripts/sync-redirects.mjs --check && node scripts/check-guides.mjs && next build && node scripts/check-seo.mjs",
     "build:worker": "wrangler deploy --dry-run --outdir dist/enquiry-worker",
     "deploy:worker": "wrangler deploy",
     "dev:worker": "wrangler dev",
@@ -14,7 +14,8 @@
     "enquiries": "node scripts/enquiries.mjs",
     "etsy:auth": "node scripts/etsy-auth.mjs",
     "etsy:refresh": "node scripts/etsy-auth.mjs --refresh",
-    "check:seo": "node scripts/check-seo.mjs"
+    "check:seo": "node scripts/check-seo.mjs",
+    "check:guides": "node scripts/check-guides.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.8",

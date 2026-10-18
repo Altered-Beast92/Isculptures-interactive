@@ -1,8 +1,20 @@
+/** A real studio photo for the guide's hero: `work` keys live in content/work-media.json,
+ *  `product` keys (product slugs) in content/product-media.json, `index` picks one of a product's photos. */
+export type GuideHero = { source: 'work' | 'product'; key: string; index?: number };
 export type Guide = {
   slug: string; title: string; summary: string; category: string;
   published?: string; updated?: string;
   image: string; project: string; service: string; serviceLabel: string; enquiryRoute?: string;
-  sections: { id: string; title: string; paragraphs: string[]; points?: string[] }[];
+  /** Legacy guides render from sections. A guide with a body in app/guides/posts/ omits them. */
+  sections?: { id: string; title: string; paragraphs: string[]; points?: string[] }[];
+  /** Whole minutes. Computed from the word count (about 200 words a minute) for legacy guides. */
+  readMinutes?: number;
+  /** Three or four lines that restate what the body says, never new claims. */
+  takeaways?: string[];
+  /** Slugs from content/products.ts shown as "Pieces in this guide". */
+  products?: string[];
+  /** Hero photo. Falls back to the `image` key in content/work-media.json. */
+  hero?: GuideHero;
 };
 const occasionGuides: Guide[] = [
   {
