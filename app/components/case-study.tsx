@@ -38,7 +38,7 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
       <h1>{project.title}</h1>
       <p className="study-lede">{project.summary}</p>
       <a className="primary" href={enquiryUrl}>Ask about something similar ↗</a>
-      <p className="study-order-note">The minimum order is 10 units. We’ll confirm the design, finish and timing in your quote.</p>
+      <p className="study-order-note">We’ll confirm the design, finish and timing in your quote.</p>
       <MockupNote/>
       </div>
       {lead

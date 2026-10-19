@@ -72,12 +72,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="product-actions">
           {product.bulkFirst
             ? <>
-                <a className="primary" href={enquiry}>Order 10+ for your event <span aria-hidden="true">↗</span></a>
+                <a className="primary" href={enquiry}>Order for your event <span aria-hidden="true">↗</span></a>
                 <a className="secondary" href={buy} target="_blank" rel="noopener">Buy on Etsy ↗</a>
               </>
             : <>
                 <a className="primary" href={buy} target="_blank" rel="noopener">Buy on Etsy <span aria-hidden="true">↗</span></a>
-                <a className="secondary" href={enquiry}>Order 10+ for your event or parish ↗</a>
+                <a className="secondary" href={enquiry}>Bulk order for an event or parish ↗</a>
               </>}
         </div>
         <p className="product-note">Printed to order in our Sydney studio and delivered Australia-wide. For a parish, school or event order, tell us your numbers and we will quote the whole run.</p>
@@ -101,7 +101,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <h2>Price</h2>
           <p className="product-single-price">{aud(product.sizes[0].price)} <small>{product.sizes[0].label}</small></p>
         </>}
-        <p className="product-note">Prices are per {product.soldAsSet ? 'set' : 'piece'} as listed on Etsy. For a custom batch of ten or more pieces, ask us for a quote.</p>
+        <p className="product-note">Prices are per {product.soldAsSet ? 'set' : 'piece'} as listed on Etsy. For a custom batch, ask us for a quote.</p>
       </div>
       <div>
         <h2>Finishes</h2>
