@@ -1,9 +1,10 @@
 import PrinterBackdrop from './components/printer-backdrop';
+import GuideGrid from './components/guide-grid';
 import MockupNote from './components/mockup-note';
-import { guides } from '../content/guides';
 import { featuredTestimonials } from '../content/testimonials';
 import { products, getProduct, priceRange, aud } from '../content/products';
 import { reviewedBusiness, aggregateRating } from '../lib/reviews';
+import { guidesByUpdated } from '../lib/guides';
 import { SOURCE_LABELS } from '../content/types';
 import media from '../content/work-media.json';
 import productMedia from '../content/product-media.json';
@@ -23,8 +24,6 @@ const eventPhotos = [
 // The five pieces with published reviews, most reviewed first. Each card opens the piece's
 // own page, whose Etsy button is tracked, rather than sending the visitor straight to Etsy.
 const bestSellers = ['saint-michael-statue', 'jesus-christ-sacred-heart', 'saint-charbel-statue', 'saint-george-the-victorious', 'st-gabriel-icon-bonbonniere'].map(slug => getProduct(slug)!);
-// The guides worth reading before ordering, linked beside the answers they expand on.
-const reading = [guides[0], guides[2], guides[3]];
 // Rendered into the page and into FAQPage data from one source, so the answer a visitor
 // reads and the answer a search or AI engine quotes can never drift apart.
 const faqs: { q: string; a: string; more?: { href: string; label: string } }[] = [
@@ -74,6 +73,8 @@ export default function Home() {
     <section className="floating-process block-dark" id="process"><Chapter number="05" label="HOW IT WORKS"/><h2>How ordering <br/><em>works.</em></h2><ol className="studio-process step-row"><li><span>01</span><h3>Send your brief</h3><p>What it’s for, how many you need and your deadline. You don’t need a finished design.</p></li><li><span>02</span><h3>Get your quote</h3><p>We agree the price and the timing with you before anything is made.</p></li><li><span>03</span><h3>Approve and print</h3><p>Once you’ve approved the design, we start printing.</p></li></ol><aside className="mockup-offer"><span className="mockup-flag">FREE</span><div><h3>A design mockup with your quote</h3><p>Send us your idea and we’ll draw it up alongside the price. No charge, and no obligation to order.</p></div><a className="studio-button" href="/enquiry?route=design">Request a mockup <span>↗</span></a></aside></section>
     <section className="story-stage block-solid" id="printing"><Chapter number="06" label="PARTS & 3D FILES"/><div className="story-columns"><h2>Have a 3D file? <br/><em>We can print it.</em></h2><article className="chapter-copy"><div className="file-formats" aria-label="3D model formats">.STL <span>/</span> .OBJ <span>/</span> .3MF</div><p>Parts, prototypes, jigs and custom objects. Send us the model with its dimensions and what it’s for, and we’ll work out the best way to print it.</p><a className="studio-button" href="/enquiry?route=file">Send us your file <span>↗</span></a></article></div></section>
     <section className="story-stage block-ivory" id="statues"><Chapter number="07" label="STATUES & ICONS"/><div className="story-section-heading"><div><h2>Statues and icons, <br/><em>one at a time.</em></h2><p className="heading-note">Single pieces are sold through our Etsy shop. Each page shows the sizes, colours and current prices.</p></div><a className="studio-text-link" href="/products">See all {products.length} pieces ↗</a></div><div className="piece-rail">{bestSellers.map(product => { const photo = productMedia[product.slug as keyof typeof productMedia][0]; const { low } = priceRange(product); return <a key={product.slug} href={'/products/' + product.slug}><img src={photo.src.replace('.webp', '-small.webp')} alt={photo.alt} width={photo.smallWidth} height={Math.round(photo.height * photo.smallWidth / photo.width)} loading="lazy"/><b>{product.title}</b><span>from {aud(low)}{product.soldAsSet ? ' a set' : ''}</span></a>; })}</div></section>
-    <section className="story-stage faq-stage block-solid" id="faq"><Chapter number="08" label="FAQ"/><div className="story-columns"><div><h2>Frequently asked <br/><em>questions.</em></h2><ul className="guide-links">{reading.map(guide => <li key={guide.slug}><a href={'/guides/' + guide.slug}>{guide.title} <span aria-hidden="true">↗</span></a></li>)}<li><a href="/guides">All our guides <span aria-hidden="true">↗</span></a></li></ul></div><div className="faq-list">{faqs.map(item => <details key={item.q}><summary>{item.q}</summary><p>{item.a}{item.more && <> <a href={item.more.href}>{item.more.label} →</a></>}</p></details>)}</div></div></section>
+    <section className="story-stage faq-stage block-solid" id="faq"><Chapter number="08" label="FAQ"/><div className="story-columns"><div><h2>Frequently asked <br/><em>questions.</em></h2></div><div className="faq-list">{faqs.map(item => <details key={item.q}><summary>{item.q}</summary><p>{item.a}{item.more && <> <a href={item.more.href}>{item.more.label} →</a></>}</p></details>)}</div></div></section>
+    {/* The three newest posts, so each new one gets a homepage link the day it goes live. */}
+    <section className="story-stage block-ivory latest-posts" id="blog"><Chapter number="09" label="FROM THE BLOG"/><div className="story-section-heading"><h2>From the <br/><em>blog.</em></h2><a className="studio-text-link" href="/guides">All posts ↗</a></div><GuideGrid items={guidesByUpdated().slice(0, 3)} photos/></section>
   </main>;
 }

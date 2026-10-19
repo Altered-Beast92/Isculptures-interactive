@@ -15,7 +15,7 @@ const groups = [
   { title: 'Studio', links: [
     ['Statues & Icons', '/products'],
     ['Our Work', '/work'],
-    ['Ordering Guides', '/guides'],
+    ['Blog', '/guides'],
     ['About Us', '/pages/about'],
     ['Get a Quote', '/enquiry'],
   ] },

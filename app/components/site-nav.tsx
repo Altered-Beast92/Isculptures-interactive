@@ -80,7 +80,7 @@ export default function SiteNav() {
         </div>;
       })}
       <a href="/products" aria-current={pathname.startsWith('/products') ? 'page' : undefined}>Statues &amp; icons</a>
-      <a href="/work" aria-current={pathname.startsWith('/work') ? 'page' : undefined}>Our work</a><a href="/guides" aria-current={pathname.startsWith('/guides') ? 'page' : undefined}>Guides</a>
+      <a href="/work" aria-current={pathname.startsWith('/work') ? 'page' : undefined}>Our work</a><a href="/guides" aria-current={pathname.startsWith('/guides') ? 'page' : undefined}>Blog</a>
       <a href="/enquiry" className="nav-cta">Get a quote ↗</a>
     </div>
   </nav></header>;
