@@ -390,3 +390,4 @@ body .site-header .site-links .nav-cta:hover{
 .block-ivory .guide-card .section-tag,.block-ivory .guide-card .guide-read{color:#705831}
 .block-ivory .guide-card-meta{color:#6f6656}
 @media(max-width:900px){.latest-posts .guide-grid{grid-template-columns:1fr}}
+.heading-note a{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:4px}.heading-note a:hover{color:var(--accent)}

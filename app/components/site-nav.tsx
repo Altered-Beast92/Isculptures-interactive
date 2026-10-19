@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { track } from '../../lib/analytics';
 import BrandLogo from './brand-logo';
+import { etsyShopLink } from '../../lib/site';
 // Five service pages fold into two short lists, so the whole menu fits on a laptop
 // screen instead of collapsing to a button below 1400px.
 const groups = [
@@ -49,6 +50,10 @@ export default function SiteNav() {
         const slug = new URLSearchParams(href.split('?')[1] || '').get('utm_content') || 'unknown';
         track('etsy_click', slug);
       }
+      // Shop-front links are counted by where they sit: header, footer or home.
+      if (/^https:\/\/www\.etsy\.com\/au\/shop\//.test(href)) {
+        track('etsy_click', 'shop-' + (new URLSearchParams(href.split('?')[1] || '').get('utm_campaign') || 'unknown'));
+      }
     };
     document.addEventListener('click', outboundClick);
     return () => document.removeEventListener('click', outboundClick);
@@ -80,6 +85,7 @@ export default function SiteNav() {
         </div>;
       })}
       <a href="/products" aria-current={pathname.startsWith('/products') ? 'page' : undefined}>Statues &amp; icons</a>
+      <a href={etsyShopLink('header')} target="_blank" rel="noopener">Shop<span className="visually-hidden"> on Etsy (opens in a new tab)</span> <span aria-hidden="true">↗</span></a>
       <a href="/work" aria-current={pathname.startsWith('/work') ? 'page' : undefined}>Our work</a><a href="/guides" aria-current={pathname.startsWith('/guides') ? 'page' : undefined}>Blog</a>
       <a href="/enquiry" className="nav-cta">Get a quote ↗</a>
     </div>
