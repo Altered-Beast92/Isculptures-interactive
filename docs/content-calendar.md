@@ -13,7 +13,7 @@ a guide ends (see "Buyer and call to action" in `docs/guide-drafting.md`).
 
 | Status | Month | Type | Buyer | Working title | Search intent | Link to |
 | ------ | ----- | ---- | ----- | ------------- | ------------- | ------- |
-| planned | Oct 2026 | New | Business | Corporate Christmas gifts you can 3D print with your logo | Commercial, business | /pages/events-custom-gifts, /pages/wholesale, /guides/bulk-3d-printing-quote-checklist |
+| drafted (PR #29) | Oct 2026 | New | Business | Corporate Christmas gifts you can 3D print with your logo | Commercial, business | /pages/events-custom-gifts, /pages/wholesale, /guides/bulk-3d-printing-quote-checklist |
 | planned | Nov 2026 | New | Events | Personalised Christmas place settings for venues, dinners and events | Seasonal, commercial | /products/personalised-christmas-tree, /guides/ordering-custom-event-favours, /pages/events-custom-gifts |
 | planned | Nov 2026 | Refresh | Events | personalised-baby-shower-keepsakes: 1,200+ words, product picks and photos (41 old Shopify URLs redirect here) | Commercial | /products/first-tooth-favour-tag, /products/personalised-rose-sculpture, /pages/bonbonniere-custom |
 | planned | Dec 2026 | New | Trade | Wholesale saint statues and icons for church shops and religious stores | Commercial, trade | /pages/wholesale, /pages/ongoing-supply, /products, /products/saint-michael-statue, /products/saint-charbel-statue, /products/saint-joseph-icon |
