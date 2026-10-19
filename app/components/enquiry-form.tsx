@@ -266,7 +266,7 @@ export default function EnquiryForm() {
       <h2 id="category-heading" ref={categoryHeading} tabIndex={-1}>What do you need made?</h2><p className="route-help">Pick the closest option. You can explain the rest in the form.</p>
       <div className="route-grid">{categories.map(category => <button key={category.route} type="button" className="route-tab" aria-controls="project-enquiry-form" disabled={state === 'sending'} onClick={() => { setRoute(category.route); setHasSelected(true); setStep(0); setErrors({}); setMessage(''); }}>
         <span className="route-tab-top"><span className="route-icon" aria-hidden="true"><RouteIcon route={category.route}/></span><span className="route-arrow" aria-hidden="true">↗</span></span>
-        <span className="route-title">{category.title}</span><span className="route-description">{category.description}</span><span className="route-foot">{category.flag && <span className="route-flag">{category.flag}</span>}<span className="route-minimum">BULK ORDERS / 10+ UNITS</span></span>
+        <span className="route-title">{category.title}</span><span className="route-description">{category.description}</span><span className="route-foot">{category.flag && <span className="route-flag">{category.flag}</span>}</span>
       </button>)}</div>
       <p className="route-footnote">You send a brief → We review it → You get a quote</p>
     </section>

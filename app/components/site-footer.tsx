@@ -13,6 +13,7 @@ const groups = [
     ['Repeat Orders & Supply', '/pages/ongoing-supply'],
   ] },
   { title: 'Studio', links: [
+    ['Statues & Icons', '/products'],
     ['Our Work', '/work'],
     ['Ordering Guides', '/guides'],
     ['About Us', '/pages/about'],
@@ -29,10 +30,12 @@ const groups = [
 export default function SiteFooter() {
   const pathname = usePathname();
   const onEnquiry = pathname === '/enquiry';
-  return <footer className={'site-footer story-footer' + (onEnquiry ? ' enquiry-page-footer' : '')}>
+  // Service and about pages already end on their own quote button just above the footer.
+  const endsOnQuote = onEnquiry || pathname.startsWith('/pages/');
+  return <footer className={'site-footer story-footer' + (onEnquiry ? ' enquiry-page-footer' : endsOnQuote ? ' no-footer-cta' : '')}>
     {/* The enquiry page is already the call to action, so it keeps the links without repeating it.
         The tagline is a paragraph, not a heading, so it doesn't repeat in every page's outline. */}
-    {!onEnquiry && <><span>GET IN TOUCH</span><p className="footer-heading">Have something <br/>in mind?</p>
+    {!endsOnQuote && <><span>GET IN TOUCH</span><p className="footer-heading">Have something <br/>in mind?</p>
     <a className="primary" href="/enquiry">Get a quote <span>↗</span></a></>}
     <div className="footer-grid">
       <div className="footer-brand">
