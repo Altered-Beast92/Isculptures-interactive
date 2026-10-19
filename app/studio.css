@@ -1,6 +1,8 @@
 /* Impeccable Sculptures: a continuous 3D studio, warm chapter breaks and open typography. */
 .sculpture-story,.enquiry-canvas,.story-footer{font-family:var(--font-manrope),Arial,sans-serif}
-.sculpture-story{--accent:#c19854;--chapter-ink:#ede6d8;--chapter-muted:#c2c8bc;color:var(--chapter-ink)}
+/* --rule is the hairline each surface draws with, so a block can move between the dark
+   printing scene and the warm chapters without its dividers being rewritten. */
+.sculpture-story{--accent:#c19854;--chapter-ink:#ede6d8;--chapter-muted:#c2c8bc;--rule:#ffffff25;color:var(--chapter-ink)}
 .sculpture-story h1,.sculpture-story h2,.sculpture-story h3{font-family:var(--font-manrope),Arial,sans-serif;font-weight:500}
 .sculpture-story h1{font-weight:600}
 .sculpture-story h2{font-size:clamp(40px,4.5vw,68px);line-height:1.04;letter-spacing:-.055em;margin:0;text-transform:none;font-weight:500}
@@ -8,8 +10,10 @@
 .sculpture-story .chapter-marker{margin-bottom:38px;gap:12px;font:12px/1.5 var(--font-mono),monospace;letter-spacing:.12em;color:var(--chapter-muted)}
 .sculpture-story .chapter-marker>span:first-child{display:inline;width:auto;height:auto;border:0;border-radius:0;background:none;letter-spacing:.08em;color:var(--accent)}
 .cinematic-home.sculpture-story .story-stage,.cinematic-home.sculpture-story .floating-work,.cinematic-home.sculpture-story .floating-process,.cinematic-home.sculpture-story .floating-guides{padding:70px 6vw;min-height:0;display:block}
-.sculpture-story .block-solid{--chapter-ink:#243128;--chapter-muted:#4b5545;--accent:#705831;background:#e6d4b1;color:var(--chapter-ink);border:0}
-.sculpture-story .block-glass{background:linear-gradient(110deg,#101b15ba,#101b1555);border-block:1px solid #ffffff13}
+.sculpture-story .block-solid{--chapter-ink:#243128;--chapter-muted:#4b5545;--accent:#705831;--rule:#24312840;background:#e6d4b1;color:var(--chapter-ink);border:0}
+/* The glass carries copy on its right half now, so it keeps a floor of darkness there
+   rather than fading out over the bright print bed. */
+.sculpture-story .block-glass{background:linear-gradient(110deg,#101b15c2,#101b157a);border-block:1px solid #ffffff13}
 .sculpture-story .world:after{background:linear-gradient(90deg,#091510c7,transparent 73%),linear-gradient(0deg,#0c17105e,transparent 50%)}
 body:has(.sculpture-story) .site-header{font-family:var(--font-manrope),Arial,sans-serif}
 body:has(.sculpture-story) .site-header .logo{font-size:19px;letter-spacing:-.07em}
@@ -23,8 +27,8 @@ body:has(.sculpture-story) .site-header .nav-cta{font-size:14px;background:trans
 .story-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8vw;align-items:start}
 .chapter-copy{padding:24px 28px;background:#14241a75;backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);border:1px solid #ffffff20;border-radius:3px;font-size:17px;line-height:1.8;color:var(--chapter-muted)}
 .chapter-copy>p{margin:0 0 20px}.chapter-copy .studio-button{margin-top:12px}.chapter-copy .studio-text-link{margin-top:18px}
-.batch-detail{display:flex;align-items:center;gap:26px;border-block:1px solid #ffffff25;margin:30px 0 12px;padding:24px 0}
-.batch-detail>b{font-size:83px;line-height:1;letter-spacing:-.09em;font-weight:300;color:#e6d4b1}.batch-detail>b span{font-size:37px;vertical-align:top}.batch-detail>p{font-size:14px;line-height:1.7;margin:0;max-width:280px}
+/* On a warm chapter the same panel is tinted paper rather than smoked glass. */
+.block-solid .chapter-copy{background:#fffaf033;border-color:#24312826;backdrop-filter:none;-webkit-backdrop-filter:none}
 .story-section-heading{display:flex;justify-content:space-between;align-items:end;gap:35px;margin-bottom:32px}.story-section-heading>a{flex-shrink:0}
 .studio-gallery{display:grid;grid-template-columns:.82fr 1.18fr;grid-template-rows:repeat(2,minmax(0,1fr));gap:20px;height:clamp(570px,53vw,810px)}
 .studio-project{position:relative;overflow:hidden;min-width:0;border-radius:4px;isolation:isolate;background:#17231a;color:#fff5df}
@@ -37,15 +41,19 @@ body:has(.sculpture-story) .site-header .nav-cta{font-size:14px;background:trans
 .sculpture-story .studio-project h3{font-size:clamp(24px,2.4vw,36px);line-height:1.1;letter-spacing:-.04em;text-transform:none;color:#fff5df;margin:10px 0 0}
 .project-caption>b{position:absolute;right:0;bottom:0;font-size:28px;font-weight:400}
 .studio-social{text-align:right;font-size:13px;margin:20px 0 0;color:var(--chapter-muted)}.studio-social a{text-decoration:underline;text-underline-offset:5px}
-.studio-notes{margin:25px 0 0}.studio-notes>div{padding:17px 0;border-top:1px solid #ffffff25}.studio-notes dt{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#d4c09a}.studio-notes dd{font-size:15px;line-height:1.6;margin:7px 0 0}
 .heading-note{font-size:16px;line-height:1.8;color:var(--chapter-muted);margin:26px 0 0;max-width:400px}
-.supply-ledger>div{display:grid;grid-template-columns:32px 1fr;gap:10px 16px;border-top:1px solid #24312855;padding:22px 0}
-.supply-ledger>div>span{font-size:12px;color:#705831;padding-top:5px}.sculpture-story .supply-ledger h3{margin:0;font-size:30px;line-height:1.15;letter-spacing:-.04em}.supply-ledger p{grid-column:2;font-size:15px;line-height:1.75;margin:0;color:#4b5545}.supply-ledger>.studio-button{margin-top:14px}
-.file-formats{font-size:clamp(25px,2.7vw,43px);letter-spacing:-.05em;line-height:1.3;color:#e6d4b1;border-bottom:1px solid #ffffff30;padding-bottom:22px;margin-bottom:22px}.file-formats>span{color:#c19854;font-size:.7em}
+.supply-ledger>div{display:grid;grid-template-columns:32px 1fr;gap:10px 16px;border-top:1px solid var(--rule);padding:22px 0}
+.supply-ledger>div>span{font-size:12px;color:var(--accent);padding-top:5px}.sculpture-story .supply-ledger h3{margin:0;font-size:30px;line-height:1.15;letter-spacing:-.04em}.supply-ledger p{grid-column:2;font-size:15px;line-height:1.75;margin:0;max-width:460px;color:var(--chapter-muted)}.supply-ledger>.studio-button{margin-top:14px}
+.file-formats{font-size:clamp(25px,2.7vw,43px);letter-spacing:-.05em;line-height:1.3;color:var(--chapter-ink);border-bottom:1px solid var(--rule);padding-bottom:22px;margin-bottom:22px}.file-formats>span{color:var(--accent);font-size:.7em}
 .process-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:7vw}
-.studio-process{list-style:none;margin:0;padding:0}.studio-process li{display:grid;grid-template-columns:38px 1fr;gap:10px 20px;padding:24px 0;border-top:1px solid #24312845}.studio-process li>span{font-size:26px;font-weight:300;color:#705831;line-height:1}.studio-process h3{margin:0;font-size:30px;letter-spacing:-.04em;line-height:1}.studio-process p{grid-column:2;margin:0;font-size:16px;color:#4b5545;line-height:1.7}
-.sculpture-story .floating-guides .guide-grid{margin:0;gap:30px}.sculpture-story .floating-guides .guide-card{background:#14241a75;backdrop-filter:blur(13px);border:0;border-top:1px solid #ffffff55;border-radius:0;padding:26px;box-shadow:none}
-.sculpture-story .guide-card .section-tag{font-size:10px;letter-spacing:.15em;color:#c9b48a}.sculpture-story .guide-card h3{font:400 30px/1.2 var(--font-manrope),Arial,sans-serif;letter-spacing:-.04em;margin:18px 0}.sculpture-story .guide-card p{font-size:16px;line-height:1.8;color:#c2c8bc}
+.studio-process{list-style:none;margin:0;padding:0}.studio-process li{display:grid;grid-template-columns:38px 1fr;gap:10px 20px;padding:24px 0;border-top:1px solid var(--rule)}.studio-process li>span{font-size:26px;font-weight:300;color:var(--accent);line-height:1}.studio-process h3{margin:0;font-size:30px;letter-spacing:-.04em;line-height:1}.studio-process p{grid-column:2;margin:0;font-size:16px;color:var(--chapter-muted);line-height:1.7}
+/* The three steps run across the page rather than down it, so ordering reads as a short
+   sequence instead of another stacked list. */
+.studio-process.step-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(24px,3vw,56px);margin-top:34px}
+.step-row li{grid-template-columns:1fr;gap:14px;padding:22px 0 0;align-content:start}
+.step-row li>span{font-size:13px;letter-spacing:.14em;font-weight:400;font-family:var(--font-mono),monospace}
+.sculpture-story .step-row h3{font-size:clamp(23px,2vw,29px)}
+.step-row p{grid-column:1;font-size:16px}
 .sculpture-story .faq-list details{border-color:#24312840;padding:22px 0}.sculpture-story .faq-list details:first-child{padding-top:0}.sculpture-story .faq-list summary{font-weight:500;font-size:17px}.sculpture-story .faq-list p{font-size:16px;line-height:1.8;color:#4b5545}
 .testimonial-stage .story-section-heading>p{max-width:340px;margin:0;font-size:16px;line-height:1.7;color:var(--chapter-muted)}
 .testimonial-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
@@ -56,7 +64,7 @@ body:has(.sculpture-story) .site-header .nav-cta{font-size:14px;background:trans
 .testimonial-card figcaption strong{font-size:15px;color:#ede6d8}.testimonial-card figcaption small{margin-top:8px;padding:4px 8px;border:1px solid #ffffff30;border-radius:999px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#d9ba7d}
 @media(min-width:1800px){.sculpture-story h2{font-size:80px}}
 @media(max-width:1100px){.story-columns{gap:40px}.studio-gallery{height:640px;grid-template-columns:1fr 1fr}.process-layout{gap:35px}.chapter-copy{padding:23px}.sculpture-story h2{font-size:48px}.testimonial-grid{grid-template-columns:1fr 1fr}.testimonial-card:last-child{grid-column:1/-1}}
-@media(max-width:760px){.cinematic-home.sculpture-story .story-stage,.cinematic-home.sculpture-story .floating-work,.cinematic-home.sculpture-story .floating-process,.cinematic-home.sculpture-story .floating-guides{padding:44px 6vw}.story-columns,.process-layout{grid-template-columns:1fr;gap:30px}.sculpture-story h2{font-size:clamp(37px,9vw,54px)}.sculpture-story .chapter-marker{margin-bottom:25px}.story-section-heading{align-items:start;flex-direction:column;gap:15px}.studio-gallery{display:flex;height:auto;flex-direction:column;gap:18px}.studio-project{height:330px}.studio-project:first-child{height:500px}.studio-project:first-child img{object-position:50% 15%}.studio-social{text-align:left}.batch-detail>b{font-size:65px}.chapter-copy{font-size:16px}.sculpture-story .floating-guides .guide-grid{grid-template-columns:1fr}.sculpture-story .guide-card h3{font-size:27px}.studio-process h3,.sculpture-story .supply-ledger h3{font-size:27px}.heading-note{margin-top:20px}.sculpture-story .faq-list summary{font-size:16px}}
+@media(max-width:760px){.cinematic-home.sculpture-story .story-stage,.cinematic-home.sculpture-story .floating-work,.cinematic-home.sculpture-story .floating-process,.cinematic-home.sculpture-story .floating-guides{padding:44px 6vw}.story-columns,.process-layout{grid-template-columns:1fr;gap:30px}.sculpture-story h2{font-size:clamp(37px,9vw,54px)}.sculpture-story .chapter-marker{margin-bottom:25px}.story-section-heading{align-items:start;flex-direction:column;gap:15px}.studio-gallery{display:flex;height:auto;flex-direction:column;gap:18px}.studio-project{height:330px}.studio-project:first-child{height:500px}.studio-project:first-child img{object-position:50% 15%}.studio-social{text-align:left}.chapter-copy{font-size:16px}.studio-process h3,.sculpture-story .supply-ledger h3{font-size:27px}.studio-process.step-row{grid-template-columns:1fr;gap:0}.heading-note{margin-top:20px}.sculpture-story .faq-list summary{font-size:16px}}
 @media(max-width:760px){.testimonial-grid{grid-template-columns:1fr}.testimonial-card:last-child{grid-column:auto}.testimonial-card{padding:24px}.testimonial-card blockquote{font-size:21px;margin:20px 0 26px}}
 @media(prefers-reduced-motion:reduce){.studio-project img,.studio-button{transition:none}.studio-project:hover img,.studio-button:hover{transform:none}}
 /* Enquiry: the same studio typography, on a warm paper surface. */
@@ -135,7 +143,7 @@ body:has(.sculpture-story) .site-footer.story-footer,.site-footer.story-footer{b
 
 @media(max-width:760px){.enquiry-masthead,.enquiry-introduction>p,.route-help{display:none}.enquiry-introduction{margin-bottom:22px}.enquiry-introduction h1{margin-bottom:0}.route-picker h2{margin-bottom:15px}.enquiry-canvas{padding-top:25px}.route-title{font-size:22px}}
 
-.cinematic-home.sculpture-story :is(#b2b,#events,#supply,#printing,#faq) h2{grid-row:auto;grid-column:auto;margin:0;font-size:clamp(40px,4.5vw,68px)}
+.cinematic-home.sculpture-story :is(#b2b,#printing,#faq) h2{grid-row:auto;grid-column:auto;margin:0;font-size:clamp(40px,4.5vw,68px)}
 .sculpture-story .chapter-copy .studio-text-link{display:flex;width:fit-content}
 .brand-logo{display:inline-flex;flex-shrink:0;width:380px;max-width:100%;padding:0;background:transparent;line-height:0}
 .brand-logo img{display:block;width:100%;height:auto}
@@ -145,7 +153,7 @@ body:has(.sculpture-story) .site-footer.story-footer,.site-footer.story-footer{b
 .story-footer .footer-grid>div:first-child>a.brand-logo{display:inline-flex;margin:0;width:340px}
 .project-yellow-rose-sculptures img{object-position:50% 48%}
 @media(max-width:760px){.site-header nav,body:has(.cinematic-home) .site-header nav{height:96px}.brand-logo{width:300px}.site-header nav{gap:12px}.site-header .menu-toggle{padding:9px 12px;font-size:12px;flex-shrink:0}.site-footer.story-footer>.footer-grid{grid-template-columns:minmax(0,1fr)}.site-footer.story-footer .brand-logo{width:330px}}
-@media(max-width:760px){.cinematic-home.sculpture-story :is(#b2b,#events,#supply,#printing,#faq) h2{font-size:clamp(37px,9vw,54px)}}
+@media(max-width:760px){.cinematic-home.sculpture-story :is(#b2b,#printing,#faq) h2{font-size:clamp(37px,9vw,54px)}}
 
 @media(max-width:1400px){.site-header .site-links,body:has(.sculpture-story) .site-header .site-links{font-size:16px;gap:10px}}
 
@@ -198,13 +206,50 @@ body .site-header .site-links .nav-cta:hover{
 @keyframes printer-dust-drift{from{transform:translate3d(-6px,10px,0)}to{transform:translate3d(8px,-16px,0)}}
 @media(prefers-reduced-motion:reduce){.printer-dust{display:none}}
 
-/* The free mockup offer: a banded promise under the "from a file" chapter, echoing the enquiry tab flag. */
-.mockup-offer{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:28px;margin-top:48px;padding:26px 30px;border:1px solid #e6d4b140;border-radius:3px;background:#14241a75;backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px)}
-.mockup-flag{align-self:start;padding:6px 12px;border:1px solid #c19854;border-radius:999px;font-size:11px;letter-spacing:.14em;color:#e6d4b1;white-space:nowrap}
-.sculpture-story .mockup-offer h3{margin:0 0 8px;font-size:clamp(23px,2.1vw,30px);font-weight:400;letter-spacing:-.04em;line-height:1.15;color:#e6d4b1}
-.mockup-offer p{margin:0;font-size:16px;line-height:1.75;color:var(--chapter-muted);max-width:620px}
-.mockup-offer .studio-button{flex-shrink:0;white-space:nowrap}
-@media(max-width:900px){.mockup-offer{grid-template-columns:1fr;gap:18px;padding:24px;margin-top:36px}.mockup-offer .studio-button{width:100%}}
+/* The free mockup offer closes the ordering steps as the page's one inverted panel:
+   warm paper laid on the dark printing scene, hatched like the enquiry tabs. */
+.mockup-offer{position:relative;overflow:hidden;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:28px;margin-top:54px;max-width:1240px;padding:30px 34px;border:0;border-radius:4px;background:linear-gradient(158deg,#f1e3c6,#e0cda5);color:#243128;box-shadow:0 22px 60px #0000003d}
+.mockup-offer:after{content:'';position:absolute;right:0;bottom:0;width:190px;height:190px;pointer-events:none;background:repeating-linear-gradient(-45deg,#24312814 0 1px,transparent 1px 8px);-webkit-mask-image:linear-gradient(-45deg,#000 0 40%,transparent 75%);mask-image:linear-gradient(-45deg,#000 0 40%,transparent 75%)}
+.mockup-offer>*{position:relative}
+.mockup-flag{align-self:start;padding:7px 13px;border:0;border-radius:999px;background:#243128;font:500 11px/1 var(--font-mono),monospace;letter-spacing:.14em;color:#e6d4b1;white-space:nowrap}
+.sculpture-story .mockup-offer h3{margin:0 0 8px;font-size:clamp(23px,2.1vw,30px);font-weight:500;letter-spacing:-.04em;line-height:1.15;color:#243128}
+.mockup-offer p{margin:0;font-size:16px;line-height:1.7;color:#4b5545;max-width:760px}
+.mockup-offer .studio-button{flex-shrink:0;white-space:nowrap;background:#243128;color:#e6d4b1;border-color:#243128}
+.mockup-offer .studio-button:hover{background:#3c4b36}
+@media(max-width:900px){.mockup-offer{grid-template-columns:1fr;gap:18px;padding:26px;margin-top:38px}.mockup-offer .studio-button{width:100%}}
+
+/* Percentage gutters stop doing any work past about 1770px, where they would stretch a
+   line of text across a whole ultrawide screen. Beyond that the rail grows instead and
+   every chapter holds the same 1560px measure the gallery pages already use. */
+.cinematic-home.sculpture-story{--rail:max(6vw,(100% - 1560px)/2);--hero-rail:max(7vw,(100% - 1560px)/2)}
+.cinematic-home.sculpture-story :is(.story-stage,.floating-work,.floating-process){padding-inline:var(--rail)}
+.cinematic-home.sculpture-story .cinema-hero{padding-inline:var(--hero-rail)}
+.cinematic-home.sculpture-story .cinema-caption{left:var(--hero-rail);right:var(--hero-rail)}
+@media(max-width:600px){.cinematic-home.sculpture-story{--rail:5vw;--hero-rail:7vw}}
+
+/* Events: the chapter most visitors arrive for drops the two-column rhythm for a
+   gold-ruled band, so one block on the page does not look like its neighbours. */
+.sculpture-story .feature-band{border-top:2px solid var(--accent)}
+/* The lede sits against the heading rather than in a facing column, so the two stay
+   related however wide the screen gets. */
+.feature-head{display:grid;grid-template-columns:auto minmax(280px,420px);justify-content:start;gap:clamp(28px,3.5vw,64px);align-items:end}
+.sculpture-story .feature-head h2{font-size:clamp(44px,5vw,72px)}
+.feature-head>p{margin:0;font-size:18px;line-height:1.75;color:var(--chapter-muted)}
+.feature-head a{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:5px}
+.feature-head a:hover{color:var(--accent)}
+.feature-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(24px,3vw,56px);margin:46px 0 0}
+.feature-notes>div{padding-top:20px;border-top:1px solid var(--rule)}
+.feature-notes dt{font:500 11px/1.6 var(--font-mono),monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.feature-notes dd{margin:10px 0 0;font-size:17px;line-height:1.6;color:var(--chapter-ink)}
+.feature-action{margin-top:40px}
+
+/* The guides ride in the column the FAQ heading leaves empty, as links not cards. */
+.guide-links{list-style:none;margin:38px 0 0;padding:0;max-width:430px}
+.guide-links li{border-top:1px solid var(--rule)}
+.guide-links a{display:flex;justify-content:space-between;align-items:baseline;gap:18px;padding:14px 0;font-size:15px;line-height:1.5;color:var(--chapter-ink)}
+.guide-links a:hover{color:var(--accent)}
+.guide-links a>span{color:var(--accent)}
+@media(max-width:900px){.feature-head,.feature-notes{grid-template-columns:1fr}.feature-head>p{margin-top:22px}.feature-notes{margin-top:30px}.feature-notes>div{padding-block:16px 0}.guide-links{max-width:none;margin-top:28px}}
 
 /* Attachments upload as they are chosen, so each one carries its own progress and its own recovery. */
 .challenge-panel{margin:14px 0 16px}
@@ -273,3 +318,12 @@ body .site-header .site-links .nav-cta:hover{
 .breadcrumbs li { display: inline; overflow-wrap: anywhere; }
 .breadcrumbs li + li::before { content: '/'; margin-right: .6rem; opacity: .55; }
 .breadcrumbs a { text-underline-offset: .2em; }
+
+/* Texture. Three layers, each a few percent of contrast: enough for a surface, not
+   enough to read as a pattern. A fine grain over the whole page, printed layer lines
+   ruling the warm chapters, and the mockup card's drafting hatch carried onto the
+   events band so the hatch becomes a motif rather than a one-off. */
+.cinematic-home{--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.cinematic-home:before{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.07;background:var(--grain) 0 0/220px 220px repeat}
+.cinematic-home .block-solid{background-image:repeating-linear-gradient(180deg,#2531260d 0 1px,transparent 1px 6px)}
+.sculpture-story .feature-band:before{content:'';position:absolute;right:0;bottom:0;z-index:-1;width:min(46vw,620px);height:min(62%,340px);pointer-events:none;background:repeating-linear-gradient(-45deg,#e6d4b11c 0 1px,transparent 1px 10px);-webkit-mask-image:linear-gradient(-45deg,#000 0 30%,transparent 80%);mask-image:linear-gradient(-45deg,#000 0 30%,transparent 80%)}
