@@ -3,6 +3,10 @@ export const SITE_URL = 'https://isculptures.com.au';
 // A production opt-in must never make Vercel preview/development builds indexable.
 export const INDEXABLE = process.env.SITE_INDEXABLE === 'true'
   && !['preview', 'development'].includes(process.env.VERCEL_ENV || '');
+// Single pieces sell only on Etsy. Links add a utm_campaign naming where they sit, which
+// the click tracking in site-nav.tsx reads back.
+export const ETSY_SHOP = 'https://www.etsy.com/au/shop/iSculptures';
+export const etsyShopLink = (campaign: string) => `${ETSY_SHOP}?utm_source=isculptures&utm_medium=referral&utm_campaign=${campaign}`;
 export const CONTACT = { name: 'Impeccable Sculptures', legalName: 'Impeccable Sculptures', email: 'info@isculptures.com.au', phone: '0437 383 684', tel: '+61437383684' };
 // The branded card shown when any page is shared; project pages swap in their own photograph.
 export const SHARE_IMAGE = { url: SITE_URL + '/brand/impeccable-sculptures-share.jpg', width: 1200, height: 630, alt: 'Impeccable Sculptures, custom 3D printing in Sydney, with photographs of rose sculptures, boxed event favours and gift boxes' };
@@ -54,7 +58,7 @@ export function businessSchema() {
     areaServed: AREA_SERVED.map(name => ({ '@type': 'Place', name })),
     ...(OPENING_HOURS.length ? { openingHoursSpecification: OPENING_HOURS.map(hours => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: hours.days, opens: hours.opens, closes: hours.closes })) } : {}),
     ...(GBP_URL ? { hasMap: GBP_URL } : {}),
-    sameAs: ['https://www.etsy.com/au/shop/iSculptures', 'https://www.instagram.com/impeccablesculptures/', GBP_URL].filter(Boolean),
+    sameAs: [ETSY_SHOP, 'https://www.instagram.com/impeccablesculptures/', GBP_URL].filter(Boolean),
   };
 }
 
