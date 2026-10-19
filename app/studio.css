@@ -242,13 +242,7 @@ body .site-header .site-links .nav-cta:hover{
 .feature-notes dd{margin:10px 0 0;font-size:17px;line-height:1.6;color:var(--chapter-ink)}
 .feature-action{margin-top:40px}
 
-/* The guides ride in the column the FAQ heading leaves empty, as links not cards. */
-.guide-links{list-style:none;margin:38px 0 0;padding:0;max-width:430px}
-.guide-links li{border-top:1px solid var(--rule)}
-.guide-links a{display:flex;justify-content:space-between;align-items:baseline;gap:18px;padding:14px 0;font-size:15px;line-height:1.5;color:var(--chapter-ink)}
-.guide-links a:hover{color:var(--accent)}
-.guide-links a>span{color:var(--accent)}
-@media(max-width:900px){.feature-head,.feature-notes{grid-template-columns:1fr}.feature-head>p{margin-top:22px}.feature-notes{margin-top:30px}.feature-notes>div{padding-block:16px 0}.guide-links{max-width:none;margin-top:28px}}
+@media(max-width:900px){.feature-head,.feature-notes{grid-template-columns:1fr}.feature-head>p{margin-top:22px}.feature-notes{margin-top:30px}.feature-notes>div{padding-block:16px 0}}
 
 /* Attachments upload as they are chosen, so each one carries its own progress and its own recovery. */
 .challenge-panel{margin:14px 0 16px}
@@ -387,3 +381,12 @@ body .site-header .site-links .nav-cta:hover{
   .nav-group-panel small{display:none}
 }
 @media(prefers-reduced-motion:reduce){.nav-group-toggle,.nav-group-toggle>span{transition:none}}
+
+/* From the blog: the three newest posts as photo cards on the ivory surface. */
+.latest-posts .guide-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:8px 0 0}
+.block-ivory .guide-card{background:#fffdf8;border-color:#24312826;border-radius:4px;color:var(--chapter-ink);box-shadow:0 14px 34px #5242200f}
+.block-ivory .guide-card:hover{border-color:var(--accent)}
+.block-ivory .guide-card p{color:#4b5545}
+.block-ivory .guide-card .section-tag,.block-ivory .guide-card .guide-read{color:#705831}
+.block-ivory .guide-card-meta{color:#6f6656}
+@media(max-width:900px){.latest-posts .guide-grid{grid-template-columns:1fr}}

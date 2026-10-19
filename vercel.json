@@ -248,6 +248,11 @@
       "statusCode": 301
     },
     {
+      "source": "/blog",
+      "destination": "/guides",
+      "statusCode": 301
+    },
+    {
       "source": "/blogs/custom-3d-printing",
       "destination": "/guides",
       "statusCode": 301
