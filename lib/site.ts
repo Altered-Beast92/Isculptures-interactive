@@ -60,7 +60,7 @@ export function businessSchema() {
 
 export function pageMetadata(title: string, description: string, path: string): Metadata {
   const brandedTitle = title.includes(CONTACT.name) ? title : `${title} | ${CONTACT.name}`;
-  return { title: brandedTitle, description, alternates: { canonical: path, types: { 'application/rss+xml': '/feed.xml' } },
+  return { title: brandedTitle, description, alternates: { canonical: path },
     openGraph: { title: brandedTitle, description, url: SITE_URL + path, type: 'website', siteName: CONTACT.name, locale: 'en_AU', images: [SHARE_IMAGE] },
     twitter: { card: 'summary_large_image', title: brandedTitle, description, images: [SHARE_IMAGE] } };
 }

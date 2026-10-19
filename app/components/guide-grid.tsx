@@ -1,6 +1,6 @@
 import type { Guide } from '../../content/guides';
 import { guideHero, guideReadMinutes, guideUpdated, monthYear } from '../../lib/guides';
-/** `photos` adds each guide's hero photo and read time. Left off, the cards stay text only, as on the homepage. */
+/** `photos` adds each guide's hero photo and read time. Left off, the cards stay text only, as on the service pages. */
 export default function GuideGrid({ items, photos = false }: { items: Guide[]; photos?: boolean }) {
   return <div className="guide-grid">{items.map(guide => {
     const hero = photos ? guideHero(guide) : null;

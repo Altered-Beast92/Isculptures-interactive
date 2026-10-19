@@ -50,8 +50,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         <div className="product-card-body"><h3>{product.title}</h3><span className="product-card-price">{priceLabel(product)}{set && <> &middot; {set}</>}</span></div>
       </a>;
     })}</div></section>}
-    <aside className="guide-author"><b>About the author</b><p>{GUIDE_AUTHOR.bio}</p></aside>
-    <figure className="guide-example"><img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy"/><figcaption>An example of our work. <a href={'/work/' + guide.project}>See more photos →</a></figcaption></figure>
+    {photo.src !== hero.src && <figure className="guide-example"><img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy"/><figcaption>An example of our work. <a href={'/work/' + guide.project}>See more photos →</a></figcaption></figure>}
     <section className="guide-enquiry"><h2>Ready to get a quote?</h2><p>Send us what you know so far. We’ll get back to you with options, pricing and timing.</p><div className="portfolio-actions"><a className="primary" href={'/enquiry' + (guide.enquiryRoute ? '?route=' + guide.enquiryRoute : '')}>Get a quote ↗</a><a href={'/pages/' + guide.service}>{guide.serviceLabel} →</a></div></section>
     <section className="guide-related"><h2>More guides</h2><GuideGrid items={guides.filter(item => item.slug !== slug).slice(0, 2)} photos/></section>
   </article><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }}/></main>;

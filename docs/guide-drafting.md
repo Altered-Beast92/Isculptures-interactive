@@ -102,12 +102,14 @@ the guide sends people:
 | Business | `/pages/wholesale`, `/pages/events-custom-gifts` or `/pages/industrial`, whichever fits | `/enquiry?route=supply` (files: `?route=file`) |
 | Trade | `/pages/wholesale`, and `/pages/ongoing-supply` for reorders | `/enquiry?route=supply` |
 | Events | `/pages/bonbonniere-custom` or `/pages/events-custom-gifts` | `/enquiry?route=bulk` |
-| Single pieces | the matching catalogue pages at `/products/<slug>` | one sentence on ordering 10 or more for an event or parish, linking `/enquiry?route=bulk` |
+| Single pieces | the matching catalogue pages at `/products/<slug>` | one sentence on bulk orders for an event or parish, linking `/enquiry?route=bulk` |
 
 - Link the service page within the first half of the guide, in a sentence where it helps the reader, not only at
   the end.
-- Close with a short paragraph for readers ordering 10 or more: what to send us (quantity, date needed, names or
+- Close with a short paragraph for bulk or event orders: what to send us (quantity, date needed, names or
   wording) and the closing link from the table. Keep it to two or three sentences.
+- Mention the 10-unit minimum only where the guide is about quantities, pricing or how to order, and then once.
+  Don't repeat it in every section or in the takeaways.
 - Business and trade guides tend to need figures only the owner has: lead times for larger runs, price bands,
   reseller minimums, packaging for retail. Never estimate them. Leave a `TODO(owner)` comment at each spot and list
   them in the PR.
@@ -189,7 +191,7 @@ Then read docs/guide-drafting.md and follow it exactly. In short:
 3. Duplicate guard: read every existing guide first. If the row's search intent overlaps one, stop and propose a Refresh row instead of drafting.
 4. Research: every fact from a source you checked during this run, prices in AUD, 'as of <Month Year>' on anything time-sensitive. Quote prices only as mirrored from Etsy in content/products.ts. Make no claims about materials, sizes, lead times or capacity that the site doesn't already state; leave {/* TODO(owner): ... */} instead. Never invent customers, orders, quantities or stories. Quote reviews only word for word from content/testimonials.ts.
 5. Religious content: name the tradition (Catholic, Maronite, Orthodox and so on), cite church or diocesan sources, keep a respectful tone, and list anything doctrinal in the PR for the owner to check.
-6. Write: plain Australian English, as 'we', 1,000 to 1,500 words for a new guide, the short answer first, at least one link to another guide and one to a /pages/ service page, the catalogue pieces that genuinely fit (aim for two), never a link to etsy.com. Follow the 'Buyer and call to action' section for the row's Buyer column: link the matching service page in the first half and close with a short paragraph for people ordering 10 or more, linking the enquiry route it names. Never estimate lead times, price bands or reseller minimums; leave a TODO(owner) instead. Add the body in app/guides/posts/<slug>.tsx, register it in app/guides/posts/index.ts, and add the metadata (title up to 60 characters, summary up to 155, readMinutes, 3 to 4 takeaways, products, hero) to content/guides.ts.
+6. Write: plain Australian English, as 'we', 1,000 to 1,500 words for a new guide, the short answer first, at least one link to another guide and one to a /pages/ service page, the catalogue pieces that genuinely fit (aim for two), never a link to etsy.com. Follow the 'Buyer and call to action' section for the row's Buyer column: link the matching service page in the first half and close with a short paragraph for bulk or event orders, linking the enquiry route it names. Mention the 10-unit minimum only where the guide is about quantities, pricing or how to order, and then only once. Never estimate lead times, price bands or reseller minimums; leave a TODO(owner) instead. Add the body in app/guides/posts/<slug>.tsx, register it in app/guides/posts/index.ts, and add the metadata (title up to 60 characters, summary up to 155, readMinutes, 3 to 4 takeaways, products, hero) to content/guides.ts.
 7. Editing pass as a separate full read: check every figure against its source; state units and currency; replace vague words with figures or cut them; recheck the takeaways against the body; lead each section with the answer; vary sentence length; cut throat-clearing and repetition; remove delve, navigate the landscape, leverage, robust, seamless, game-changer, 'it's important to note', 'when it comes to', 'not just X but Y', 'whether you're X or Y' and rhetorical-question openers; at most one em dash per paragraph; Australian spelling.
 8. Photo: the most relevant real photo from content/work-media.json or content/product-media.json. No AI-generated images, and never a photo of a product the guide isn't about.
 9. Run npm run check:guides, npm run typecheck, npm test and npm run build:web. All must pass. Leave next-env.d.ts and AGENTS.md out of the commit if tooling rewrote them.
