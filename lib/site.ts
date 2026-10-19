@@ -64,3 +64,13 @@ export function pageMetadata(title: string, description: string, path: string): 
     openGraph: { title: brandedTitle, description, url: SITE_URL + path, type: 'website', siteName: CONTACT.name, locale: 'en_AU', images: [SHARE_IMAGE] },
     twitter: { card: 'summary_large_image', title: brandedTitle, description, images: [SHARE_IMAGE] } };
 }
+
+// --- Guide author -----------------------------------------------------------
+// Shown as the byline on every guide and emitted as a schema.org Person that works for
+// the business node above. First name only, no surname and no photo, at the owner's request.
+export const GUIDE_AUTHOR = {
+  name: 'Daniel',
+  role: 'maker at Impeccable Sculptures',
+  // TODO(owner): extend this bio with real background (years making, where you trained, what you are known for). Keep every claim true.
+  bio: 'Daniel runs Impeccable Sculptures, a 3D printing studio in Sydney that makes saint statues, icons, bonbonniere and custom pieces, delivered Australia-wide.',
+};
