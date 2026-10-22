@@ -59,6 +59,21 @@ const occasionGuides: Guide[] = [
 ];
 export const guides: Guide[] = [
   {
+    slug: 'personalised-christmas-place-settings', title: 'Personalised Christmas place settings for events',
+    summary: 'Name place settings for Christmas dinners, venues and events: choosing a piece, counting seats, checking names and planning the date.',
+    category: 'CHRISTMAS EVENTS', image: 'personalised-batch', project: 'personalised-boxed-keepsakes',
+    service: 'events-custom-gifts', serviceLabel: 'Corporate gifts & event favours', enquiryRoute: 'bulk',
+    published: '2026-10-22', updated: '2026-10-22', readMinutes: 6,
+    takeaways: [
+      'A named place setting works as the place card and the take-home gift in one.',
+      'Count one setting per seat, include hosts, staff and late additions, and order spare settings without names.',
+      'Send one checked name list in seating order; you approve every name before we print.',
+      'Plan from the date the settings must be on the tables; Express Post within NSW metro closes 23 December 2026.',
+    ],
+    products: ['personalised-christmas-tree', 'personalised-rose-sculpture'],
+    hero: { source: 'product', key: 'personalised-christmas-tree', index: 1 },
+  },
+  {
     slug: 'bulk-3d-printing-quote-checklist', title: 'What to include in a bulk 3D printing quote request',
     summary: 'What to send us so we can quote your bulk order properly, even if you don’t have a 3D file yet.',
     category: 'PLANNING YOUR ORDER', image: 'event-favours', project: 'ribbon-finished-event-favours',
