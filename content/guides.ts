@@ -19,16 +19,19 @@ export type Guide = {
 const occasionGuides: Guide[] = [
   {
     slug: 'personalised-baby-shower-keepsakes', title: 'Personalised baby shower favours and keepsakes',
-    summary: 'Planning favours for baby shower guests or a keepsake for the parents: choosing a design, getting the wording right and timing your order.',
+    summary: 'Baby shower favours and a keepsake for the parents: choosing a piece, working out quantities, wording before the name is final, and timing your order.',
     category: 'BABY SHOWERS', image: 'gift-boxes', project: 'personalised-gift-boxes',
     service: 'bonbonniere-custom', serviceLabel: 'Personalised keepsakes', enquiryRoute: 'bulk',
-    sections: [
-      { id: 'recipients', title: 'Guest favour or gift for the parents?', paragraphs: ['First decide who the piece is for. A favour for every guest needs a set quantity and should be easy to hand out. A keepsake for the parents might have different wording, a different size and nicer packaging. Keep the two separate in your brief.', 'For guest favours, decide whether it’s one per person, per couple or per household, and add a few spares to the total. Our minimum is 10 units. If you’d also like a separate gift for the parents, ask about it when you enquire about the favours.'] },
-      { id: 'design', title: 'Pick a design that suits how it’ll be used', paragraphs: ['A small sculpture, a personalised tag or a gift box each work differently on the day. Send us a reference and tell us whether it’s for display, for each place setting or packaging for a gift you’re supplying. A photo is a good starting point, and we’ll confirm what can actually be made.', 'Think about where the keepsake ends up after the shower and how guests will carry it home. Give us sizes and any packaging limits. If you have anything in mind beyond decoration, like a toy or something that touches food, tell us, because that needs to be checked separately.'] },
-      { id: 'wording', title: 'Sort out the wording early', paragraphs: ['Tell us if the design will use the family name, a short thank-you, the shower date or each guest’s name. If the baby’s name isn’t decided yet, say so, and we’ll agree when you need to confirm it.', 'Send one checked list of wording with spelling and punctuation. Point out what’s the same on every piece and what changes. If family members are helping decide, pick one person to send us the final version.'] },
-      { id: 'presentation', title: 'Budget for the finished favour', paragraphs: ['Say whether your budget covers just the pieces or also tags, ribbon, boxes, assembly and freight. For a big guest list, ask us about simplifying the design or cutting down on variations while keeping the details you care about.', 'Tell us the delivery postcode, the shower date and the earlier date you need everything in hand. Leave yourself time to check and set up. We’ll confirm materials, finish, price and timing once we’ve reviewed your brief.'] },
-      { id: 'brief', title: 'What to send with your enquiry', paragraphs: ['You can start with a rough number and a reference photo. Just mark anything you haven’t decided yet.'], points: ['Who gets each piece and how many you need', 'A reference design, how it’ll be used and a rough size', 'Shared wording and any individual names', 'Colours, finish and packaging ideas', 'Budget, delivery postcode and the date you need it'] },
+    updated: '2026-11-08',
+    readMinutes: 7,
+    takeaways: [
+      'Keep guest favours and a keepsake for the parents separate in your brief: different wording, and sometimes a different colour or box.',
+      'Count favours per guest or per household, add spares, and send one total. In our example, 22 households plus 4 spares is 26 pieces.',
+      'If the baby’s name isn’t final, use the parents’ names or the date on the favours and save the name for the parents’ keepsake.',
+      'Plan from the delivery date. As of November 2026, Australia Post gives Parcel Post 2 to 4 business days within a state and 3 to 6 interstate.',
     ],
+    products: ['personalised-rose-sculpture', 'first-tooth-favour-tag'],
+    hero: { source: 'product', key: 'personalised-rose-sculpture', index: 0 },
   },
   {
     slug: 'personalised-wedding-bonbonniere', title: 'Planning personalised wedding bonbonniere',
