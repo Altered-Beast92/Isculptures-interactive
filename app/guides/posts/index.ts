@@ -4,5 +4,8 @@
 // fails the build if the two drift apart.
 
 import type { ComponentType } from 'react';
+import PersonalisedBabyShowerKeepsakes from './personalised-baby-shower-keepsakes';
 
-export const guideBodies: Record<string, ComponentType> = {};
+export const guideBodies: Record<string, ComponentType> = {
+  'personalised-baby-shower-keepsakes': PersonalisedBabyShowerKeepsakes,
+};
