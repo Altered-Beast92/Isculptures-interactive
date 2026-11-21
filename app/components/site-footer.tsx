@@ -5,25 +5,25 @@ import BrandLogo from './brand-logo';
 
 const groups = [
   { title: 'Services', links: [
-    ['All Services', '/services'],
-    ['Wholesale & Bulk Orders', '/pages/wholesale'],
-    ['Corporate Gifts & Event Favours', '/pages/events-custom-gifts'],
-    ['Bonbonniere & Keepsakes', '/pages/bonbonniere-custom'],
-    ['Parts & Prototypes', '/pages/industrial'],
-    ['Repeat Orders & Supply', '/pages/ongoing-supply'],
+    ['All services', '/services'],
+    ['Wholesale & bulk orders', '/pages/wholesale'],
+    ['Corporate gifts & event favours', '/pages/events-custom-gifts'],
+    ['Bonbonniere & keepsakes', '/pages/bonbonniere-custom'],
+    ['Parts & prototypes', '/pages/industrial'],
+    ['Repeat orders & supply', '/pages/ongoing-supply'],
   ] },
   { title: 'Studio', links: [
-    ['Statues & Icons', '/products'],
-    ['Our Work', '/work'],
+    ['Statues & icons', '/products'],
+    ['Our work', '/work'],
     ['Blog', '/guides'],
-    ['About Us', '/pages/about'],
-    ['Get a Quote', '/enquiry'],
+    ['About us', '/pages/about'],
+    ['Get a quote', '/enquiry'],
   ] },
   { title: 'Information', links: [
-    ['Privacy Notice', '/policies/privacy-policy'],
-    ['Enquiries & Orders', '/policies/terms-of-service'],
+    ['Privacy notice', '/policies/privacy-policy'],
+    ['Enquiries & orders', '/policies/terms-of-service'],
     ['Delivery', '/policies/shipping-policy'],
-    ['Order Issues', '/policies/refund-policy'],
+    ['Order issues', '/policies/refund-policy'],
   ] },
 ] as const;
 
@@ -58,7 +58,7 @@ export default function SiteFooter() {
         {GBP_URL && <li><a href={GBP_URL} target="_blank" rel="noopener">Google reviews <span aria-hidden="true">↗</span></a></li>}
         <li><a href="https://www.instagram.com/impeccablesculptures/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span></a></li>
         <li><a href="https://www.facebook.com/isculptures" target="_blank" rel="noreferrer">Facebook <span aria-hidden="true">↗</span></a></li>
-        <li><a href="https://www.etsy.com/au/shop/iSculptures?utm_source=isculptures&amp;utm_medium=referral&amp;utm_campaign=footer" target="_blank" rel="noopener">Shop Single Pieces on Etsy <span aria-hidden="true">↗</span></a></li>
+        <li><a href="https://www.etsy.com/au/shop/iSculptures?utm_source=isculptures&amp;utm_medium=referral&amp;utm_campaign=footer" target="_blank" rel="noopener">Shop single pieces on Etsy <span aria-hidden="true">↗</span></a></li>
       </ul>
     </div>
   </footer>;
