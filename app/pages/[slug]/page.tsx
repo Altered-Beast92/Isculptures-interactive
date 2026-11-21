@@ -47,15 +47,15 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       {service.facts && <div className="service-glance"><p className="section-tag">QUICK FACTS</p><dl>{service.facts.map(fact => <div key={fact.label}><dt>{fact.label}</dt><dd>{fact.href ? <a href={fact.href}>{fact.value}</a> : fact.value}</dd></div>)}</dl></div>}
     </header>
 
+    {work.length > 0 && <section className="service-band service-work" aria-labelledby="service-work-title">
+      <div className="service-band-head"><div><p className="section-tag">OUR WORK</p><h2 id="service-work-title">Examples of our work</h2></div><a href="/work">See all our work →</a></div>
+      <WorkGrid items={work}/>
+    </section>}
+
     <section className="service-ledger" aria-labelledby="service-ledger-title">
       <div className="service-ledger-head"><p className="section-tag">{about ? 'HOW WE WORK' : 'GOOD TO KNOW'}</p><h2 id="service-ledger-title">{about ? 'Working with us' : 'Before you get in touch'}</h2></div>
       <ol>{service.sections.map((section, index) => <li key={section.title}><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><div><h3>{section.title}</h3><p>{section.text}</p>{section.points && <ul>{section.points.map(point => <li key={point}>{point}</li>)}</ul>}</div></li>)}</ol>
     </section>
-
-    {work.length > 0 && <section className="service-band" aria-labelledby="service-work-title">
-      <div className="service-band-head"><div><p className="section-tag">OUR WORK</p><h2 id="service-work-title">Examples of our work</h2></div><a href="/work">See all our work →</a></div>
-      <WorkGrid items={work}/>
-    </section>}
 
     {reviews.length > 0 && <section className="service-band" aria-labelledby="service-reviews-title">
       <div className="service-band-head"><div><p className="section-tag">REVIEWS</p><h2 id="service-reviews-title">What customers say</h2></div></div>
