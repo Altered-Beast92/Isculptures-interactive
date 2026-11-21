@@ -1,6 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import { CONTACT, GBP_URL } from '../../lib/site';
+import { CONTACT, GBP_URL, OPENING_HOURS, openingHoursText } from '../../lib/site';
 import BrandLogo from './brand-logo';
 
 const groups = [
@@ -44,6 +44,7 @@ export default function SiteFooter() {
         <ul className="footer-contact">
           <li><span>Phone</span><a href={'tel:' + CONTACT.tel}>{CONTACT.phone}</a></li>
           <li><span>Email</span><a href={'mailto:' + CONTACT.email}>{CONTACT.email}</a></li>
+          {OPENING_HOURS.length > 0 && <li><span>Hours</span><p>{openingHoursText()}</p></li>}
         </ul>
       </div>
       {groups.map(group => <div key={group.title} className="footer-links">
@@ -56,6 +57,7 @@ export default function SiteFooter() {
       <ul className="footer-social">
         {GBP_URL && <li><a href={GBP_URL} target="_blank" rel="noopener">Google reviews <span aria-hidden="true">↗</span></a></li>}
         <li><a href="https://www.instagram.com/impeccablesculptures/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span></a></li>
+        <li><a href="https://www.facebook.com/isculptures" target="_blank" rel="noreferrer">Facebook <span aria-hidden="true">↗</span></a></li>
         <li><a href="https://www.etsy.com/au/shop/iSculptures?utm_source=isculptures&amp;utm_medium=referral&amp;utm_campaign=footer" target="_blank" rel="noopener">Shop Single Pieces on Etsy <span aria-hidden="true">↗</span></a></li>
       </ul>
     </div>

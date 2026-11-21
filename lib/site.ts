@@ -20,7 +20,19 @@ export const AREA_SERVED = ['Sydney', 'New South Wales', 'Australia'];
 // e.g. https://share.google/…). Setting it ties the profile and this site together as one business
 // in the schema (sameAs, hasMap) and shows a "Google reviews" link on the homepage and footer.
 export const GBP_URL = 'https://share.google/1kZsvqiPr3rKBPJWz';
-export const OPENING_HOURS: { days: string[]; opens: string; closes: string }[] = [];
+// Opening hours as the owner gave them on 2026-11-21: weekdays 9 to 5, Saturday 9 to 12,
+// closed Sunday. Days not listed are closed. Change them here and on the profile together.
+export const OPENING_HOURS: { days: string[]; opens: string; closes: string }[] = [
+  { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '17:00' },
+  { days: ['Saturday'], opens: '09:00', closes: '12:00' },
+];
+// "09:00" → "9am", "12:30" → "12:30pm".
+const clock = (time: string) => { const [hour, minute] = time.split(':').map(Number); return (hour % 12 || 12) + (minute ? ':' + String(minute).padStart(2, '0') : '') + (hour < 12 ? 'am' : 'pm'); };
+/** The same hours in words for visitors, e.g. "Mon–Fri 9am–5pm · Sat 9am–12pm". */
+export const openingHoursText = () => OPENING_HOURS.map(({ days, opens, closes }) => {
+  const short = days.map(day => day.slice(0, 3));
+  return (short.length > 2 ? short[0] + '–' + short.at(-1) : short.join(', ')) + ' ' + clock(opens) + '–' + clock(closes);
+}).join(' · ');
 
 // --- Content freshness ------------------------------------------------------
 // Seeded from this repository's git history for the file each collection lives in.
@@ -57,7 +69,8 @@ export function businessSchema() {
     areaServed: AREA_SERVED.map(name => ({ '@type': 'Place', name })),
     ...(OPENING_HOURS.length ? { openingHoursSpecification: OPENING_HOURS.map(hours => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: hours.days, opens: hours.opens, closes: hours.closes })) } : {}),
     ...(GBP_URL ? { hasMap: GBP_URL } : {}),
-    sameAs: ['https://www.etsy.com/au/shop/iSculptures', 'https://www.instagram.com/impeccablesculptures/', GBP_URL].filter(Boolean),
+    // The same social profiles the Business Profile lists, so both name one business.
+    sameAs: ['https://www.etsy.com/au/shop/iSculptures', 'https://www.instagram.com/impeccablesculptures/', 'https://www.facebook.com/isculptures', GBP_URL].filter(Boolean),
   };
 }
 
