@@ -28,7 +28,7 @@ export default function ProductsPage() {
     },
   };
 
-  return <main id="main-content" className="document-page"><article>
+  return <main id="main-content" className="document-page product-index"><article>
     <Breadcrumbs items={[{ name: 'Products', path: '/products' }]}/>
     <p className="section-tag">STATUES, ICONS &amp; BONBONNIERE</p>
     <h1>Pieces we make</h1>
