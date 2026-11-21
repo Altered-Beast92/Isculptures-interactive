@@ -402,3 +402,10 @@ body .site-header .site-links .nav-cta:hover{
 .enquiry-canvas .enquiry-send{margin-top:14px}
 .enquiry-canvas .enquiry-send .primary{width:100%;margin:0;font-size:15px}
 .single-enquiry .attachment-waiting .attachment-state{color:#705831}
+
+/* Phone and tablet menu: one rhythm for every link, grouped or not. Each group label, and the
+   first plain link after the groups, opens a new section with the same gap. */
+@media(max-width:1180px){.site-header .site-links,body:has(.sculpture-story) .site-header .site-links{gap:0}.site-header .site-links>a:not(.nav-cta),.site-header .nav-group-panel a{padding:11px 10px;font-size:16px;font-weight:500;line-height:1.35}.nav-group-label{margin:22px 10px 4px}.site-header .nav-group:first-child .nav-group-label{margin-top:2px}.site-header .nav-group+a:not(.nav-cta){margin-top:22px}.site-header .site-links .nav-cta{margin-top:22px}}
+/* Tablet quote page: the introduction sits above the four starting points instead of beside
+   them, so the cards get the full width in two columns rather than spilling off the side. */
+@media(min-width:761px) and (max-width:1050px){.enquiry-layout{display:block}.enquiry-introduction{position:static;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:48px;align-items:start;margin-bottom:40px}.enquiry-introduction>:is(.enquiry-kicker,h1){grid-column:1/-1}.enquiry-direct{margin-top:0}.enquiry-introduction h1{font-size:clamp(60px,9vw,88px);line-height:.95;margin:0 0 22px}.enquiry-introduction h1 br{display:none}.enquiry-introduction h1 em{margin-left:.13em}.route-tab{aspect-ratio:auto;min-height:200px;max-height:none}}
