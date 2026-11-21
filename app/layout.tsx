@@ -5,6 +5,7 @@ import './studio.css';
 import './subpages.css';
 import SiteNav from './components/site-nav';
 import SiteFooter from './components/site-footer';
+import MobileCta from './components/mobile-cta';
 import SiteAnalytics from './components/site-analytics';
 import { INDEXABLE, CONTACT, SITE_URL, pageMetadata, businessSchema } from '../lib/site';
 const manrope = localFont({ src: '../public/fonts/manrope-latin.woff2', weight: '200 800', variable: '--font-manrope', display: 'swap' });
@@ -30,5 +31,5 @@ const clarityTag = CLARITY_ID && `(function(c,l,a,r,i,t,y){c[a]=c[a]||function()
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const organisation = businessSchema();
-  return <html lang="en-AU" className={`${manrope.variable} ${playfair.variable} ${mono.variable}`}><body>{clarityTag && <script dangerouslySetInnerHTML={{ __html: clarityTag }}/>}<a className="skip-link" href="#main-content">Skip to content</a><SiteNav/>{children}<SiteFooter/><SiteAnalytics/><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organisation).replace(/</g, '\\u003c') }}/></body></html>;
+  return <html lang="en-AU" className={`${manrope.variable} ${playfair.variable} ${mono.variable}`}><body>{clarityTag && <script dangerouslySetInnerHTML={{ __html: clarityTag }}/>}<a className="skip-link" href="#main-content">Skip to content</a><SiteNav/>{children}<SiteFooter/><MobileCta/><SiteAnalytics/><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organisation).replace(/</g, '\\u003c') }}/></body></html>;
 }

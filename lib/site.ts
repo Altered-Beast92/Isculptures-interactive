@@ -22,6 +22,11 @@ export const AREA_SERVED = ['Sydney', 'New South Wales', 'Australia'];
 export const GBP_URL = 'https://share.google/1kZsvqiPr3rKBPJWz';
 // Opening hours as the owner gave them on 2026-11-21: weekdays 9 to 5, Saturday 9 to 12,
 // closed Sunday. Days not listed are closed. Change them here and on the profile together.
+// The rating and review count the Business Profile shows, copied by hand on 2026-11-21. The
+// homepage hero quotes them beside a link to the profile, so update them when the profile
+// changes. They stay out of the schema: Google does not allow a business to mark up its own
+// profile rating on its own site.
+export const GOOGLE_REVIEWS = { rating: 5, count: 15 };
 export const OPENING_HOURS: { days: string[]; opens: string; closes: string }[] = [
   { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '17:00' },
   { days: ['Saturday'], opens: '09:00', closes: '12:00' },
