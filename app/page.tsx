@@ -8,7 +8,7 @@ import { guidesByUpdated } from '../lib/guides';
 import { SOURCE_LABELS } from '../content/types';
 import media from '../content/work-media.json';
 import productMedia from '../content/product-media.json';
-import { CONTACT, SITE_URL } from '../lib/site';
+import { CONTACT, SITE_URL, GBP_URL } from '../lib/site';
 
 const gallery = [
   { key: 'custom-sculptures', slug: 'custom-sculptures-keepsakes', title: 'Gold character sculptures', label: 'CUSTOM SCULPTURES' },
@@ -60,7 +60,7 @@ export default function Home() {
     <section className="floating-work block-solid" id="work"><Chapter number="03" label="OUR WORK"/><div className="story-section-heading"><h2>Some of our <br/><em>3D printed work.</em></h2><a className="studio-text-link" href="/work">See all our work ↗</a></div><div className="studio-gallery">{gallery.map(item => { const photo = media[item.key]; return <a key={item.key} className={'studio-project project-' + item.key} href={'/work/' + item.slug}><img src={photo.src} srcSet={smallSet(photo)} sizes="(max-width: 700px) 88vw, (max-width: 1100px) 44vw, 52vw" alt={photo.alt} width={photo.width} height={photo.height} loading="lazy"/><div className="project-caption"><span>{item.label}</span><h3>{item.title}</h3><b aria-hidden="true">↗</b></div></a>; })}</div></section>
     {/* Reviews sit before the ordering steps, where a visitor decides whether to enquire,
         and each one shows the piece it is about. */}
-    <section className="story-stage testimonial-stage block-ivory" id="testimonials"><Chapter number="04" label="REVIEWS"/><div className="story-section-heading"><h2>Customer <br/><em>reviews.</em></h2><p><strong>{aggregateRating.ratingValue.toFixed(1)} out of 5</strong> from {aggregateRating.reviewCount} reviews across Google, Etsy and Judge.me.</p></div><div className="testimonial-grid">{reviews.map(review => {
+    <section className="story-stage testimonial-stage block-ivory" id="testimonials"><Chapter number="04" label="REVIEWS"/><div className="story-section-heading"><h2>Customer <br/><em>reviews.</em></h2><p><strong>{aggregateRating.ratingValue.toFixed(1)} out of 5</strong> from {aggregateRating.reviewCount} reviews across Google, Etsy and Judge.me.{GBP_URL && <> <a href={GBP_URL} target="_blank" rel="noopener">Read our Google reviews <span aria-hidden="true">↗</span></a></>}</p></div><div className="testimonial-grid">{reviews.map(review => {
       const product = products.find(item => item.reviews?.includes(review.id));
       const photo = product && productMedia[product.slug as keyof typeof productMedia][0];
       return <figure className="testimonial-card" key={review.id}>

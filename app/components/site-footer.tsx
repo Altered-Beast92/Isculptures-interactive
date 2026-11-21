@@ -1,6 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import { CONTACT } from '../../lib/site';
+import { CONTACT, GBP_URL } from '../../lib/site';
 import BrandLogo from './brand-logo';
 
 const groups = [
@@ -54,6 +54,7 @@ export default function SiteFooter() {
     <div className="footer-bottom">
       <small>© {new Date().getFullYear()} {CONTACT.name} · Sydney, Australia</small>
       <ul className="footer-social">
+        {GBP_URL && <li><a href={GBP_URL} target="_blank" rel="noopener">Google reviews <span aria-hidden="true">↗</span></a></li>}
         <li><a href="https://www.instagram.com/impeccablesculptures/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span></a></li>
         <li><a href="https://www.etsy.com/au/shop/iSculptures?utm_source=isculptures&amp;utm_medium=referral&amp;utm_campaign=footer" target="_blank" rel="noopener">Shop Single Pieces on Etsy <span aria-hidden="true">↗</span></a></li>
       </ul>
