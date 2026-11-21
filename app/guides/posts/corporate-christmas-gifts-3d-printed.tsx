@@ -14,8 +14,8 @@ export default function CorporateChristmasGifts() {
 
       <h2>What a 3D printed corporate gift can be</h2>
       <p>
-        Three formats cover most requests: a small sculpture or ornament, a place setting, and a boxed gift with a message
-        plaque. Which one fits depends on where the gift ends up. A client's desk wants something compact and good-looking from
+        Three formats suit most corporate gifts: a small sculpture or ornament, a place setting, and a boxed gift with a
+        message plaque. Which one fits depends on where the gift ends up. A client's desk wants something compact and good-looking from
         every angle. A staff dinner wants something that sits at each seat.
       </p>
       <p>
@@ -57,8 +57,8 @@ export default function CorporateChristmasGifts() {
       </p>
       <ul>
         <li>
-          <strong>Logo:</strong> send the best file you have (vector artwork if possible, otherwise a clear high-resolution
-          image). We confirm how it will translate onto the piece before printing.
+          <strong>Logo:</strong> send it in whatever format you have. If it is small or low resolution, we can upscale it.
+          We confirm how it will translate onto the piece before printing.
         </li>
         <li>
           <strong>Brand colours:</strong> name the colours you want matched and we tell you what we can supply. Check the
@@ -77,7 +77,6 @@ export default function CorporateChristmasGifts() {
         <a href="/guides/bulk-3d-printing-quote-checklist">Our quote checklist</a> lists everything worth including in the
         first message. Use it as a template.
       </p>
-      {/* TODO(owner): confirm which logo file types you prefer (SVG, PDF, high-resolution PNG) and the smallest logo detail you can reproduce reliably */}
 
       <h2>Plan the order backwards from your delivery date</h2>
       <p>
@@ -86,10 +85,14 @@ export default function CorporateChristmasGifts() {
         works before we accept an order.
       </p>
       <p>
-        We do not publish a standard lead time, because it depends on quantity, design work and how many versions there are.
-        Give us your date in the first message and we confirm whether it is achievable.
+        Allow at least two weeks, and up to a month for larger quantities. The exact time depends on how many pieces you need,
+        the design work and how many versions there are. Give us your date in the first message and we confirm whether it is
+        achievable.
       </p>
-      {/* TODO(owner): add the last order date you recommend for Christmas delivery, and typical lead times for runs of 10 to 50 and for 50+ */}
+      <p>
+        For gifts you want before Christmas, count back from the day you need them in hand: two weeks at the very least, and a
+        month for a big run. The earlier your enquiry reaches us, the more room there is for design changes.
+      </p>
       <p>
         Allow your own time as well: someone has to check the proof, and gifts that go to a client list need addresses
         collected. Do the proof check early in the process, since changes after approval cost time.
@@ -103,19 +106,17 @@ export default function CorporateChristmasGifts() {
         that is possible, with a plaque for personal wording.
       </p>
       <p>
-        If the gifts go to several addresses, tell us how many and where. We deliver Australia-wide from Sydney. Whether we can
-        pack and send to individual addresses is something we confirm per job.
+        We can also pack and send gifts to individual addresses anywhere in Australia, so a client list does not have to go
+        through your office first. Tell us how many addresses there are and where, and we include the delivery in your quote.
       </p>
-      {/* TODO(owner): confirm whether you can pack and ship to multiple individual addresses, and any extra cost */}
 
       <h2>Budget and what the quote includes</h2>
       <p>
-        There is no standard price per piece for a branded order. Size, material, design work, finish, the number of versions
-        and packaging all move the total, which our guide to{' '}
+        There is no standard price per piece for a branded order. The price depends mostly on the size of the piece and the
+        colour options you choose. Design work, the number of versions and packaging also move the total, which our guide to{' '}
         <a href="/guides/what-affects-bulk-3d-printing-cost">what affects bulk 3D printing cost</a> walks through. Our minimum
         is 10 units per batch. Tell us your budget and whether it covers packaging and freight, and we say what is achievable.
       </p>
-      {/* TODO(owner): add a typical price band for branded gift orders at 10, 25 and 50 units, if you want one published */}
       <p>
         Gifts for staff or clients can have tax consequences for the business. We have not covered this here, so ask your
         accountant how your gifts should be treated before you settle your budget.
