@@ -16,10 +16,10 @@ export const AREA_SERVED = ['Sydney', 'New South Wales', 'Australia'];
 // Both of these are omitted from the schema while empty rather than guessed. Opening
 // hours that disagree with the Business Profile are worse than publishing none at all.
 // Fill them from the profile itself, copied exactly.
-// GBP_URL is the profile's own share link (Business Profile → Share, e.g. https://maps.app.goo.gl/…
-// or https://g.page/r/…). Setting it ties the profile and this site together as one business
+// GBP_URL is the profile's own share link (Business Profile → Share → Copy link,
+// e.g. https://share.google/…). Setting it ties the profile and this site together as one business
 // in the schema (sameAs, hasMap) and shows a "Google reviews" link on the homepage and footer.
-export const GBP_URL = '';
+export const GBP_URL = 'https://share.google/1kZsvqiPr3rKBPJWz';
 export const OPENING_HOURS: { days: string[]; opens: string; closes: string }[] = [];
 
 // --- Content freshness ------------------------------------------------------
