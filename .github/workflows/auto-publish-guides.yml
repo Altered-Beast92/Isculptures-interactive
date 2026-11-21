@@ -1,0 +1,90 @@
+name: Auto-publish guides
+
+# The guide drafter routine opens a pull request from a draft/<slug> branch on the 8th and 22nd of
+# each month. This workflow merges it, and Vercel then publishes it, once the site passes the same
+# checks the drafter runs: typecheck, tests, and build:web (redirects, guide and SEO checks, build).
+#
+# A pull request waits for the owner instead when it:
+#   - carries the "hold" label, or is a GitHub draft;
+#   - changes anything outside the guide files (posts, content/guides.ts, the content calendar);
+#   - changes a guide before docs/content-calendar.md names it as "(PR #<n>)". The drafter pushes that
+#     row in a second commit just after opening the pull request. Merging before it lands would lose
+#     the row, and the next run would draft the same topic again.
+# A failing check leaves the pull request open, exactly as before.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+    branches: [main]
+
+concurrency:
+  group: auto-publish-guides-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    if: >-
+      startsWith(github.head_ref, 'draft/') &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !github.event.pull_request.draft &&
+      !contains(github.event.pull_request.labels.*.name, 'hold')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    outputs:
+      ready: ${{ steps.scope.outputs.ready }}
+    steps:
+      # On pull_request events this checks out the PR merged into main, so HEAD^1 is main.
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - name: Check the pull request only touches guide files
+        id: scope
+        env:
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          changed=$(git diff --name-only HEAD^1 HEAD)
+          echo "Files changed:"; echo "$changed"
+          outside=$(echo "$changed" | grep -v -E '^(app/guides/posts/[^/]+\.tsx?|content/guides\.ts|docs/content-calendar\.md)$' || true)
+          if [ -n "$outside" ]; then
+            echo "::notice::Changes outside the guide files, so this pull request waits for the owner: $(echo $outside)"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          elif echo "$changed" | grep -q -E '^(app/guides/posts/|content/guides\.ts$)' && ! grep -q "(PR #$PR)" docs/content-calendar.md; then
+            echo "::notice::docs/content-calendar.md does not name PR #$PR yet. The drafter pushes that row next, and this runs again then."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build:web
+        env:
+          SITE_INDEXABLE: 'true'
+
+  merge:
+    needs: check
+    if: needs.check.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # --match-head-commit refuses the merge if anything was pushed after the checked commit.
+      - name: Merge the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: gh pr merge "$PR" --merge --match-head-commit "$HEAD_SHA"
