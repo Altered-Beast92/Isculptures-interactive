@@ -5,4 +5,8 @@
 
 import type { ComponentType } from 'react';
 
-export const guideBodies: Record<string, ComponentType> = {};
+import CorporateChristmasGifts from './corporate-christmas-gifts-3d-printed';
+
+export const guideBodies: Record<string, ComponentType> = {
+  'corporate-christmas-gifts-3d-printed': CorporateChristmasGifts,
+};

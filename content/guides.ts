@@ -59,6 +59,21 @@ const occasionGuides: Guide[] = [
 ];
 export const guides: Guide[] = [
   {
+    slug: 'corporate-christmas-gifts-3d-printed', title: 'Corporate Christmas gifts with your logo, 3D printed',
+    summary: 'Branded Christmas gifts for clients and staff, made as one matching batch: what you can personalise, how to brief us and how to plan the date.',
+    category: 'CORPORATE GIFTS', image: 'gift-boxes', project: 'personalised-gift-boxes',
+    service: 'events-custom-gifts', serviceLabel: 'Corporate gifts & event favours', enquiryRoute: 'supply',
+    published: '2026-11-21', updated: '2026-11-21', readMinutes: 6,
+    takeaways: [
+      'We make branded Christmas gifts as one matching batch, carrying a logo, names, wording and brand colours.',
+      'Split your list by recipient (clients, staff, dinner guests) and keep the number of designs small.',
+      'Allow at least two weeks, and up to a month for larger runs, counting back from the date you need the gifts in hand.',
+      'Price depends mostly on size and colour options; send your quantity, logo, date and budget for a quote.',
+    ],
+    products: ['personalised-christmas-tree', 'personalised-rose-sculpture'],
+    hero: { source: 'product', key: 'personalised-christmas-tree', index: 0 },
+  },
+  {
     slug: 'bulk-3d-printing-quote-checklist', title: 'What to include in a bulk 3D printing quote request',
     summary: 'What to send us so we can quote your bulk order properly, even if you don’t have a 3D file yet.',
     category: 'PLANNING YOUR ORDER', image: 'event-favours', project: 'ribbon-finished-event-favours',
