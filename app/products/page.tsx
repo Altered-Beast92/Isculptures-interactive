@@ -17,7 +17,15 @@ export default function ProductsPage() {
     url: SITE_URL + '/products',
     name: 'Statues, icons and bonbonniere',
     about: { '@id': SITE_URL + '/#organisation' },
-    hasPart: products.map(product => ({ '@type': 'Product', name: product.title, url: SITE_URL + '/products/' + product.slug })),
+    // A plain list of links, not Product nodes. Google reads every Product it finds as a
+    // product snippet, and one with no offer or rating is invalid: listing the 24 pieces
+    // as Products here put 24 errors in Search Console. Each product page carries the full
+    // Product, with its price, on its own URL.
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: products.length,
+      itemListElement: products.map((product, index) => ({ '@type': 'ListItem', position: index + 1, url: SITE_URL + '/products/' + product.slug, name: product.title })),
+    },
   };
 
   return <main id="main-content" className="document-page"><article>

@@ -55,7 +55,7 @@ body:has(.sculpture-story) .site-header .nav-cta{font-size:14px;background:trans
 .sculpture-story .step-row h3{font-size:clamp(23px,2vw,29px)}
 .step-row p{grid-column:1;font-size:16px}
 .sculpture-story .faq-list details{border-color:#24312840;padding:22px 0}.sculpture-story .faq-list details:first-child{padding-top:0}.sculpture-story .faq-list summary{font-weight:500;font-size:17px}.sculpture-story .faq-list p{font-size:16px;line-height:1.8;color:#4b5545}
-.testimonial-stage .story-section-heading>p{max-width:340px;margin:0;font-size:16px;line-height:1.7;color:var(--chapter-muted)}
+.testimonial-stage .story-section-heading>p{max-width:340px;margin:0;font-size:16px;line-height:1.7;color:var(--chapter-muted)}.testimonial-stage .story-section-heading>p a{color:var(--chapter-ink);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
 .testimonial-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
 .testimonial-card{display:flex;flex-direction:column;min-width:0;margin:0;padding:28px;background:#27211b;border:1px solid #ffffff1a;border-radius:3px}
 .testimonial-rating{font-size:15px;letter-spacing:.16em;color:#d9ba7d}
@@ -390,3 +390,15 @@ body .site-header .site-links .nav-cta:hover{
 .block-ivory .guide-card .section-tag,.block-ivory .guide-card .guide-read{color:#705831}
 .block-ivory .guide-card-meta{color:#6f6656}
 @media(max-width:900px){.latest-posts .guide-grid{grid-template-columns:1fr}}
+
+/* The quote form is one page. Send spans the column so it reads as the end of the form,
+   with the human check and any reason it cannot send directly above it. */
+.single-enquiry fieldset{margin-bottom:0}
+.single-enquiry .optional-details{margin:6px 0 18px}
+.single-enquiry .attachment-panel{margin:4px 0 22px}
+.single-enquiry .challenge-panel{margin:6px 0 4px}
+.single-enquiry .enquiry-feedback:focus{outline:none}
+.single-enquiry .consent-note{margin:16px 0 0}
+.enquiry-canvas .enquiry-send{margin-top:14px}
+.enquiry-canvas .enquiry-send .primary{width:100%;margin:0;font-size:15px}
+.single-enquiry .attachment-waiting .attachment-state{color:#705831}
