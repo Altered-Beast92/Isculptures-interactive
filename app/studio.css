@@ -409,3 +409,62 @@ body .site-header .site-links .nav-cta:hover{
 /* Tablet quote page: the introduction sits above the four starting points instead of beside
    them, so the cards get the full width in two columns rather than spilling off the side. */
 @media(min-width:761px) and (max-width:1050px){.enquiry-layout{display:block}.enquiry-introduction{position:static;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:48px;align-items:start;margin-bottom:40px}.enquiry-introduction>:is(.enquiry-kicker,h1){grid-column:1/-1}.enquiry-direct{margin-top:0}.enquiry-introduction h1{font-size:clamp(60px,9vw,88px);line-height:.95;margin:0 0 22px}.enquiry-introduction h1 br{display:none}.enquiry-introduction h1 em{margin-left:.13em}.route-tab{aspect-ratio:auto;min-height:200px;max-height:none}}
+
+/* Hero proof: the Google rating sits straight under the two buttons and opens the profile. */
+.hero-rating{display:flex;width:fit-content;align-items:center;gap:10px;min-height:44px;margin-top:14px;font-size:14px;line-height:1.3;color:#ede6d8;text-decoration:none}
+.hero-rating .hero-stars{color:#e6c88f;font-size:15px;letter-spacing:.1em}
+.hero-rating>span:last-child{color:var(--sand)}
+.hero-rating:hover>span:nth-child(2){text-decoration:underline;text-underline-offset:4px}
+.hero-rating+.mockup-note{margin-top:4px}
+/* The 3D-file offer shares the ordering chapter with the free mockup: the same row, outlined on
+   the dark scene rather than a second paper panel, so the mockup stays the one bright offer. */
+.mockup-offer.file-offer{margin-top:16px;background:transparent;color:#e6d4b1;border:1px solid #e6d4b140;box-shadow:none}
+.mockup-offer.file-offer:after{background:repeating-linear-gradient(-45deg,#e6d4b114 0 1px,transparent 1px 8px)}
+.sculpture-story .mockup-offer.file-offer h3{color:#f1e6cf}
+.mockup-offer.file-offer p{color:#c9c2b0}
+.mockup-offer.file-offer .mockup-flag{background:#e6d4b1;color:#243128}
+.mockup-offer.file-offer .studio-button{background:transparent;color:#e6d4b1;border-color:#e6d4b180}
+.mockup-offer.file-offer .studio-button:hover{background:#e6d4b11a}
+.studio-text-link{min-height:44px}
+/* Phone: the homepage's long card lists become swipe rows, like the statues row, so the page is
+   far shorter. Each card snaps into place and the next one peeks in to show there is more. */
+@media(max-width:760px){
+.cinematic-home :is(#testimonials .testimonial-grid,#work .studio-gallery,#blog .guide-grid,#events .event-strip){display:grid;grid-template-columns:none;grid-template-rows:none;grid-auto-flow:column;grid-auto-columns:84%;gap:14px;height:auto;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;padding-bottom:8px}
+.cinematic-home :is(#testimonials .testimonial-grid,#work .studio-gallery,#blog .guide-grid,#events .event-strip)>*{scroll-snap-align:start;min-width:0;margin:0}
+.cinematic-home #work .studio-project,.cinematic-home #work .studio-project:first-child{height:auto;aspect-ratio:4/5;grid-row:auto}
+.cinematic-home #events .event-strip img{height:auto;aspect-ratio:4/3}
+/* The call bar carries Call and Get a quote on every page, so the footer drops its own. */
+body:has(.mobile-cta) .site-footer.story-footer>:is(span,.footer-heading,.primary){display:none}
+body:has(.mobile-cta) .site-footer.story-footer>.footer-grid{margin-top:0;border-top:0;padding-top:8px}
+/* Footer links are finger-sized on a phone: at least 44px tall. */
+.footer-links ul{gap:0}
+.footer-links a,.footer-contact a,.footer-social a{min-height:44px}
+}
+@media(max-width:420px){.site-footer.story-footer>.footer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.site-footer.story-footer .footer-grid>.footer-brand{grid-column:1/-1}}
+/* Phone call bar: Call and Get a quote, fixed to the bottom once the visitor scrolls past the
+   first screen. Hidden on the quote page itself, where the form is the call to action. */
+.mobile-cta{display:none}
+@media(max-width:760px){
+.mobile-cta{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 4vw calc(10px + env(safe-area-inset-bottom));background:#17130ff2;border-top:1px solid #e6d4b133;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);transform:translateY(110%);visibility:hidden;transition:transform .25s ease,visibility 0s linear .25s}
+.mobile-cta.is-shown{transform:none;visibility:visible;transition:transform .25s ease,visibility 0s}
+.mobile-cta a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:4px;font:600 14px/1.2 var(--font-manrope),Arial,sans-serif;text-decoration:none;white-space:nowrap}
+.mobile-cta-call{border:1px solid #e6d4b180;color:#ede6d8}
+.mobile-cta-quote{background:#e6d4b1;color:#243128}
+body:has(.mobile-cta){padding-bottom:calc(68px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){.mobile-cta,.mobile-cta.is-shown{transition:none}}
+/* Phone: tighter chapters, steps, bulk list and offer panels. Every word stays; only the air goes. */
+@media(max-width:760px){
+.cinematic-home.sculpture-story :is(.story-stage,.floating-work,.floating-process){padding-block:36px}
+.cinematic-home .studio-process.step-row{margin-top:20px}
+.cinematic-home .step-row li{gap:8px;padding:16px 0 4px}
+.cinematic-home.sculpture-story .step-row h3{font-size:22px}
+.cinematic-home .supply-ledger>div{padding-block:14px}
+.cinematic-home.sculpture-story .supply-ledger h3{font-size:22px}
+.cinematic-home .mockup-offer{gap:12px;padding:20px;margin-top:28px}
+.cinematic-home .mockup-offer.file-offer{margin-top:12px}
+}
+@media(max-width:760px){
+.cinematic-home .mockup-offer .mockup-flag{justify-self:start}
+.cinematic-home #testimonials .testimonial-card blockquote{font-size:17px;line-height:1.55;margin:16px 0 20px}
+}
