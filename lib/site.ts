@@ -69,7 +69,8 @@ export function businessSchema() {
     areaServed: AREA_SERVED.map(name => ({ '@type': 'Place', name })),
     ...(OPENING_HOURS.length ? { openingHoursSpecification: OPENING_HOURS.map(hours => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: hours.days, opens: hours.opens, closes: hours.closes })) } : {}),
     ...(GBP_URL ? { hasMap: GBP_URL } : {}),
-    sameAs: ['https://www.etsy.com/au/shop/iSculptures', 'https://www.instagram.com/impeccablesculptures/', GBP_URL].filter(Boolean),
+    // The same social profiles the Business Profile lists, so both name one business.
+    sameAs: ['https://www.etsy.com/au/shop/iSculptures', 'https://www.instagram.com/impeccablesculptures/', 'https://www.facebook.com/isculptures', GBP_URL].filter(Boolean),
   };
 }
 
