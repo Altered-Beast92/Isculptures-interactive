@@ -1,6 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import { CONTACT, GBP_URL } from '../../lib/site';
+import { CONTACT, GBP_URL, OPENING_HOURS, openingHoursText } from '../../lib/site';
 import BrandLogo from './brand-logo';
 
 const groups = [
@@ -44,6 +44,7 @@ export default function SiteFooter() {
         <ul className="footer-contact">
           <li><span>Phone</span><a href={'tel:' + CONTACT.tel}>{CONTACT.phone}</a></li>
           <li><span>Email</span><a href={'mailto:' + CONTACT.email}>{CONTACT.email}</a></li>
+          {OPENING_HOURS.length > 0 && <li><span>Hours</span><p>{openingHoursText()}</p></li>}
         </ul>
       </div>
       {groups.map(group => <div key={group.title} className="footer-links">

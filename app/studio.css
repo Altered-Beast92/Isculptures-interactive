@@ -280,7 +280,7 @@ body .site-header .site-links .nav-cta:hover{
 .footer-contact{list-style:none;display:grid;gap:10px;width:100%;max-width:340px;margin:4px 0 0;padding:0}
 .footer-contact li{display:grid;grid-template-columns:60px minmax(0,1fr);align-items:baseline;gap:12px;padding-top:10px;border-top:1px solid #ffffff14}
 .footer-contact span{font:500 10px/1.6 var(--font-mono),monospace;letter-spacing:.12em;text-transform:uppercase;color:#b9a47c}
-.footer-contact a{font-size:15px;color:#ede6d8;overflow-wrap:anywhere}
+.footer-contact a{font-size:15px;color:#ede6d8;overflow-wrap:anywhere}.footer-contact p{margin:0;font-size:15px;line-height:1.5;color:#ede6d8}
 .footer-title{margin:0 0 16px;font:500 11px/1.6 var(--font-mono),monospace;letter-spacing:.14em;text-transform:uppercase;color:#d9ba7d}
 .footer-links ul{list-style:none;display:grid;gap:10px;margin:0;padding:0}
 .footer-links a{display:inline-flex;align-items:center;min-height:24px;font-size:14px;line-height:1.4;color:#ddd5c6;transition:color .2s,transform .2s}
