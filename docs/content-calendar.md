@@ -1,8 +1,10 @@
 # Guide content calendar
 
-Two guides a month, drafted on the 8th and 22nd at 00:00 UTC. The drafting routine takes the first row whose
-status is `planned`, drafts it as a pull request, and changes the status to `drafted (PR #n)`. Nothing is
-published until the owner reviews and merges it. `New` rows add a guide. `Refresh` rows rewrite an existing
+Two guides a month, written on the 8th and 22nd at 00:00 UTC. The drafting routine takes the first row whose
+status is `planned`, writes it as a pull request, and changes the status to `drafted (PR #n)`. The
+`Auto-publish guides` workflow then merges that pull request once the site's checks pass, and Vercel publishes it.
+Add the `hold` label to a pull request to stop it publishing. See `docs/guide-drafting.md` for the details.
+`New` rows add a guide. `Refresh` rows rewrite an existing
 guide in place (same slug, same `published` date) and convert it to a TSX body.
 
 To change what gets written next, reorder the rows, edit them, or set a row to `skip`. Rows marked `later` are
