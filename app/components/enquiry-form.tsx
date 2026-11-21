@@ -266,7 +266,7 @@ export default function EnquiryForm() {
   const hasErrors = Object.values(errors).some(Boolean);
   return <>
     <section className="route-picker" aria-labelledby="category-heading" hidden={hasSelected}>
-      <p className="route-step">01 / YOUR STARTING POINT</p>
+      
       <h2 id="category-heading" ref={categoryHeading} tabIndex={-1}>What do you need made?</h2><p className="route-help">Pick the closest option. You can explain the rest in the form.</p>
       <div className="route-grid">{categories.map(category => <button key={category.route} type="button" className="route-tab" aria-controls="project-enquiry-form" disabled={state === 'sending'} onClick={() => { setRoute(category.route); setHasSelected(true); setErrors({}); setMessage(''); }}>
         <span className="route-tab-top"><span className="route-icon" aria-hidden="true"><RouteIcon route={category.route}/></span><span className="route-arrow" aria-hidden="true">↗</span></span>
