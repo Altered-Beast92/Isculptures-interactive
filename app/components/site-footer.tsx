@@ -1,6 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import { CONTACT } from '../../lib/site';
+import { CONTACT, GBP_URL, OPENING_HOURS, openingHoursText } from '../../lib/site';
 import BrandLogo from './brand-logo';
 
 const groups = [
@@ -13,8 +13,9 @@ const groups = [
     ['Repeat Orders & Supply', '/pages/ongoing-supply'],
   ] },
   { title: 'Studio', links: [
+    ['Statues & Icons', '/products'],
     ['Our Work', '/work'],
-    ['Ordering Guides', '/guides'],
+    ['Blog', '/guides'],
     ['About Us', '/pages/about'],
     ['Get a Quote', '/enquiry'],
   ] },
@@ -29,10 +30,12 @@ const groups = [
 export default function SiteFooter() {
   const pathname = usePathname();
   const onEnquiry = pathname === '/enquiry';
-  return <footer className={'site-footer story-footer' + (onEnquiry ? ' enquiry-page-footer' : '')}>
+  // Service and about pages already end on their own quote button just above the footer.
+  const endsOnQuote = onEnquiry || pathname.startsWith('/pages/');
+  return <footer className={'site-footer story-footer' + (onEnquiry ? ' enquiry-page-footer' : endsOnQuote ? ' no-footer-cta' : '')}>
     {/* The enquiry page is already the call to action, so it keeps the links without repeating it.
         The tagline is a paragraph, not a heading, so it doesn't repeat in every page's outline. */}
-    {!onEnquiry && <><span>GET IN TOUCH</span><p className="footer-heading">Have something <br/>in mind?</p>
+    {!endsOnQuote && <><span>GET IN TOUCH</span><p className="footer-heading">Have something <br/>in mind?</p>
     <a className="primary" href="/enquiry">Get a quote <span>↗</span></a></>}
     <div className="footer-grid">
       <div className="footer-brand">
@@ -41,6 +44,7 @@ export default function SiteFooter() {
         <ul className="footer-contact">
           <li><span>Phone</span><a href={'tel:' + CONTACT.tel}>{CONTACT.phone}</a></li>
           <li><span>Email</span><a href={'mailto:' + CONTACT.email}>{CONTACT.email}</a></li>
+          {OPENING_HOURS.length > 0 && <li><span>Hours</span><p>{openingHoursText()}</p></li>}
         </ul>
       </div>
       {groups.map(group => <div key={group.title} className="footer-links">
@@ -51,7 +55,9 @@ export default function SiteFooter() {
     <div className="footer-bottom">
       <small>© {new Date().getFullYear()} {CONTACT.name} · Sydney, Australia</small>
       <ul className="footer-social">
+        {GBP_URL && <li><a href={GBP_URL} target="_blank" rel="noopener">Google reviews <span aria-hidden="true">↗</span></a></li>}
         <li><a href="https://www.instagram.com/impeccablesculptures/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span></a></li>
+        <li><a href="https://www.facebook.com/isculptures" target="_blank" rel="noreferrer">Facebook <span aria-hidden="true">↗</span></a></li>
         <li><a href="https://www.etsy.com/au/shop/iSculptures?utm_source=isculptures&amp;utm_medium=referral&amp;utm_campaign=footer" target="_blank" rel="noopener">Shop Single Pieces on Etsy <span aria-hidden="true">↗</span></a></li>
       </ul>
     </div>

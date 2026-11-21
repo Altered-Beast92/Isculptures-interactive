@@ -14,6 +14,7 @@ export default function PrinterBackdrop() {
   const [active, setActive] = useState(true);
   const [progress, setProgress] = useState(0);
   const [scrolling, setScrolling] = useState(false);
+  const [hidden, setHidden] = useState(false);
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const connection = (navigator as Navigator & { connection?: EventTarget & { saveData?: boolean } }).connection;
@@ -45,14 +46,22 @@ export default function PrinterBackdrop() {
     if (!enabled) return;
     let timer: ReturnType<typeof setTimeout>;
     let frame = 0;
-    let distance = 1;
-    // Cache document measurements on resize, not during every scroll frame.
-    const measure = () => { distance = Math.max(1, document.documentElement.scrollHeight - window.innerHeight); };
+    let distance = 1, covered = Infinity;
+    // Cache document measurements on resize, not during every scroll frame. The print
+    // completes as the [data-print-end] chapter scrolls past; the blocks after it are
+    // opaque, so once its bottom edge leaves the screen the scene stops rendering.
+    const measure = () => {
+      const end = document.querySelector('[data-print-end]');
+      const bottom = end ? end.getBoundingClientRect().bottom + window.scrollY : Infinity;
+      distance = Math.max(1, Math.min(bottom, document.documentElement.scrollHeight) - window.innerHeight);
+      covered = bottom;
+    };
     const update = () => {
       if (frame) return;
       frame = requestAnimationFrame(() => {
         frame = 0;
         setProgress(window.scrollY / distance);
+        setHidden(window.scrollY > covered);
         setScrolling(true);
         clearTimeout(timer);
         timer = setTimeout(() => setScrolling(false), 120);
@@ -69,9 +78,10 @@ export default function PrinterBackdrop() {
       window.removeEventListener('scroll', update); window.removeEventListener('resize', resize);
     };
   }, [enabled]);
-  return <div className="world" aria-hidden="true" data-active={active}>
+  const live = active && !hidden;
+  return <div className="world" aria-hidden="true" data-active={live}>
     {enabled && mounted && <>
-      <SceneBoundary><PrinterScene progress={progress} isScrolling={scrolling} active={active}/></SceneBoundary>
+      <SceneBoundary><PrinterScene progress={progress} isScrolling={scrolling} active={live}/></SceneBoundary>
       <div className="printer-dust">{Array.from({ length: 20 }, (_, i) => <i key={i} style={{
         left: `${(i * 37 + 11) % 100}%`, top: `${(i * 53 + 7) % 100}%`,
         '--dust-duration': `${8 + i % 7}s`, '--dust-delay': `-${i * 1.3}s`,

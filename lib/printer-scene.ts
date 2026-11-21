@@ -12,7 +12,7 @@ export function createPrinterRenderer(canvas: HTMLCanvasElement | OffscreenCanva
   renderer.localClippingEnabled = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  const scene = new THREE.Scene(); scene.background = new THREE.Color('#191b1a');
+  const scene = new THREE.Scene(); scene.background = new THREE.Color('#1b1814');
   const camera = new THREE.PerspectiveCamera(42, 1, .1, 1000);
   camera.position.set(3.9,.45,5.8);
   const rig = new THREE.Group(); rig.name = 'printer'; rig.position.set(1.35,-.15,0); scene.add(rig);
@@ -21,13 +21,15 @@ export function createPrinterRenderer(canvas: HTMLCanvasElement | OffscreenCanva
   const spool = new THREE.Group(); spool.name = 'spool'; spool.position.set(-1.78,1.05,-.7); rig.add(spool);
   const carrier = new THREE.Group(); carrier.name = 'carrier'; carrier.position.set(0,1.72,-.55); rig.add(carrier);
   const clip = new THREE.Plane(new THREE.Vector3(0,-1,0),-.9);
-  const modelMaterial = new THREE.MeshStandardMaterial({ color: '#8f918d', roughness: .65, metalness: .05, clippingPlanes: [clip], side: THREE.DoubleSide });
+  const modelMaterial = new THREE.MeshStandardMaterial({ color: '#c4bba9', roughness: .65, metalness: .05, clippingPlanes: [clip], side: THREE.DoubleSide });
   const filament = createPrinterFilament();
   const filamentMaterial = new THREE.MeshStandardMaterial({ color: '#cfc7b2', roughness: .42, metalness: .04 });
   const feed = new THREE.Mesh(filament.geometry, filamentMaterial); feed.frustumCulled = false; feed.name = 'filament'; rig.add(feed);
-  scene.add(new THREE.AmbientLight(0xffffff,.65));
-  const key = new THREE.SpotLight('#fff4df',290,0,.72,1); key.position.set(-3,5,4); scene.add(key);
-  const fill = new THREE.SpotLight('#e8efff',110,0,.78,1); fill.position.set(3,3,4); scene.add(fill);
+  // A warm key from the left and a neutral fill, so the scene reads as a lit studio
+  // bench rather than grey on black.
+  scene.add(new THREE.AmbientLight('#fff1de',.6));
+  const key = new THREE.SpotLight('#ffd9a6',360,0,.72,1); key.position.set(-3,5,4); scene.add(key);
+  const fill = new THREE.SpotLight('#f2e6d3',90,0,.78,1); fill.position.set(3,3,4); scene.add(fill);
   const target = new THREE.Vector3(), inlet = new THREE.Vector3(), lastInlet = new THREE.Vector3(1e3,1e3,1e3);
   let disposed = false, ready = false, lost = false, initial = true, compact = false, renderScale = 1;
   let elapsedBefore = 0, headTarget = 0, sampleStart = 0, sampleFrames = 0, sampleCpu = 0;

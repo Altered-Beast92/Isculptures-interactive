@@ -9,7 +9,8 @@ const ModelPreview = dynamic(() => import('./model-preview'), { ssr: false });
 type Config = { available: boolean; uploads: boolean; turnstileSiteKey?: string };
 type TurnstileAPI = { render: (element: HTMLElement, options: Record<string, unknown>) => string; remove: (id: string) => void; reset: (id: string) => void };
 type Ticket = { ticket: string; expires: string };
-type Upload = { slot: number; name: string; size: number; file: File; status: 'uploading' | 'done' | 'error'; progress: number; error?: string };
+// A file chosen before the human check has passed waits, and uploads the moment it does.
+type Upload = { slot: number; name: string; size: number; file: File; status: 'waiting' | 'uploading' | 'done' | 'error'; progress: number; error?: string };
 const endpoint = process.env.NEXT_PUBLIC_ENQUIRY_ENDPOINT || '/api/enquiry';
 const categories: { route: EnquiryRoute; title: string; description: string; guidance: string; prompt: string; flag?: string }[] = [
   { route: 'bulk', title: 'Event favours & gifts', description: 'Bonbonniere, keepsakes and personalised gifts for weddings, christenings and other events.', guidance: 'Minimum 10 units.', prompt: 'What’s the occasion? Include the number of guests, any names or wording, and the event date.' },
@@ -17,10 +18,6 @@ const categories: { route: EnquiryRoute; title: string; description: string; gui
   { route: 'design', title: 'Start from an idea', flag: 'FREE DESIGN MOCKUP', description: 'No 3D file? Send a sketch, photo or description and we’ll work out the design.', guidance: 'Minimum 10 units. Any design costs are included in your quote.', prompt: 'Describe your idea: what it’s for, roughly how big, and any photos or references you like.' },
   { route: 'file', title: 'I have a 3D file', description: 'Send an STL, OBJ or 3MF and we’ll check it’s ready to print.', guidance: 'Minimum 10 units. Tell us if you need a prototype first.', prompt: 'What’s the part for? Include the quantity, size, any material preference and the tolerances that matter.' },
 ];
-const STEPS = ['Project', 'Delivery', 'Contact'];
-// Which step owns each field, so an error can be shown where it can actually be fixed.
-const FIELD_STEP: Record<string, number> = { brief: 0, quantity: 0, annualQuantity: 0, files: 0, requiredBy: 1, name: 2, email: 2, consent: 2 };
-const stepFor = (key: string) => FIELD_STEP[key] ?? 2;
 const fileSize = (bytes: number) => bytes < 1024 ? bytes + ' B' : bytes < 1048576 ? Math.round(bytes / 1024) + ' KB' : (bytes / 1048576).toFixed(1) + ' MB';
 // A quote needs to see the piece, not every pixel, so photographs travel at a workable size.
 async function shrinkImage(file: File) {
@@ -62,10 +59,12 @@ function putFile(url: string, file: File, onProgress: (fraction: number) => void
     request.send(file);
   });
 }
+// One page, not steps. The only things a visitor must give are what they want made, a name and
+// an email; everything else is either optional in plain sight or folded into "Add more detail".
+// The Send button is never silently disabled: pressing it always either sends or says why not.
 export default function EnquiryForm() {
   const [route, setRoute] = useState<EnquiryRoute>('bulk');
   const [hasSelected, setHasSelected] = useState(false);
-  const [step, setStep] = useState(0);
   const selectedCategory = categories.find(category => category.route === route)!;
   const projectHeading = useRef<HTMLHeadingElement>(null);
   const categoryHeading = useRef<HTMLHeadingElement>(null);
@@ -78,12 +77,14 @@ export default function EnquiryForm() {
   const [message, setMessage] = useState('');
   const [reference, setReference] = useState('');
   const [ticket, setTicket] = useState<Ticket | null>(null);
+  // Read by code that runs after an await, where the rendered `ticket` may already be stale.
+  const ticketRef = useRef<Ticket | null>(null);
+  const holdTicket = (value: Ticket | null) => { ticketRef.current = value; setTicket(value); };
   const form = useRef<HTMLFormElement>(null);
   const feedback = useRef<HTMLDivElement>(null);
   const challenge = useRef<HTMLDivElement>(null);
   const widget = useRef<string | null>(null);
   const submissionId = useRef('');
-  const legends = useRef<(HTMLLegendElement | null)[]>([]);
   // Set after mount so the exported HTML does not carry a build-time date.
   const [today, setToday] = useState('');
   const nextSlot = useRef(0);
@@ -114,7 +115,8 @@ export default function EnquiryForm() {
     }).catch(() => { if (!abort.signal.aborted) setConfig({ available: false, uploads: false }); }).finally(() => clearTimeout(timeout));
     return () => { clearTimeout(timeout); abort.abort(); };
   }, []);
-  // The check runs on the first step so a verified ticket can authorise uploads while the brief is still being written.
+  // The check mounts as soon as the form shows, so most visitors have passed it long before they
+  // reach Send. It sits directly above Send, where anyone Cloudflare asks to tick it will see it.
   useEffect(() => {
     if (!config?.turnstileSiteKey || !challenge.current || !hasSelected) return;
     let cancelled = false;
@@ -123,21 +125,23 @@ export default function EnquiryForm() {
         const response = await fetch(endpoint + '/ticket', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ submissionId: submissionId.current, turnstileToken: value }), signal: AbortSignal.timeout(15000) });
         const result = await response.json() as Ticket & { error?: string };
         if (!response.ok || typeof result.ticket !== 'string') throw new Error(result.error || 'Verification could not be completed. Please retry.');
-        if (!cancelled) { setTicket({ ticket: result.ticket, expires: String(result.expires) }); setMessage(''); }
+        if (!cancelled) { holdTicket({ ticket: result.ticket, expires: String(result.expires) }); setMessage(''); setState(current => current === 'error' ? 'idle' : current); }
       } catch (problem) {
-        if (!cancelled) { setTicket(null); setMessage(problem instanceof Error ? problem.message : 'Verification could not be completed. Please retry.'); }
+        if (!cancelled) { holdTicket(null); setMessage(problem instanceof Error ? problem.message : 'Verification could not be completed. Please retry.'); }
       }
     };
     const mount = () => {
       const api = (window as Window & { turnstile?: TurnstileAPI }).turnstile;
-      if (!cancelled && api && challenge.current && widget.current === null) widget.current = api.render(challenge.current, { sitekey: config.turnstileSiteKey, action: 'enquiry', callback: (value: string) => claim(value), 'expired-callback': () => setTicket(null), 'error-callback': () => { setTicket(null); setMessage('Verification could not load. Please retry or email the studio.'); } });
+      // The ticket a token buys lasts far longer than the token, so an expired token keeps the
+      // ticket. The widget refreshes itself, and a fresh pass simply replaces the ticket.
+      if (!cancelled && api && challenge.current && widget.current === null) widget.current = api.render(challenge.current, { sitekey: config.turnstileSiteKey, action: 'enquiry', callback: (value: string) => claim(value), 'error-callback': () => { holdTicket(null); setMessage('The human check could not load. Please refresh the page, or email the studio.'); } });
     };
     let script = document.querySelector<HTMLScriptElement>('script[data-enquiry-turnstile]');
     if (!script) { script = document.createElement('script'); script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'; script.async = true; script.dataset.enquiryTurnstile = 'true'; document.head.appendChild(script); }
     script.addEventListener('load', mount); mount();
     return () => { cancelled = true; script?.removeEventListener('load', mount); const api = (window as Window & { turnstile?: TurnstileAPI }).turnstile; if (widget.current !== null) api?.remove(widget.current); widget.current = null; };
   }, [config?.turnstileSiteKey, hasSelected]);
-  useEffect(() => { if (state === 'sent' || state === 'error' || Object.keys(errors).length) feedback.current?.focus(); }, [state, errors]);
+  useEffect(() => { if (state === 'sent') feedback.current?.focus(); }, [state]);
   useEffect(() => { if (hasSelected) projectHeading.current?.focus(); }, [hasSelected, route]);
   const error = (key: string) => errors[key] ? <span className="field-error" id={'error-' + key}>{errors[key]}</span> : null;
   const props = (key: string) => ({ 'aria-invalid': !!errors[key], 'aria-describedby': errors[key] ? 'error-' + key : undefined });
@@ -161,8 +165,12 @@ export default function EnquiryForm() {
       .catch(problem => { if (!controller.signal.aborted) patch(entry.slot, { status: 'error', error: problem instanceof Error ? problem.message : 'This file could not be uploaded.' }); })
       .finally(() => { if (transfers.current.get(entry.slot) === controller) transfers.current.delete(entry.slot); });
   };
+  // Files chosen before the check passed start uploading as soon as it does.
+  useEffect(() => {
+    if (!ticket) return;
+    for (const item of uploads) if (item.status === 'waiting') transfer(item, ticket);
+  }, [ticket]); // eslint-disable-line react-hooks/exhaustive-deps
   const attach = async (chosen: File[]) => {
-    if (!ticket) { setErrors(previous => ({ ...previous, files: 'Complete the verification above before attaching files.' })); return; }
     const room = MAX_FILES - uploads.length;
     if (chosen.length > room) { setErrors(previous => ({ ...previous, files: 'Choose up to ' + MAX_FILES + ' files.' })); return; }
     const prepared = await Promise.all(chosen.map(shrinkImage));
@@ -170,9 +178,10 @@ export default function EnquiryForm() {
     if (issue) { setErrors(previous => ({ ...previous, files: issue })); return; }
     if (nextSlot.current + prepared.length > MAX_SLOTS) { setErrors(previous => ({ ...previous, files: 'Too many changes to the attachments. Please refresh the page and start again.' })); return; }
     setErrors(previous => ({ ...previous, files: '' }));
-    const entries = prepared.map<Upload>(file => ({ slot: nextSlot.current++, name: file.name, size: file.size, file, status: 'uploading', progress: 0 }));
+    const held = ticketRef.current;
+    const entries = prepared.map<Upload>(file => ({ slot: nextSlot.current++, name: file.name, size: file.size, file, status: held ? 'uploading' : 'waiting', progress: 0 }));
     setUploads(previous => [...previous, ...entries]);
-    for (const entry of entries) transfer(entry, ticket);
+    if (held) for (const entry of entries) transfer(entry, held);
   };
   const detach = (slot: number) => {
     transfers.current.get(slot)?.abort();
@@ -181,14 +190,15 @@ export default function EnquiryForm() {
     setPreview(current => current === slot ? null : current);
     setErrors(previous => ({ ...previous, files: '' }));
   };
-  const uploading = uploads.some(item => item.status === 'uploading');
+  const uploading = uploads.some(item => item.status === 'uploading' || item.status === 'waiting');
   const failed = uploads.filter(item => item.status === 'error');
   const stored = uploads.filter(item => item.status === 'done');
   const previewable = stored.find(item => item.slot === preview);
-  // Both the step buttons and the send button read the form through here, so they agree on what is wrong.
   const inspect = () => {
     const values = new FormData(form.current!); const field = (key: string) => String(values.get(key) || '');
-    const payload = { submissionId: submissionId.current, route, website: field('website'), consent: values.get('consent') === 'on',
+    // Consent is the privacy line printed directly above the Send button: pressing Send after
+    // reading it is the acknowledgement, so the visitor no longer has to tick a box for it.
+    const payload = { submissionId: submissionId.current, route, website: field('website'), consent: true,
       contact: { name: field('name'), email: field('email'), company: field('company'), phone: field('phone'), customerType: field('customerType') },
       brief: field('brief'), quantity: field('quantity'), annualQuantity: route === 'supply' ? field('annualQuantity') : '', frequency: route === 'supply' ? field('frequency') : '',
       material: field('material'), dimensions: field('dimensions'), finish: field('finish'), packaging: field('packaging'), budget: field('budget'),
@@ -201,44 +211,37 @@ export default function EnquiryForm() {
     if (fileError) checked.errors.files = fileError;
     return checked;
   };
-  // Two frames, so React has committed the new step before anything is measured or scrolled.
+  // Two frames, so React has committed the change before anything is measured or scrolled.
   const afterPaint = (act: () => void) => requestAnimationFrame(() => requestAnimationFrame(act));
-  // Focus alone does not reliably bring a field back into view, so the scroll is explicit.
-  const bring = (node: HTMLElement | null | undefined) => { if (!node) return; node.focus({ preventScroll: true }); node.scrollIntoView({ block: 'center' }); };
-  const firstProblem = () => form.current?.querySelector<HTMLElement>('fieldset:not([hidden]) [aria-invalid="true"]') ?? null;
-  // Moving only moves. Clearing the message is the caller's business, so a failure can send
-  // the visitor to another step while its explanation stays on screen.
-  const reveal = (next: number) => {
-    setStep(next);
-    afterPaint(() => bring(firstProblem() ?? legends.current[next]));
+  // Focus alone does not reliably bring a field back into view, so the scroll is explicit. A
+  // field folded inside "Add more detail" is unfolded first, or it could not be seen or fixed.
+  const bring = (node: HTMLElement | null | undefined) => {
+    if (!node) return;
+    const fold = node.closest('details');
+    if (fold) fold.open = true;
+    node.focus({ preventScroll: true }); node.scrollIntoView({ block: 'center' });
   };
-  const goTo = (next: number) => { setMessage(''); reveal(next); };
-  // Continue only moves on once this step is sound, so nothing is discovered at the very end.
-  const advance = () => {
-    setMessage('');
-    const { errors: found } = inspect();
-    const blocking = Object.fromEntries(Object.entries(found).filter(([key, value]) => value && stepFor(key) === step));
-    setErrors(previous => ({ ...previous, ...blocking }));
-    if (Object.keys(blocking).length) { afterPaint(() => bring(firstProblem())); return; }
-    reveal(step + 1);
-  };
+  // Every reason Send cannot go ahead lands here, next to the button, and is read out.
+  const refuse = (text: string) => { setState('error'); setMessage(text); afterPaint(() => bring(feedback.current)); };
   const send = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault(); if (state === 'sending' || !hasSelected || !form.current) return;
     const checked = inspect();
     setErrors(checked.errors); setMessage('');
-    if (!checked.data || Object.keys(checked.errors).length) {
-      const first = Object.keys(checked.errors).filter(key => checked.errors[key]).map(stepFor).sort()[0] ?? 0;
-      setState('idle'); reveal(first);
+    if (!checked.data || Object.values(checked.errors).some(Boolean)) {
+      setState('idle');
+      afterPaint(() => bring(form.current?.querySelector<HTMLElement>('[aria-invalid="true"]') ?? feedback.current));
       return;
     }
-    if (!config?.available) { setState('error'); setMessage('Online enquiries are temporarily unavailable. Please email your brief to info@isculptures.com.au.'); return; }
-    if (uploading) { setState('error'); setMessage('Your files are still uploading. Please wait for them to finish.'); return; }
-    if (config.turnstileSiteKey && !ticket) { setState('error'); setMessage('Please complete the verification on the first step before sending.'); return; }
+    if (!config) return refuse('Still connecting to the studio. Please wait a moment and press Send again.');
+    if (!config.available) return refuse('Online enquiries are temporarily unavailable. Please email your brief to info@isculptures.com.au.');
+    if (config.turnstileSiteKey && !ticketRef.current) return refuse('One last step: tick “Verify you are human” just above, then press Send again.');
+    if (uploading) return refuse('Your files are still uploading. Press Send again once each one shows “Uploaded”.');
     setState('sending');
     try {
+      const held = ticketRef.current;
       const response = await fetch(endpoint, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(30000),
-        body: JSON.stringify({ ...checked.data, ticket: ticket?.ticket, expires: ticket?.expires, attachments: stored.map(item => item.slot) })
+        body: JSON.stringify({ ...checked.data, ticket: held?.ticket, expires: held?.expires, attachments: stored.map(item => item.slot) })
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || result.ok !== true || typeof result.id !== 'string') {
@@ -250,66 +253,80 @@ export default function EnquiryForm() {
       track('enquiry_submitted', route);
     } catch (problem) {
       track('enquiry_error', route);
-      setState('error'); setMessage(problem instanceof Error ? problem.message : 'We could not confirm receipt. Please try again.');
-      // Only a refused verification is worth re-challenging for, and the widget lives on the first step.
+      // A refused verification means the check has to be passed again, right above the button.
       if (problem instanceof Error && (problem as Error & { status?: number }).status === 403) {
         const api = (window as Window & { turnstile?: TurnstileAPI }).turnstile;
         if (widget.current !== null) api?.reset(widget.current);
-        setTicket(null); reveal(0);
+        holdTicket(null);
       }
+      refuse(problem instanceof Error ? problem.message : 'We could not confirm receipt. Please try again.');
     }
   };
   if (state === 'sent') return <div ref={feedback} tabIndex={-1} className="enquiry-success" role="status"><p className="section-tag">ENQUIRY RECEIVED</p><h2>Thanks, we’ve got your enquiry.</h2><p>Your reference is <strong>{reference}</strong></p><p>We’ll read through it and reply to the email address you gave us. Sending an enquiry doesn’t lock in an order or a production slot.</p><a className="primary" href="/">Back to home</a></div>;
+  const hasErrors = Object.values(errors).some(Boolean);
   return <>
     <section className="route-picker" aria-labelledby="category-heading" hidden={hasSelected}>
       <p className="route-step">01 / YOUR STARTING POINT</p>
       <h2 id="category-heading" ref={categoryHeading} tabIndex={-1}>What do you need made?</h2><p className="route-help">Pick the closest option. You can explain the rest in the form.</p>
-      <div className="route-grid">{categories.map(category => <button key={category.route} type="button" className="route-tab" aria-controls="project-enquiry-form" disabled={state === 'sending'} onClick={() => { setRoute(category.route); setHasSelected(true); setStep(0); setErrors({}); setMessage(''); }}>
+      <div className="route-grid">{categories.map(category => <button key={category.route} type="button" className="route-tab" aria-controls="project-enquiry-form" disabled={state === 'sending'} onClick={() => { setRoute(category.route); setHasSelected(true); setErrors({}); setMessage(''); }}>
         <span className="route-tab-top"><span className="route-icon" aria-hidden="true"><RouteIcon route={category.route}/></span><span className="route-arrow" aria-hidden="true">↗</span></span>
-        <span className="route-title">{category.title}</span><span className="route-description">{category.description}</span><span className="route-foot">{category.flag && <span className="route-flag">{category.flag}</span>}<span className="route-minimum">BULK ORDERS / 10+ UNITS</span></span>
+        <span className="route-title">{category.title}</span><span className="route-description">{category.description}</span><span className="route-foot">{category.flag && <span className="route-flag">{category.flag}</span>}</span>
       </button>)}</div>
       <p className="route-footnote">You send a brief → We review it → You get a quote</p>
     </section>
-    <form id="project-enquiry-form" hidden={!hasSelected} ref={form} className="enquiry-form staged-enquiry" onSubmit={send}
+    <form id="project-enquiry-form" hidden={!hasSelected} ref={form} className="enquiry-form staged-enquiry single-enquiry" onSubmit={send}
       onInput={event => clearError(event.target)}
       onChange={event => { clearError(event.target); if (!started.current) { started.current = true; track('enquiry_started', route); } }} noValidate>
-    <div className="enquiry-category-intro"><button className="change-category" type="button" disabled={state === 'sending'} onClick={() => { setHasSelected(false); requestAnimationFrame(() => categoryHeading.current?.focus()); }}>← Change category</button><p className="section-tag">YOUR PROJECT</p><h2 ref={projectHeading} tabIndex={-1}>{selectedCategory.title}</h2><p>{selectedCategory.guidance}</p></div>
-    <nav className="enquiry-stages" aria-label="Enquiry steps">{STEPS.map((label, index) => {
-      const unresolved = Object.keys(errors).some(key => errors[key] && stepFor(key) === index);
-      return <button key={label} type="button" className={unresolved ? 'stage-unresolved' : undefined} aria-current={step === index ? 'step' : undefined} aria-label={'0' + (index + 1) + ' ' + label + (unresolved ? ', needs attention' : '')} disabled={state === 'sending'} onClick={() => goTo(index)}>0{index + 1}<span>{label}</span>{unresolved && <em aria-hidden="true">!</em>}</button>;
-    })}</nav>
-    <fieldset hidden={step !== 0} disabled={state === 'sending'}><legend ref={node => { legends.current[0] = node; }} tabIndex={-1}>Your project</legend>
+    <div className="enquiry-category-intro"><button className="change-category" type="button" disabled={state === 'sending'} onClick={() => { setHasSelected(false); requestAnimationFrame(() => categoryHeading.current?.focus()); }}>← Change category</button><p className="section-tag">YOUR PROJECT</p><h2 ref={projectHeading} tabIndex={-1}>{selectedCategory.title}</h2><p>{selectedCategory.guidance} Only your idea, name and email are needed.</p></div>
+    <fieldset disabled={state === 'sending'}><legend className="visually-hidden">Your enquiry</legend>
       <input type="hidden" name="route" value={route}/>
-      <label>What would you like to make? <span>(required)</span><textarea name="brief" maxLength={5000} rows={4} {...props('brief')} placeholder={selectedCategory.prompt}/>{error('brief')}</label>
-      <div className="enquiry-grid"><label>Quantity per order <span>(leave blank if unsure)</span><input name="quantity" type="number" min={route === 'bulk' || route === 'supply' ? 10 : 1} max={10000000} step="1" {...props('quantity')}/>{error('quantity')}</label><label>Approximate size / dimensions<input name="dimensions" maxLength={500} placeholder="e.g. 80 mm tall"/></label></div>
-      <div className="enquiry-grid" hidden={route !== 'supply'}><label>Estimated annual quantity<input name="annualQuantity" disabled={route !== 'supply'} type="number" min="1" max={10000000} step="1" {...props('annualQuantity')}/>{error('annualQuantity')}</label><label>Order frequency<input name="frequency" maxLength={200} placeholder="e.g. one-off, monthly, quarterly, seasonal" disabled={route !== 'supply'}/></label></div>
-      <details className="optional-details"><summary>Materials, finish, packaging &amp; budget (optional)</summary><div className="enquiry-grid"><label>Material preference<input name="material" maxLength={200} placeholder="Not sure? We can recommend."/></label><label>Finish / colour / branding<input name="finish" maxLength={500}/></label><label>Packaging requirements<input name="packaging" maxLength={500}/></label><label>Budget or target unit price (AUD)<input name="budget" maxLength={100} placeholder="e.g. $15 per item, or $2,000 total"/></label></div></details>
-      <div className="attachment-panel"><label htmlFor="files">Supporting files <span>(optional)</span></label><p id="file-help">STL, OBJ, 3MF, PDF, PNG, JPG or HEIC. Up to {MAX_FILES} files; 50 MB each, 150 MB total. Files upload as you choose them and are stored privately. Photographs are resized before sending.</p>
-        <div className="challenge-panel" hidden={!config?.turnstileSiteKey}><div ref={challenge}/></div>
-        <input id="files" type="file" multiple accept={EXTENSIONS.map(value => '.' + value).join(',')} disabled={!config?.uploads || !ticket || uploads.length >= MAX_FILES} aria-describedby="file-help" onChange={event => { const chosen = Array.from(event.target.files || []); event.target.value = ''; attach(chosen); }}/>
-        <div className="challenge-panel" hidden={!config?.turnstileSiteKey}><div ref={challenge}/></div>
-        {config?.uploads && !ticket && <p className="attachment-hint">Complete the check above to attach files.</p>}
+      <label>What would you like made? <span>(required)</span><textarea name="brief" maxLength={5000} rows={5} {...props('brief')} placeholder={selectedCategory.prompt}/>{error('brief')}</label>
+      <div className="enquiry-grid">
+        <label>{route === 'supply' ? 'Quantity per order' : 'How many?'} <span>(optional)</span><input name="quantity" type="number" inputMode="numeric" min={route === 'bulk' || route === 'supply' ? 10 : 1} max={10000000} step="1" {...props('quantity')}/>{error('quantity')}</label>
+        <label>Needed by <span>(optional)</span><input name="requiredBy" type="date" min={today || undefined} {...props('requiredBy')}/>{error('requiredBy')}</label>
+      </div>
+      <div className="enquiry-grid">
+        <label>Your name <span>(required)</span><input name="name" autoComplete="name" maxLength={200} {...props('name')}/>{error('name')}</label>
+        <label>Email <span>(required)</span><input name="email" type="email" autoComplete="email" maxLength={254} {...props('email')}/>{error('email')}</label>
+      </div>
+      <div className="enquiry-grid">
+        <label>Phone <span>(optional)</span><input name="phone" type="tel" autoComplete="tel" maxLength={40}/></label>
+        <label>Delivery suburb or postcode <span>(optional)</span><input name="postcode" maxLength={100} autoComplete="postal-code"/></label>
+      </div>
+      <div className="attachment-panel"><label htmlFor="files">Photos, sketches or 3D files <span>(optional)</span></label><p id="file-help">PNG, JPG, HEIC, PDF, STL, OBJ or 3MF. Up to {MAX_FILES} files, 50 MB each. They’re stored privately.</p>
+        <input id="files" type="file" multiple accept={EXTENSIONS.map(value => '.' + value).join(',')} disabled={!config?.uploads || uploads.length >= MAX_FILES} aria-describedby="file-help" onChange={event => { const chosen = Array.from(event.target.files || []); event.target.value = ''; attach(chosen); }}/>
         {error('files')}
         {uploads.length > 0 && <ul className="attachment-list">{uploads.map(item => <li key={item.slot} className={'attachment attachment-' + item.status}>
           <span className="attachment-name">{item.name}</span><span className="attachment-size">{fileSize(item.size)}</span>
-          <span className="attachment-state">{item.status === 'uploading' ? Math.round(item.progress * 100) + '%' : item.status === 'done' ? 'Uploaded' : 'Failed'}</span>
+          <span className="attachment-state">{item.status === 'waiting' ? 'Uploads after the check below' : item.status === 'uploading' ? Math.round(item.progress * 100) + '%' : item.status === 'done' ? 'Uploaded' : 'Failed'}</span>
           <progress className="attachment-progress" max={100} value={item.status === 'done' ? 100 : Math.round(item.progress * 100)} aria-label={'Upload progress for ' + item.name}/>
-          {item.status === 'error' && <span className="attachment-error">{item.error} <button type="button" className="text-btn" onClick={() => { if (ticket) transfer(item, ticket); }}>Retry</button></span>}
+          {item.status === 'error' && <span className="attachment-error">{item.error} <button type="button" className="text-btn" onClick={() => { if (ticketRef.current) transfer(item, ticketRef.current); }}>Retry</button></span>}
           <button type="button" className="text-btn attachment-remove" onClick={() => detach(item.slot)} aria-label={'Remove ' + item.name}>Remove</button>
         </li>)}</ul>}
+        {stored.some(item => /\.(stl|obj)$/i.test(item.name)) && <button className="text-btn" type="button" onClick={() => setPreview(preview === null ? stored.find(item => /\.(stl|obj)$/i.test(item.name))!.slot : null)}>{preview === null ? 'Preview a 3D model (optional)' : 'Close 3D preview'}</button>}
+        {previewable && <ModelPreview key={previewable.slot} file={previewable.file}/>}
       </div>
-      {stored.some(item => /\.(stl|obj)$/i.test(item.name)) && <button className="text-btn" type="button" onClick={() => setPreview(preview === null ? stored.find(item => /\.(stl|obj)$/i.test(item.name))!.slot : null)}>{preview === null ? 'Preview a 3D model (optional)' : 'Close 3D preview'}</button>}
-      {previewable && <ModelPreview key={previewable.slot} file={previewable.file}/>}
+      <details className="optional-details"><summary>Add more detail (optional)</summary>
+        <div className="enquiry-grid" hidden={route !== 'supply'}><label>Estimated annual quantity<input name="annualQuantity" disabled={route !== 'supply'} type="number" inputMode="numeric" min="1" max={10000000} step="1" {...props('annualQuantity')}/>{error('annualQuantity')}</label><label>Order frequency<input name="frequency" maxLength={200} placeholder="e.g. one-off, monthly, quarterly, seasonal" disabled={route !== 'supply'}/></label></div>
+        <div className="enquiry-grid">
+          <label>Approximate size<input name="dimensions" maxLength={500} placeholder="e.g. 80 mm tall"/></label>
+          <label>Finish, colour or branding<input name="finish" maxLength={500}/></label>
+          <label>Packaging<input name="packaging" maxLength={500} placeholder="e.g. boxed with ribbon and a name tag"/></label>
+          <label>Budget or target price (AUD)<input name="budget" maxLength={100} placeholder="e.g. $15 per item, or $2,000 total"/></label>
+          <label>Material preference<input name="material" maxLength={200} placeholder="Not sure? We can recommend."/></label>
+          <label>Company or organisation<input name="company" autoComplete="organization" maxLength={200}/></label>
+        </div>
+        <label>I’m enquiring as<select name="customerType" defaultValue=""><option value="">Please select</option>{CUSTOMER_TYPES.map(type => <option key={type}>{type}</option>)}</select></label>
+        <label className="check-label"><input type="checkbox" name="deadlineFixed"/>The date can’t move (for example, an event day)</label>
+        <label>Multiple destinations or delivery notes<input name="destinations" maxLength={500}/></label>
+        <label>Anything else we should know?<textarea name="notes" rows={3} maxLength={3000} placeholder="Repeat order reference, approvals, tolerances, supplier onboarding or confidentiality requirements."/></label>
+      </details>
     </fieldset>
-    <fieldset hidden={step !== 1} disabled={state === 'sending'}><legend ref={node => { legends.current[1] = node; }} tabIndex={-1}>Timing &amp; delivery</legend><div className="enquiry-grid"><label>Required delivery date<input name="requiredBy" type="date" min={today || undefined} {...props('requiredBy')}/>{error('requiredBy')}</label><label>Delivery suburb / postcode<input name="postcode" maxLength={100} autoComplete="postal-code"/></label></div><label className="check-label"><input type="checkbox" name="deadlineFixed"/>This delivery date is fixed</label><label>Multiple destinations or delivery notes <span>(optional)</span><input name="destinations" maxLength={500}/></label></fieldset>
-    <fieldset hidden={step !== 2} disabled={state === 'sending'}><legend ref={node => { legends.current[2] = node; }} tabIndex={-1}>Your contact details</legend><div className="enquiry-grid"><label>Your name <span>(required)</span><input name="name" autoComplete="name" maxLength={200} {...props('name')}/>{error('name')}</label><label>Email <span>(required)</span><input name="email" type="email" autoComplete="email" maxLength={254} {...props('email')}/>{error('email')}</label><label>Company / organisation<input name="company" autoComplete="organization" maxLength={200}/></label><label>Phone <span>(optional)</span><input name="phone" type="tel" autoComplete="tel" maxLength={40}/></label></div>
-    <label>I’m enquiring as<select name="customerType" defaultValue=""><option value="">Please select (optional)</option>{CUSTOMER_TYPES.map(type => <option key={type}>{type}</option>)}</select></label><label>Anything else we should know?<textarea name="notes" rows={3} maxLength={3000} placeholder="Repeat order reference, approvals, tolerances, supplier onboarding or confidentiality requirements."/></label>
     <div className="trap" aria-hidden="true"><label>Leave empty<input name="website" tabIndex={-1} autoComplete="off"/></label></div>
-    <label className="check-label"><input name="consent" type="checkbox" {...props('consent')}/><span>I have read the <a href="/policies/privacy-policy" target="_blank" rel="noreferrer">privacy notice</a> and understand my details and files will be used to respond to this enquiry.</span></label>{error('consent')}
-    </fieldset>
-    <div ref={feedback} tabIndex={-1} role={state === 'error' || Object.values(errors).some(Boolean) ? 'alert' : undefined}>{Object.values(errors).some(Boolean) && <p className="form-error">Please check the highlighted fields above.</p>}{message && <p className="form-error">{message} <a href="mailto:info@isculptures.com.au">Email the studio</a>.</p>}</div>
-    <div className="enquiry-step-actions">{step > 0 && <button className="previous-step" type="button" disabled={state === 'sending'} onClick={() => goTo(step - 1)}>← Back</button>}{step < 2 && <button className="primary next-step" type="button" onClick={advance}>Continue to {step === 0 ? 'delivery' : 'contact'} ↗</button>}
-    <button hidden={step !== 2} className="primary" type="submit" disabled={state === 'sending' || !config?.available || uploading || (!!config?.turnstileSiteKey && !ticket)}>{state === 'sending' ? 'Sending your enquiry…' : uploading ? 'Waiting for your files…' : 'Send project enquiry ↗'}</button></div>
+    <div className="challenge-panel" hidden={!config?.turnstileSiteKey}><div ref={challenge}/></div>
+    <div ref={feedback} tabIndex={-1} className="enquiry-feedback" aria-live="assertive">{hasErrors && <p className="form-error">Please check the highlighted fields above.</p>}{message && <p className="form-error">{message} <a href="mailto:info@isculptures.com.au">Email the studio</a>.</p>}</div>
+    <p className="fineprint consent-note">By sending, you agree we can use your details and any files to reply to this enquiry, as set out in our <a href="/policies/privacy-policy" target="_blank" rel="noreferrer">privacy notice</a>.</p>
+    <div className="enquiry-step-actions enquiry-send"><button className="primary" type="submit" disabled={state === 'sending'}>{state === 'sending' ? 'Sending your enquiry…' : 'Send enquiry ↗'}</button></div>
     <p className="fineprint">We’ll confirm materials, price and lead time once we’ve seen your brief. <a href="/policies/terms-of-service">How enquiries and orders work</a>.</p>
   </form></>;
 }
