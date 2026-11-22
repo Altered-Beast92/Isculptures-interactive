@@ -22,7 +22,7 @@ export const productDetails: Record<string, ProductDetail> = {
   'jesus-christ-sacred-heart': {
     details: [
       'Printed in four sizes from 15cm to 30cm and 19 colours, from plain white to silk gold.',
-      'It suits a home altar, a confirmation gift or a house blessing. For a parish, school or church shop, a batch of 10 or more can mix sizes and colours and is quoted together.',
+      'It suits a home altar, a confirmation gift or a house blessing. For a parish, school or church shop, a batch can mix sizes and colours and is quoted together.',
     ],
     guide: CHURCH_SHOPS,
   },
@@ -64,7 +64,7 @@ export const productDetails: Record<string, ProductDetail> = {
   'virgin-mary-and-jesus-icon': {
     details: [
       'Three sizes from 15cm to 25cm and 19 colours.',
-      'It matches the Christ Pantocrator icon in shape and size, so the two can hang side by side. A church shop can order both in one batch of 10 or more.',
+      'It matches the Christ Pantocrator icon in shape and size, so the two can hang side by side. A church shop can order both in one batch.',
     ],
     guide: CHURCH_SHOPS,
   },
@@ -78,7 +78,7 @@ export const productDetails: Record<string, ProductDetail> = {
   'saint-paisios': {
     details: [
       'Three sizes from 15cm to 25cm in 19 colours. Our photo shows it in white.',
-      'Like all our icons, a church shop or parish can order it in a batch of 10 or more, mixed with other saints, sizes and colours.',
+      'Like all our icons, a church shop or parish can order it in a batch, mixed with other saints, sizes and colours.',
     ],
     guide: CHURCH_SHOPS,
   },
@@ -99,21 +99,21 @@ export const productDetails: Record<string, ProductDetail> = {
   'saint-peter-keeper-of-keys': {
     details: [
       'Four sizes from 15cm to 30cm in 19 colours.',
-      'For a confirmation or a parish gift, a batch of 10 or more can mix sizes and colours, and larger quantities bring the price per piece down.',
+      'For a confirmation or a parish gift, a batch can mix sizes and colours, and larger quantities bring the price per piece down.',
     ],
     guide: CHURCH_SHOPS,
   },
   'saint-dominic-de-guzman-statue': {
     details: [
       'Our photo shows it in white, holding a book and a lily. It comes in four sizes from 15cm to 30cm and 19 colours.',
-      'For a Dominican parish, school or community, a batch of 10 or more can mix sizes and colours and is quoted together.',
+      'For a Dominican parish, school or community, a batch can mix sizes and colours and is quoted together.',
     ],
     guide: CHURCH_SHOPS,
   },
   'immaculate-mary-statue': {
     details: [
       'Four sizes from 15cm to 30cm in 19 colours.',
-      'It suits a home altar, a parish gift or a church shop shelf. For orders of 10 or more, larger quantities bring the price per piece down.',
+      'It suits a home altar, a parish gift or a church shop shelf. For larger orders, the price per piece comes down.',
     ],
     guide: CHURCH_SHOPS,
   },

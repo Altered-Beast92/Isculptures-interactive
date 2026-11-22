@@ -20,7 +20,7 @@ const mono = localFont({ src: [
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  ...pageMetadata('Custom & bulk 3D printing in Sydney', 'Sydney 3D printing studio making personalised favours, keepsakes, corporate gifts and custom parts. Bulk orders start at 10 units, delivered Australia-wide.', '/'),
+  ...pageMetadata('Custom & bulk 3D printing in Sydney', 'Sydney 3D printing studio making personalised favours, keepsakes, corporate gifts and custom parts. Bulk orders welcome, delivered Australia-wide.', '/'),
   authors: [{ name: CONTACT.name, url: SITE_URL }],
   publisher: CONTACT.name,
   robots: { index: INDEXABLE, follow: INDEXABLE },

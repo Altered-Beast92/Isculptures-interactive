@@ -67,7 +67,7 @@ export default function PersonalisedChristmasPlaceSettings() {
         in the same colour. That example is hypothetical, but the method works for any size.
       </p>
       <p>
-        Our minimum for a custom or bulk order is 10 units. If you are a venue or planner with several functions across
+        If you are a venue or planner with several functions across
         December, list each one with its own date and guest count. Tell us which details stay the same across them, such as the
         colour, and which change, such as the names. Our guide on{' '}
         <a href="/guides/ordering-custom-event-favours">how to order custom event favours</a> goes through the same steps for

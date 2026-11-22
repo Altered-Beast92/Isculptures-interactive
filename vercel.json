@@ -516,6 +516,186 @@
       "source": "/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-feel-personal",
       "destination": "/guides/personalised-wedding-bonbonniere",
       "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/tagged/sydney",
+      "destination": "/guides",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/tagged/custom-gifts",
+      "destination": "/guides",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/tagged/3d-printing",
+      "destination": "/guides",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/tagged/bonbonniere",
+      "destination": "/guides",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-impress-1",
+      "destination": "/guides/personalised-wedding-bonbonniere",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/unique-bonbonniere-ideas-for-memorable-weddings",
+      "destination": "/guides/personalised-wedding-bonbonniere",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/personalised-keepsakes-for-baby-shower-favors",
+      "destination": "/guides/personalised-baby-shower-keepsakes",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/impeccable-sculptures-sydney-nsw-custom-3d-printing",
+      "destination": "/services",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/custom-3d-printing-sydney-impeccable-sculptures",
+      "destination": "/services",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/impeccable-sculptures-sydney-3d-printing-services",
+      "destination": "/services",
+      "statusCode": 301
+    },
+    {
+      "source": "/blogs/custom-3d-printing/impeccable-sculptures-sydney-custom-3d-printing-nsw",
+      "destination": "/services",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/saint-michael-icon",
+      "destination": "/products/saint-michael-the-archangel-defender-of-faith-icon",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/saint-peter-bonbonniere",
+      "destination": "/products/saint-peter-keeper-of-keys",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/saint-elias-bonbonnierre",
+      "destination": "/products/saint-elias-icon-bonbonniere",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/saint-nicholas-icon",
+      "destination": "/products/saint-nicholas-the-wonderworker",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/orthodox-icon-bonbonniere",
+      "destination": "/pages/bonbonniere-custom",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/saint-peter-keys-statue",
+      "destination": "/products/saint-peter-keeper-of-keys",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/jesus-pantocrator-icon",
+      "destination": "/products/divine-jesus-christ-icon",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/saint-anthony-bonbonniere",
+      "destination": "/products/saint-anthony-of-padua-statue",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/mary-jesus-icon",
+      "destination": "/products/virgin-mary-and-jesus-icon",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/mary-and-jesus-icon",
+      "destination": "/products/virgin-mary-and-jesus-icon",
+      "statusCode": 301
+    },
+    {
+      "source": "/products/saint-george-icon",
+      "destination": "/products/saint-george-the-victorious",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/seasonal/products/christmas-twist-off-tree",
+      "destination": "/products/personalised-christmas-tree",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/bonbonniere/products/saint-anthony-bonbonniere",
+      "destination": "/products/saint-anthony-of-padua-statue",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/bonbonniere/products/saint-peter-bonbonniere",
+      "destination": "/products/saint-peter-keeper-of-keys",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/all/products/saint-peter-bonbonniere",
+      "destination": "/products/saint-peter-keeper-of-keys",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/catholic-maronite/products/saint-peter-keys-statue",
+      "destination": "/products/saint-peter-keeper-of-keys",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/all/products/mary-jesus-icon",
+      "destination": "/products/virgin-mary-and-jesus-icon",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/bonbonniere",
+      "destination": "/pages/bonbonniere-custom",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/christmas",
+      "destination": "/products/personalised-christmas-tree",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/seasonal",
+      "destination": "/products/personalised-christmas-tree",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/valentines-day",
+      "destination": "/products/personalised-rose-sculpture",
+      "statusCode": 301
+    },
+    {
+      "source": "/collections/accessories",
+      "destination": "/products",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/bonbonnieres",
+      "destination": "/pages/bonbonniere-custom",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/events",
+      "destination": "/pages/events-custom-gifts",
+      "statusCode": 301
+    },
+    {
+      "source": "/b",
+      "destination": "/",
+      "statusCode": 301
     }
   ]
 }

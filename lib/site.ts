@@ -62,7 +62,7 @@ export function businessSchema() {
     name: CONTACT.name,
     legalName: CONTACT.legalName,
     alternateName: 'iSculptures',
-    description: 'Sydney 3D printing studio making personalised favours, keepsakes, corporate gifts and custom parts in batches from 10 units, delivered Australia-wide.',
+    description: 'Sydney 3D printing studio making personalised favours, keepsakes, corporate gifts and custom parts, made to order and delivered Australia-wide.',
     url: SITE_URL,
     logo: SITE_URL + '/brand/impeccable-sculptures-logo.webp',
     image: SHARE_IMAGE.url,

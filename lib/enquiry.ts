@@ -38,7 +38,7 @@ export function validateEnquiry(input: unknown): Validation {
     if (!Number.isSafeInteger(result) || result < minimum || result > 10000000) { errors[key] = 'Enter a whole number of ' + minimum + ' or more, or leave it blank if unsure.'; return null; }
     return result;
   };
-  const quantity = number('quantity', route === 'bulk' || route === 'supply' ? 10 : 1);
+  const quantity = number('quantity', 1);
   const annualQuantity = number('annualQuantity', 1);
   const requiredBy = clean(value.requiredBy, 10);
   if (requiredBy && (!/^\d{4}-\d{2}-\d{2}$/.test(requiredBy) || Number.isNaN(Date.parse(requiredBy)) || new Date(requiredBy).toISOString().slice(0,10) !== requiredBy)) errors.requiredBy = 'Enter a valid delivery date.';

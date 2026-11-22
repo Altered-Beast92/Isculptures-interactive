@@ -144,8 +144,8 @@ export default function WholesaleSaintStatuesIcons() {
 
       <h2>How to order and reorder</h2>
       <p>
-        Our minimum is 10 units per batch, and the 10 can be split across different saints, sizes and colours: four Saint
-        Michael, three Saint Charbel and three Saint Joseph is one batch. List what you want and we quote it together.
+        A batch can mix different saints, sizes and colours, for example four Saint Michael, three Saint
+        Charbel and three Saint Joseph. List what you want and we quote it together.
         Price depends mostly on the size of each piece and the colour options you choose, then on any design work, the number
         of versions and packaging. Our guide to <a href="/guides/what-affects-bulk-3d-printing-cost">what affects bulk 3D printing cost</a>{' '}
         explains each factor, and the <a href="/guides/bulk-3d-printing-quote-checklist">quote checklist</a> lists what to

@@ -140,7 +140,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
     <section className="product-enquiry">
       <h2>Ordering more than one?</h2>
-      <p>Our minimum for a custom batch is 10 units. Names, dates and colours can change piece to piece, and we can quote packaging, ribbon and delivery with it. Tell us your numbers and the date you need them by.</p>
+      <p>Names, dates and colours can change piece to piece, larger quantities bring the price per piece down, and we can quote packaging, ribbon and delivery with it. Tell us your numbers and the date you need them by.</p>
       <div className="portfolio-actions">
         <a className="primary" href={enquiry}>Get a bulk quote ↗</a>
         <a href={'tel:' + CONTACT.tel}>Or call {CONTACT.phone}</a>
