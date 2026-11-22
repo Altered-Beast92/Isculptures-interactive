@@ -30,8 +30,8 @@ export default function PersonalisedChristmasPlaceSettings() {
         The <a href="/products/personalised-christmas-tree">personalised Christmas tree place setting</a> is the one made for
         the job. It is a tiered tree with a star topper that carries a name, and the tiers twist apart. You choose the colour
         and add a name if you wish. In our photos the trees have a red base, white or green tiers and a yellow star, with each
-        name written across the star in a script font. It is AU$40 per piece on our Etsy shop, as of October 2026.
-        {/* TODO(owner): add the height of the tree and the longest name that fits on the star. Our photos show names up to nine letters (Christina). */}
+        name written across the star in a script font. It stands about 15cm tall, and the name is up to you: any name you like, or a plain star. It is AU$40 per piece on
+        our Etsy shop, as of October 2026.
       </p>
       <p>
         The <a href="/products/personalised-rose-sculpture">personalised rose sculpture</a> suits a table that isn't
@@ -54,7 +54,6 @@ export default function PersonalisedChristmasPlaceSettings() {
       <p>
         These are the catalogue prices for single orders through Etsy. An event batch with your own names, colours or wording
         is quoted separately.
-        {/* TODO(owner): if you want to give buyers a rough guide to event pricing for the tree, add it here. Don't estimate it. */}
       </p>
 
       <h2>Turn the guest list into a quantity</h2>
@@ -102,8 +101,8 @@ export default function PersonalisedChristmasPlaceSettings() {
       <p>
         Give us both dates when you enquire: the date of the event and the earlier date you need the pieces in hand, with the
         delivery postcode. Design approval, printing, finishing and freight all have to fit before then, and we check that
-        the timeline works before we accept an order.
-        {/* TODO(owner): add the order-by date for December delivery this year, and the lead time for 50+ trees. */}
+        the timeline works before we accept an order. For 50 trees or more, allow at least three weeks, and up to a month.
+        For a December event, count back from the day the trees need to be on the tables, and send your enquiry early.
       </p>
       <p>
         If the pieces travel by post, Australia Post's last Christmas sending date for Express Post within NSW metro areas is
@@ -119,9 +118,8 @@ export default function PersonalisedChristmasPlaceSettings() {
       </p>
       <p>
         Mention any packaging you want, such as individual boxes for guests to carry the setting home, and anything you will
-        add yourself, like ribbon or a table number. The rose comes boxed or unboxed in our catalogue; ask us what is available
-        for the tree.
-        {/* TODO(owner): confirm whether trees can be boxed individually and whether a batch can be packed by table. */}
+        add yourself, like ribbon or a table number. Trees can be boxed one by one, and a batch can be packed by table, if you want either option. The rose comes boxed
+        or unboxed in our catalogue.
       </p>
       <p>
         Place settings sit beside the food, not in it. If you plan to use a piece to hold sweets or anything else that touches

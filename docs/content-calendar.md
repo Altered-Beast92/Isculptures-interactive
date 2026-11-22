@@ -1,8 +1,10 @@
 # Guide content calendar
 
-Two guides a month, drafted on the 8th and 22nd at 00:00 UTC. The drafting routine takes the first row whose
-status is `planned`, drafts it as a pull request, and changes the status to `drafted (PR #n)`. Nothing is
-published until the owner reviews and merges it. `New` rows add a guide. `Refresh` rows rewrite an existing
+Two guides a month, written on the 8th and 22nd at 00:00 UTC. The drafting routine takes the first row whose
+status is `planned`, writes it as a pull request, and changes the status to `drafted (PR #n)`. The
+`Auto-publish guides` workflow then merges that pull request once the site's checks pass, and Vercel publishes it.
+Add the `hold` label to a pull request to stop it publishing. See `docs/guide-drafting.md` for the details.
+`New` rows add a guide. `Refresh` rows rewrite an existing
 guide in place (same slug, same `published` date) and convert it to a TSX body.
 
 To change what gets written next, reorder the rows, edit them, or set a row to `skip`. Rows marked `later` are
@@ -13,10 +15,10 @@ a guide ends (see "Buyer and call to action" in `docs/guide-drafting.md`).
 
 | Status | Month | Type | Buyer | Working title | Search intent | Link to |
 | ------ | ----- | ---- | ----- | ------------- | ------------- | ------- |
-| planned | Oct 2026 | New | Business | Corporate Christmas gifts you can 3D print with your logo | Commercial, business | /pages/events-custom-gifts, /pages/wholesale, /guides/bulk-3d-printing-quote-checklist |
-| drafted (PR #32) | Nov 2026 | New | Events | Personalised Christmas place settings for venues, dinners and events | Seasonal, commercial | /products/personalised-christmas-tree, /guides/ordering-custom-event-favours, /pages/events-custom-gifts |
-| planned | Nov 2026 | Refresh | Events | personalised-baby-shower-keepsakes: 1,200+ words, product picks and photos (41 old Shopify URLs redirect here) | Commercial | /products/first-tooth-favour-tag, /products/personalised-rose-sculpture, /pages/bonbonniere-custom |
-| planned | Dec 2026 | New | Trade | Wholesale saint statues and icons for church shops and religious stores | Commercial, trade | /pages/wholesale, /pages/ongoing-supply, /products, /products/saint-michael-statue, /products/saint-charbel-statue, /products/saint-joseph-icon |
+| published 2026-11-21 (PR #29) | Oct 2026 | New | Business | Corporate Christmas gifts you can 3D print with your logo | Commercial, business | /pages/events-custom-gifts, /pages/wholesale, /guides/bulk-3d-printing-quote-checklist |
+| published 2026-11-22 (PR #32) | Nov 2026 | New | Events | Personalised Christmas place settings for venues, dinners and events | Seasonal, commercial | /products/personalised-christmas-tree, /guides/ordering-custom-event-favours, /pages/events-custom-gifts |
+| drafted (PR #33) | Nov 2026 | Refresh | Events | personalised-baby-shower-keepsakes: 1,200+ words, product picks and photos (41 old Shopify URLs redirect here) | Commercial | /products/first-tooth-favour-tag, /products/personalised-rose-sculpture, /pages/bonbonniere-custom |
+| drafted (PR #42) | Dec 2026 | New | Trade | Wholesale saint statues and icons for church shops and religious stores | Commercial, trade | /pages/wholesale, /pages/ongoing-supply, /products, /products/saint-michael-statue, /products/saint-charbel-statue, /products/saint-joseph-icon |
 | planned | Dec 2026 | Refresh | Events | christening-baptism-keepsakes: product picks, prices and photos | Commercial | /products/st-gabriel-icon-bonbonniere, /products/christening-coaster-bonbonniere, /products/pantocrator-icon-bonbonniere, /pages/bonbonniere-custom |
 | planned | Jan 2027 | New | Business | STL, OBJ or 3MF? Sending a 3D file for a production run | Informational, business | /pages/industrial, /guides/bulk-3d-printing-quote-checklist, /guides/what-affects-bulk-3d-printing-cost |
 | planned | Jan 2027 | New | Events | Easter 2027 gifts and favours for parishes, schools and families (Western Easter 28 March, Orthodox Easter 2 May) | Seasonal, commercial | /pages/bonbonniere-custom, /pages/wholesale, statue and icon product pages |

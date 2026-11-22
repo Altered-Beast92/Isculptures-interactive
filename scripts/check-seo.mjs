@@ -76,6 +76,12 @@ for (const url of urls) {
     }
     if (node.aggregateRating) assert.ok(node.aggregateRating.reviewCount > 0 && node.aggregateRating.ratingValue <= 5, `Bad rating: ${url}`);
   }
+  // Google reads every Product node as a product snippet, nested ones included, and one with
+  // no offer, review or rating is invalid. The catalogue once listed 24 bare Products this way.
+  const nodes = value => value && typeof value === 'object' ? [value, ...Object.values(value).flatMap(nodes)] : [];
+  for (const node of schemas.flatMap(nodes).filter(node => node['@type'] === 'Product')) {
+    assert.ok(node.offers || node.review || node.aggregateRating, `Product needs an offer, review or rating: ${url}`);
+  }
   const crumbs = schemas.find(schema => schema['@type'] === 'BreadcrumbList');
   if (/^\/(work|guides)\//.test(location.pathname) || location.pathname.startsWith('/pages/')) {
     assert.ok(crumbs, `Missing breadcrumbs: ${url}`);
