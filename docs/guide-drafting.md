@@ -106,6 +106,15 @@ add to them.
   the client wants either option.
 - **Personalised Christmas tree place setting (2026-11-22):** about 15cm tall. The name on the star is custom and
   optional. No published event price beyond the catalogue price; event batches are quoted.
+- **Trade and wholesale (2026-11-22):** larger quantities bring the price per piece down (quoted per order, no
+  published discount). Wholesale buyers may use our product photos in their own shop and website listings. The
+  10-unit minimum can be split across different designs, sizes and colours.
+- **Packaging (2026-11-22):** favours and bonbonniere go out in clear boxes today. Don't promise swing tags,
+  barcodes or other retail packaging; say we confirm what we can supply in the quote.
+- **Sizes (2026-11-22):** personalised rose sculpture about 10cm tall; first tooth favour tag about 6cm tall.
+- **Fully custom designs (2026-11-22):** every piece is highly customisable, and the studio designs any shape a
+  client asks for, not only the catalogue designs (the tooth tag began as one client's request). We can make a
+  matching batch again later.
 
 Anything not listed here (heights, the longest name that fits, capacity for very large runs and so on) still
 gets a `TODO(owner)` comment.
