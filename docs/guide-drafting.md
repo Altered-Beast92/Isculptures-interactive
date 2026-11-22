@@ -85,7 +85,7 @@ off the days the ImpSolutions blog drafter opens its own.
   passage around each one so it reads as finished without the answer, for example "tell us the size you need
   and we confirm what we can make", never a sentence that trails off or promises a figure.
 
-## Confirmed studio facts (owner, 2026-11-21)
+## Confirmed studio facts (owner, 2026-11-21 and 2026-11-22)
 
 The owner has answered these. Use them as stated instead of leaving a `TODO(owner)`. Don't round them up or
 add to them.
@@ -101,6 +101,11 @@ add to them.
   `content/products.ts`.
 - **Minimum and mockup:** 10 units per custom batch, and a free design mockup with the quote.
 - **Hours:** Monday to Friday 9am to 5pm, Saturday 9am to 12pm, closed Sunday.
+- **Larger runs (2026-11-22):** for 50 pieces or more, allow at least three weeks, and up to a month.
+- **Packing (2026-11-22):** pieces can be boxed one by one, and a batch can be packed by table for an event, if
+  the client wants either option.
+- **Personalised Christmas tree place setting (2026-11-22):** about 15cm tall. The name on the star is custom and
+  optional. No published event price beyond the catalogue price; event batches are quoted.
 
 Anything not listed here (heights, the longest name that fits, capacity for very large runs and so on) still
 gets a `TODO(owner)` comment.
