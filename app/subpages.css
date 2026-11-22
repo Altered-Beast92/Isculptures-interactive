@@ -304,3 +304,9 @@ main.service-page .service-work .portfolio-grid>*{scroll-snap-align:start;min-wi
 }
 /* Blog tables on phones fit the screen and wrap, so no column (a feast date, a price) starts off-screen. */
 @media(max-width:600px){.guide-table-wrap table{min-width:0;font-size:14px}.guide-table-wrap :is(th,td){padding:10px 8px}.guide-table-wrap :is(th,td):first-child{padding-left:0}}
+/* Product pages: "About this piece", two or three sentences on the piece and a link to the most useful guide. */
+.product-about{padding:clamp(28px,4vw,48px) 0;border-top:1px solid rgba(241,238,230,.14)}
+.product-about h2{margin-top:0}
+.product-about p{max-width:760px;margin:0 0 14px;font-size:17px;line-height:1.75;color:#d2d0c7}
+.product-about .product-guide{margin:18px 0 0;font-size:15px;color:#a8a69d}
+.product-about .product-guide a{display:inline-block;padding-block:11px;margin-block:-11px;color:var(--sand);text-decoration:underline;text-underline-offset:4px}
