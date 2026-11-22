@@ -6,6 +6,8 @@ import media from '../../../content/product-media.json';
 import { CONTACT, SITE_URL, pageMetadata } from '../../../lib/site';
 import { reviewSchema, productRating } from '../../../lib/reviews';
 import Breadcrumbs from '../../components/breadcrumbs';
+import { productDetails } from '../../../content/product-details';
+import { guides } from '../../../content/guides';
 
 export const dynamicParams = false;
 export const generateStaticParams = () => products.map(({ slug }) => ({ slug }));
@@ -30,6 +32,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   // Schema names the canonical listing; the visible links carry the campaign tags.
   const canonicalBuy = etsyListingUrl(product);
   const enquiry = '/enquiry?route=' + product.enquiryRoute;
+  // Piece-specific detail and the most useful guide. A guide slug that doesn't exist fails the build.
+  const about = productDetails[slug];
+  const guide = about?.guide ? guides.find(item => item.slug === about.guide) : undefined;
+  if (about?.guide && !guide) throw new Error('Unknown guide ' + about.guide + ' for product ' + slug);
 
   const schema = {
     '@context': 'https://schema.org',
@@ -85,6 +91,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <img src={photos[0].src} srcSet={`${photos[0].src.replace('.webp', '-small.webp')} ${photos[0].smallWidth}w, ${photos[0].src} ${photos[0].width}w`} sizes="(max-width: 700px) 88vw, 40vw" alt={photos[0].alt} width={photos[0].width} height={photos[0].height}/>
       </figure>
     </header>
+
+    {about && <section className="product-about">
+      <h2>About this piece</h2>
+      {about.details.map(text => <p key={text}>{text}</p>)}
+      {guide && <p className="product-guide">Read our guide: <a href={'/guides/' + guide.slug}>{guide.title} →</a></p>}
+    </section>}
 
     <section className="product-options">
       <div>
