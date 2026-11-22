@@ -6,7 +6,9 @@
 import type { ComponentType } from 'react';
 
 import CorporateChristmasGifts from './corporate-christmas-gifts-3d-printed';
+import WholesaleSaintStatuesIcons from './wholesale-saint-statues-icons-church-shops';
 
 export const guideBodies: Record<string, ComponentType> = {
   'corporate-christmas-gifts-3d-printed': CorporateChristmasGifts,
+  'wholesale-saint-statues-icons-church-shops': WholesaleSaintStatuesIcons,
 };

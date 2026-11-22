@@ -59,6 +59,21 @@ const occasionGuides: Guide[] = [
 ];
 export const guides: Guide[] = [
   {
+    slug: 'wholesale-saint-statues-icons-church-shops', title: 'Wholesale saint statues and icons for church shops',
+    summary: 'Saint statues and relief icons printed in batches for church shops and religious stores: sizes, colours, feast-day timing and how to order.',
+    category: 'TRADE', image: 'commemorative-icons', project: 'commemorative-religious-icons',
+    service: 'wholesale', serviceLabel: 'Bulk & trade orders', enquiryRoute: 'supply',
+    published: '2026-11-22', updated: '2026-11-22', readMinutes: 6,
+    takeaways: [
+      'We print saint statues and relief icons in batches for church shops and religious stores, delivered Australia-wide from Sydney.',
+      'Feast dates differ by tradition: Saint Charbel is the third Sunday of July for Maronites and 24 July in the Latin calendar.',
+      'Allow at least two weeks, and up to a month for larger quantities, counting back from the day you need stock on the shelf.',
+      'Stock two or three sizes per saint and a short colour list; size and colour options move the price most.',
+    ],
+    products: ['saint-michael-statue', 'saint-charbel-statue', 'saint-joseph-icon'],
+    hero: { source: 'product', key: 'saint-michael-statue', index: 0 },
+  },
+  {
     slug: 'corporate-christmas-gifts-3d-printed', title: 'Corporate Christmas gifts with your logo, 3D printed',
     summary: 'Branded Christmas gifts for clients and staff, made as one matching batch: what you can personalise, how to brief us and how to plan the date.',
     category: 'CORPORATE GIFTS', image: 'gift-boxes', project: 'personalised-gift-boxes',
