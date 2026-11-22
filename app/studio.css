@@ -484,3 +484,6 @@ body:has(.mobile-cta){padding-bottom:calc(68px + env(safe-area-inset-bottom))}
 /* Headings, legends and messages the code moves focus to (tabIndex -1) are not controls, so they don't
    draw a focus ring: the quote form's "Start from an idea" heading showed a stray outline box. */
 [tabindex="-1"]:focus{outline:none}
+/* Desktop menu: every item stays on one line ("Bulk & trade", "Shop ↗"), which still fits at the
+   narrowest width before the menu folds behind the Menu button. */
+@media(min-width:1181px){.site-header .site-links>*,.site-header .nav-group-toggle{white-space:nowrap}}
