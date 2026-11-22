@@ -79,6 +79,10 @@ export function businessSchema() {
   };
 }
 
+/** The Etsy shop front, tagged with where on the site the link sits (header, footer), so clicks
+ *  can be told apart in Etsy's stats and in the site's own etsy_click events. */
+export const etsyShopLink = (campaign: string) => `https://www.etsy.com/au/shop/iSculptures?utm_source=isculptures&utm_medium=referral&utm_campaign=${campaign}`;
+
 export function pageMetadata(title: string, description: string, path: string): Metadata {
   const brandedTitle = title.includes(CONTACT.name) ? title : `${title} | ${CONTACT.name}`;
   return { title: brandedTitle, description, alternates: { canonical: path },

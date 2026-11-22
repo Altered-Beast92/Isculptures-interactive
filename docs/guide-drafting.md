@@ -191,6 +191,18 @@ that sounds like a maker explaining something across the counter, and that is ex
 - Don't repeat a point made in an earlier section, and don't end a section by summarising it.
 - Australian spelling: colour, organise, personalise, centre.
 
+**Sounds like the studio, not a template** (owner request, 2026-11-22)
+
+- Write as the studio talking to one customer on the phone: "we" and "you", contractions where they read
+  naturally (we'll, you're, don't), and the answer they asked for before anything else.
+- Use the studio's real details wherever they fit: the confirmed sizes, lead times, packing options and the real
+  photos. A specific detail ("each tree stands about 15cm") does more than any adjective.
+- Cut sales adjectives: stunning, exquisite, perfect, beautiful, unique, high-quality, cherished, timeless. If a
+  piece is good, the detail shows it.
+- Short paragraphs, two to four sentences, one idea each. Mix in the occasional one-line paragraph.
+- Read every paragraph as if aloud. If it sounds like a brochure or a list of features, rewrite it as you would say it.
+- Quote customers only word for word from `content/testimonials.ts`, and only where the review is about the topic.
+
 ## Photo
 
 Real studio photos only, taken from `content/work-media.json` and `content/product-media.json` (files in
