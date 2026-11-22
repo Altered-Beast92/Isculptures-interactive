@@ -27,7 +27,7 @@ const bestSellers = ['saint-michael-statue', 'jesus-christ-sacred-heart', 'saint
 // Rendered into the page and into FAQPage data from one source, so the answer a visitor
 // reads and the answer a search or AI engine quotes can never drift apart.
 const faqs: { q: string; a: string; more?: { href: string; label: string } }[] = [
-  { q: 'What’s the minimum order?', a: '10 units. The price per piece depends on the size, finish and how much design work is involved. Single statues and icons are sold through our Etsy shop.', more: { href: '/products', label: 'Browse statues & icons' } },
+  { q: 'How is the price worked out?', a: 'Mostly by the size of each piece and the colours you choose, then any design work and packaging. Larger quantities bring the price per piece down. Single statues and icons are sold through our Etsy shop.', more: { href: '/products', label: 'Browse statues & icons' } },
   { q: 'Can you meet an event deadline?', a: 'Allow at least two weeks, and up to a month for larger quantities. Tell us the date you need everything in hand and we’ll check it against design approval, printing and shipping before you commit.' },
   { q: 'Can I reorder the same design?', a: 'Yes. Let us know roughly how many you’d need per batch and per year so we can plan for it.' },
   { q: 'Do I need a 3D file?', a: 'No. A description, rough measurements and a few reference photos are enough to get started.' },

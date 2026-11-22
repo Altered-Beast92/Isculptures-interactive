@@ -49,7 +49,7 @@ export default function ProductsPage() {
 
     <section className="product-enquiry">
       <h2>Ordering for an event?</h2>
-      <p>For a custom batch of ten or more pieces, tell us which design you want, how many you need and the date of your event.</p>
+      <p>For a custom batch, tell us which design you want, how many you need and the date of your event.</p>
       <div className="portfolio-actions">
         <a className="primary" href="/enquiry?route=bulk">Get a bulk quote ↗</a>
         <a href="/pages/bonbonniere-custom">Bonbonniere &amp; keepsakes →</a>

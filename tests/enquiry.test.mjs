@@ -61,9 +61,11 @@ function fakeFetch({ emailFails = false, verification = true, hostname = 'isculp
     return Response.json(emailFails ? { error: 'failed' } : { id: 'email-test' }, { status: emailFails ? 503 : 200 });
   };
 }
-test('rejects malformed data, invalid minimums and missing consent', () => {
+test('rejects malformed data, invalid quantities and missing consent', () => {
   assert.ok(validateEnquiry(null).errors.name);
-  assert.ok(validateEnquiry(payload({ quantity: 9 })).errors.quantity);
+  assert.ok(validateEnquiry(payload({ quantity: 0 })).errors.quantity);
+  // No minimum order: a bulk or supply enquiry for a single piece is accepted.
+  assert.equal(validateEnquiry(payload({ quantity: 1 })).errors.quantity, undefined);
   assert.ok(validateEnquiry(payload({ quantity: 10.5 })).errors.quantity);
   assert.ok(validateEnquiry(payload({ requiredBy: '2026-02-30' })).errors.requiredBy);
   const day = offset => new Date(Date.now() + offset * 86400000).toISOString().slice(0, 10);

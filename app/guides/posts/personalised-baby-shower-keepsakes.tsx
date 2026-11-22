@@ -67,7 +67,7 @@ export default function PersonalisedBabyShowerKeepsakes() {
       <p>
         Count favours by who takes one home. One per guest is simplest. One per household suits a shower where couples and
         families come together, and it brings the number down. Then add spares for late RSVPs and a few to keep, and
-        give us that single total. Our minimum for a custom batch is 10 units.
+        give us that single total.
       </p>
       <p>
         Here is a hypothetical example. Say a host is expecting 34 guests from 22 households. One favour per guest plus 4

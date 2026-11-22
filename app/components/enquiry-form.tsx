@@ -13,10 +13,10 @@ type Ticket = { ticket: string; expires: string };
 type Upload = { slot: number; name: string; size: number; file: File; status: 'waiting' | 'uploading' | 'done' | 'error'; progress: number; error?: string };
 const endpoint = process.env.NEXT_PUBLIC_ENQUIRY_ENDPOINT || '/api/enquiry';
 const categories: { route: EnquiryRoute; title: string; description: string; guidance: string; prompt: string; flag?: string }[] = [
-  { route: 'bulk', title: 'Event favours & gifts', description: 'Bonbonniere, keepsakes and personalised gifts for weddings, christenings and other events.', guidance: 'Minimum 10 units.', prompt: 'What’s the occasion? Include the number of guests, any names or wording, and the event date.' },
-  { route: 'supply', title: 'Business & repeat orders', description: 'Stock for your shop, branded products or batches you’ll reorder.', guidance: 'Minimum 10 units per order.', prompt: 'What do you need made? Include the quantity and whether it’s a one-off or something you’ll reorder.' },
-  { route: 'design', title: 'Start from an idea', flag: 'FREE DESIGN MOCKUP', description: 'No 3D file? Send a sketch, photo or description and we’ll work out the design.', guidance: 'Minimum 10 units. Any design costs are included in your quote.', prompt: 'Describe your idea: what it’s for, roughly how big, and any photos or references you like.' },
-  { route: 'file', title: 'I have a 3D file', description: 'Send an STL, OBJ or 3MF and we’ll check it’s ready to print.', guidance: 'Minimum 10 units. Tell us if you need a prototype first.', prompt: 'What’s the part for? Include the quantity, size, any material preference and the tolerances that matter.' },
+  { route: 'bulk', title: 'Event favours & gifts', description: 'Bonbonniere, keepsakes and personalised gifts for weddings, christenings and other events.', guidance: '', prompt: 'What’s the occasion? Include the number of guests, any names or wording, and the event date.' },
+  { route: 'supply', title: 'Business & repeat orders', description: 'Stock for your shop, branded products or batches you’ll reorder.', guidance: '', prompt: 'What do you need made? Include the quantity and whether it’s a one-off or something you’ll reorder.' },
+  { route: 'design', title: 'Start from an idea', flag: 'FREE DESIGN MOCKUP', description: 'No 3D file? Send a sketch, photo or description and we’ll work out the design.', guidance: 'Any design costs are included in your quote.', prompt: 'Describe your idea: what it’s for, roughly how big, and any photos or references you like.' },
+  { route: 'file', title: 'I have a 3D file', description: 'Send an STL, OBJ or 3MF and we’ll check it’s ready to print.', guidance: 'Tell us if you need a prototype first.', prompt: 'What’s the part for? Include the quantity, size, any material preference and the tolerances that matter.' },
 ];
 const fileSize = (bytes: number) => bytes < 1024 ? bytes + ' B' : bytes < 1048576 ? Math.round(bytes / 1024) + ' KB' : (bytes / 1048576).toFixed(1) + ' MB';
 // A quote needs to see the piece, not every pixel, so photographs travel at a workable size.
@@ -277,12 +277,12 @@ export default function EnquiryForm() {
     <form id="project-enquiry-form" hidden={!hasSelected} ref={form} className="enquiry-form staged-enquiry single-enquiry" onSubmit={send}
       onInput={event => clearError(event.target)}
       onChange={event => { clearError(event.target); if (!started.current) { started.current = true; track('enquiry_started', route); } }} noValidate>
-    <div className="enquiry-category-intro"><button className="change-category" type="button" disabled={state === 'sending'} onClick={() => { setHasSelected(false); requestAnimationFrame(() => categoryHeading.current?.focus()); }}>← Change category</button><p className="section-tag">YOUR PROJECT</p><h2 ref={projectHeading} tabIndex={-1}>{selectedCategory.title}</h2><p>{selectedCategory.guidance} Only your idea, name and email are needed.</p></div>
+    <div className="enquiry-category-intro"><button className="change-category" type="button" disabled={state === 'sending'} onClick={() => { setHasSelected(false); requestAnimationFrame(() => categoryHeading.current?.focus()); }}>← Change category</button><p className="section-tag">YOUR PROJECT</p><h2 ref={projectHeading} tabIndex={-1}>{selectedCategory.title}</h2><p>{[selectedCategory.guidance, 'Only your idea, name and email are needed.'].filter(Boolean).join(' ')}</p></div>
     <fieldset disabled={state === 'sending'}><legend className="visually-hidden">Your enquiry</legend>
       <input type="hidden" name="route" value={route}/>
       <label>What would you like made? <span>(required)</span><textarea name="brief" maxLength={5000} rows={5} {...props('brief')} placeholder={selectedCategory.prompt}/>{error('brief')}</label>
       <div className="enquiry-grid">
-        <label>{route === 'supply' ? 'Quantity per order' : 'How many?'} <span>(optional)</span><input name="quantity" type="number" inputMode="numeric" min={route === 'bulk' || route === 'supply' ? 10 : 1} max={10000000} step="1" {...props('quantity')}/>{error('quantity')}</label>
+        <label>{route === 'supply' ? 'Quantity per order' : 'How many?'} <span>(optional)</span><input name="quantity" type="number" inputMode="numeric" min={1} max={10000000} step="1" {...props('quantity')}/>{error('quantity')}</label>
         <label>Needed by <span>(optional)</span><input name="requiredBy" type="date" min={today || undefined} {...props('requiredBy')}/>{error('requiredBy')}</label>
       </div>
       <div className="enquiry-grid">

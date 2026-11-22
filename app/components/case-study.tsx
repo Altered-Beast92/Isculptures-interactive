@@ -56,7 +56,7 @@ export default async function CaseStudy({ params }: { params: Promise<{ slug: st
 
       {rest.length > 0 && <div className="study-gallery">{rest.map((image, i) => <img key={i} src={image.src} alt={image.alt || `${project.title}, view ${i + 2}`} width={image.width} height={image.height} loading="lazy"/>)}</div>}
 
-      <section className="project-details"><h2>Want something like this?</h2><p>Feel free to use these photos as a reference. Tell us the quantity, size, wording and packaging you have in mind, and when you need it delivered.</p><ul><li>The minimum order is 10 units.</li><li>We’ll go through design, material, finish and packaging options with you.</li><li>Pricing, timing and any samples are set out in your quote.</li></ul><a href="/guides/bulk-3d-printing-quote-checklist">What to include in your enquiry →</a></section>
+      <section className="project-details"><h2>Want something like this?</h2><p>Feel free to use these photos as a reference. Tell us the quantity, size, wording and packaging you have in mind, and when you need it delivered.</p><ul><li>We’ll go through design, material, finish and packaging options with you.</li><li>Pricing, timing and any samples are set out in your quote.</li></ul><a href="/guides/bulk-3d-printing-quote-checklist">What to include in your enquiry →</a></section>
 
       {quotes.length > 0 && <section className="study-quotes">{quotes.map(quote => <figure key={quote.id}><blockquote>{quote.quote}</blockquote><figcaption>{quote.author}{quote.company ? `, ${quote.company}` : ''} <span>{SOURCE_LABELS[quote.source]}</span></figcaption></figure>)}</section>}
 

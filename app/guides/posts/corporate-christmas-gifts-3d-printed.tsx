@@ -114,8 +114,8 @@ export default function CorporateChristmasGifts() {
       <p>
         There is no standard price per piece for a branded order. The price depends mostly on the size of the piece and the
         colour options you choose. Design work, the number of versions and packaging also move the total, which our guide to{' '}
-        <a href="/guides/what-affects-bulk-3d-printing-cost">what affects bulk 3D printing cost</a> walks through. Our minimum
-        is 10 units per batch. Tell us your budget and whether it covers packaging and freight, and we say what is achievable.
+        <a href="/guides/what-affects-bulk-3d-printing-cost">what affects bulk 3D printing cost</a> walks through. Tell us
+        your budget and whether it covers packaging and freight, and we say what is achievable.
       </p>
       <p>
         Gifts for staff or clients can have tax consequences for the business. We have not covered this here, so ask your

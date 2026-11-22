@@ -130,3 +130,43 @@
 /blogs/custom-3d-printing/personalised-baby-shower-keepsakes-that-wow-1 /guides/personalised-baby-shower-keepsakes 301
 /blogs/custom-3d-printing/personalised-baby-shower-keepsakes-theyll-treasure-4 /guides/personalised-baby-shower-keepsakes 301
 /blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-feel-personal /guides/personalised-wedding-bonbonniere 301
+
+# Search Console "Not found (404)" export, 2026-11-22. Old Shopify addresses Google still crawls,
+# each sent to the closest page that exists now. Left as 404 on purpose: Shopify web-pixel sandbox
+# paths (/wpm@...), robots-style patterns (/cart*, /*/cart*) and a tag URL with a space in it.
+/blogs/custom-3d-printing/tagged/sydney /guides 301
+/blogs/custom-3d-printing/tagged/custom-gifts /guides 301
+/blogs/custom-3d-printing/tagged/3d-printing /guides 301
+/blogs/custom-3d-printing/tagged/bonbonniere /guides 301
+/blogs/custom-3d-printing/unique-wedding-bonbonniere-ideas-that-impress-1 /guides/personalised-wedding-bonbonniere 301
+/blogs/custom-3d-printing/unique-bonbonniere-ideas-for-memorable-weddings /guides/personalised-wedding-bonbonniere 301
+/blogs/custom-3d-printing/personalised-keepsakes-for-baby-shower-favors /guides/personalised-baby-shower-keepsakes 301
+/blogs/custom-3d-printing/impeccable-sculptures-sydney-nsw-custom-3d-printing /services 301
+/blogs/custom-3d-printing/custom-3d-printing-sydney-impeccable-sculptures /services 301
+/blogs/custom-3d-printing/impeccable-sculptures-sydney-3d-printing-services /services 301
+/blogs/custom-3d-printing/impeccable-sculptures-sydney-custom-3d-printing-nsw /services 301
+/products/saint-michael-icon /products/saint-michael-the-archangel-defender-of-faith-icon 301
+/products/saint-peter-bonbonniere /products/saint-peter-keeper-of-keys 301
+/products/saint-elias-bonbonnierre /products/saint-elias-icon-bonbonniere 301
+/products/saint-nicholas-icon /products/saint-nicholas-the-wonderworker 301
+/products/orthodox-icon-bonbonniere /pages/bonbonniere-custom 301
+/products/saint-peter-keys-statue /products/saint-peter-keeper-of-keys 301
+/products/jesus-pantocrator-icon /products/divine-jesus-christ-icon 301
+/products/saint-anthony-bonbonniere /products/saint-anthony-of-padua-statue 301
+/products/mary-jesus-icon /products/virgin-mary-and-jesus-icon 301
+/products/mary-and-jesus-icon /products/virgin-mary-and-jesus-icon 301
+/products/saint-george-icon /products/saint-george-the-victorious 301
+/collections/seasonal/products/christmas-twist-off-tree /products/personalised-christmas-tree 301
+/collections/bonbonniere/products/saint-anthony-bonbonniere /products/saint-anthony-of-padua-statue 301
+/collections/bonbonniere/products/saint-peter-bonbonniere /products/saint-peter-keeper-of-keys 301
+/collections/all/products/saint-peter-bonbonniere /products/saint-peter-keeper-of-keys 301
+/collections/catholic-maronite/products/saint-peter-keys-statue /products/saint-peter-keeper-of-keys 301
+/collections/all/products/mary-jesus-icon /products/virgin-mary-and-jesus-icon 301
+/collections/bonbonniere /pages/bonbonniere-custom 301
+/collections/christmas /products/personalised-christmas-tree 301
+/collections/seasonal /products/personalised-christmas-tree 301
+/collections/valentines-day /products/personalised-rose-sculpture 301
+/collections/accessories /products 301
+/pages/bonbonnieres /pages/bonbonniere-custom 301
+/pages/events /pages/events-custom-gifts 301
+/b / 301

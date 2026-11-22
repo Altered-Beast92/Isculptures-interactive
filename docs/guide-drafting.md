@@ -78,7 +78,7 @@ off the days the ImpSolutions blog drafter opens its own.
   price from memory, from a competitor, or from Etsy directly. Say "AU$" and the piece.
 - Anything time-sensitive (cut-off dates, postage times, feast days, Easter dates) says "as of <Month Year>"
   and names its source in the PR.
-- Do not state materials, sizes, lead times, capacity, minimums other than the site's 10 units, or turnaround
+- Do not state materials, sizes, lead times, capacity, any minimum order quantity, or turnaround
   that neither the site nor "Confirmed studio facts" below already states. Where the guide would still benefit,
   leave a comment for the owner instead: `{/* TODO(owner): confirm the tallest size you print */}`.
 - A `TODO(owner)` comment is invisible on the page, and the guide goes live before the owner sees it. Write the
@@ -99,7 +99,9 @@ add to them.
 - **Pricing:** no published price bands for custom work. Price depends mostly on the size of the piece and the
   colour options chosen, then design work, versions and packaging. Catalogue prices come only from
   `content/products.ts`.
-- **Minimum and mockup:** 10 units per custom batch, and a free design mockup with the quote.
+- **No minimum order (2026-11-22):** never state a minimum quantity, and don't announce one-offs either. Lead with
+  bulk and event orders, and say larger quantities bring the price per piece down. A free design mockup comes
+  with every quote.
 - **Hours:** Monday to Friday 9am to 5pm, Saturday 9am to 12pm, closed Sunday.
 - **Larger runs (2026-11-22):** for 50 pieces or more, allow at least three weeks, and up to a month.
 - **Packing (2026-11-22):** pieces can be boxed one by one, and a batch can be packed by table for an event, if
@@ -107,8 +109,8 @@ add to them.
 - **Personalised Christmas tree place setting (2026-11-22):** about 15cm tall. The name on the star is custom and
   optional. No published event price beyond the catalogue price; event batches are quoted.
 - **Trade and wholesale (2026-11-22):** larger quantities bring the price per piece down (quoted per order, no
-  published discount). Wholesale buyers may use our product photos in their own shop and website listings. The
-  10-unit minimum can be split across different designs, sizes and colours.
+  published discount). Wholesale buyers may use our product photos in their own shop and website listings. A
+  batch can mix different designs, sizes and colours.
 - **Packaging (2026-11-22):** favours and bonbonniere go out in clear boxes today. Don't promise swing tags,
   barcodes or other retail packaging; say we confirm what we can supply in the quote.
 - **Sizes (2026-11-22):** personalised rose sculpture about 10cm tall; first tooth favour tag about 6cm tall.
@@ -158,7 +160,7 @@ the guide sends people:
   the end.
 - Close with a short paragraph for bulk or event orders: what to send us (quantity, date needed, names or
   wording) and the closing link from the table. Keep it to two or three sentences.
-- Mention the 10-unit minimum only where the guide is about quantities, pricing or how to order, and then once.
+- Don't state a minimum order quantity anywhere. Where quantity matters, say larger quantities bring the price per piece down.
   Don't repeat it in every section or in the takeaways.
 - Business and trade guides tend to need figures only the owner has: lead times for larger runs, price bands,
   reseller minimums, packaging for retail. Use "Confirmed studio facts" where it answers them. Never estimate the
@@ -244,7 +246,7 @@ Cron `0 0 8,22 * *`, model `claude-opus-5-5`, tools Bash, Read, Write, Edit, Glo
 Paste everything in the block below.
 
 ```
-You are working on isculptures.com.au, the website of Impeccable Sculptures, a 3D printing studio in Sydney, Australia. It makes saint statues, icons, bonbonniere and personalised favours, takes custom and bulk orders from 10 units, and sells single pieces only on Etsy. The site's /products pages are a catalogue whose 'Buy on Etsy' buttons hand the sale to Etsy. The site is a Next.js 16 static export in this repository (Altered-Beast92/Isculptures-interactive), deployed by Vercel from main.
+You are working on isculptures.com.au, the website of Impeccable Sculptures, a 3D printing studio in Sydney, Australia. It makes saint statues, icons, bonbonniere and personalised favours, takes custom and bulk orders, and sells single pieces only on Etsy. The site's /products pages are a catalogue whose 'Buy on Etsy' buttons hand the sale to Etsy. The site is a Next.js 16 static export in this repository (Altered-Beast92/Isculptures-interactive), deployed by Vercel from main.
 
 Your job this run: write one guide and open a pull request. The repository's 'Auto-publish guides' workflow merges that pull request once typecheck, tests and build:web pass, and Vercel then publishes it, usually before the owner has read it. So write it as finished work for the public. Never merge it yourself, never push to main, never deploy, and never create or change routines or other cloud configuration. Change only the guide files: app/guides/posts/, content/guides.ts and the row's status in docs/content-calendar.md. A pull request that changes any other file waits for the owner instead of publishing. Do not edit app/page.tsx, app/globals.css or app/studio.css.
 
@@ -256,7 +258,7 @@ Then read docs/guide-drafting.md and follow it exactly. If docs/guide-drafting.m
 3. Duplicate guard: read every existing guide first. If the row's search intent overlaps one, stop and propose a Refresh row instead of drafting.
 4. Research: every fact from a source you checked during this run, prices in AUD, 'as of <Month Year>' on anything time-sensitive. Quote prices only as mirrored from Etsy in content/products.ts. Use the 'Confirmed studio facts' section of docs/guide-drafting.md exactly as stated. Make no other claims about materials, sizes, lead times or capacity that the site doesn't already state; leave {/* TODO(owner): ... */} instead, and write the passage around it so it reads as finished without the answer, because the comment is invisible and the guide goes live. Never invent customers, orders, quantities or stories. Quote reviews only word for word from content/testimonials.ts.
 5. Religious content: name the tradition (Catholic, Maronite, Orthodox and so on), cite church or diocesan sources, keep a respectful tone, and list anything doctrinal in the PR for the owner to check.
-6. Write: plain Australian English, as 'we', 1,000 to 1,500 words for a new guide, the short answer first, at least one link to another guide and one to a /pages/ service page, the catalogue pieces that genuinely fit (aim for two), never a link to etsy.com. Follow the 'Buyer and call to action' section for the row's Buyer column: link the matching service page in the first half and close with a short paragraph for bulk or event orders, linking the enquiry route it names. Mention the 10-unit minimum only where the guide is about quantities, pricing or how to order, and then only once. Never estimate lead times, price bands or reseller minimums: use the Confirmed studio facts, otherwise leave a TODO(owner). Add the body in app/guides/posts/<slug>.tsx, register it in app/guides/posts/index.ts, and add the metadata (title up to 60 characters, summary up to 155, readMinutes, 3 to 4 takeaways, products, hero) to content/guides.ts.
+6. Write: plain Australian English, as 'we', 1,000 to 1,500 words for a new guide, the short answer first, at least one link to another guide and one to a /pages/ service page, the catalogue pieces that genuinely fit (aim for two), never a link to etsy.com. Follow the 'Buyer and call to action' section for the row's Buyer column: link the matching service page in the first half and close with a short paragraph for bulk or event orders, linking the enquiry route it names. Never state a minimum order quantity; where quantity matters, say larger quantities bring the price per piece down. Never estimate lead times, price bands or reseller minimums: use the Confirmed studio facts, otherwise leave a TODO(owner). Add the body in app/guides/posts/<slug>.tsx, register it in app/guides/posts/index.ts, and add the metadata (title up to 60 characters, summary up to 155, readMinutes, 3 to 4 takeaways, products, hero) to content/guides.ts.
 7. Editing pass as a separate full read: check every figure against its source; state units and currency; replace vague words with figures or cut them; recheck the takeaways against the body; lead each section with the answer; vary sentence length; cut throat-clearing and repetition; remove delve, navigate the landscape, leverage, robust, seamless, game-changer, 'it's important to note', 'when it comes to', 'not just X but Y', 'whether you're X or Y' and rhetorical-question openers; at most one em dash per paragraph; Australian spelling.
 8. Photo: the most relevant real photo from content/work-media.json or content/product-media.json. No AI-generated images, and never a photo of a product the guide isn't about.
 9. Run npm run check:guides, npm run typecheck, npm test and npm run build:web. All must pass. Leave next-env.d.ts and AGENTS.md out of the commit if tooling rewrote them.

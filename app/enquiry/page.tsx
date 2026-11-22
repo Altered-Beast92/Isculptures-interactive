@@ -1,6 +1,6 @@
 import EnquiryForm from '../components/enquiry-form';
 import { pageMetadata } from '../../lib/site';
-export const metadata = pageMetadata('Get a quote', 'Tell our Sydney studio what you need printed, from event favours and keepsakes to corporate gifts and parts. Bulk orders start at 10 units.', '/enquiry');
+export const metadata = pageMetadata('Get a quote', 'Tell our Sydney studio what you need printed, from event favours and keepsakes to corporate gifts and parts. Bulk orders welcome.', '/enquiry');
 export default function EnquiryPage() {
   return <main id="main-content" className="enquiry-canvas"><div className="enquiry-layout"><div className="enquiry-introduction"><p className="enquiry-kicker">SYDNEY 3D PRINTING STUDIO</p><h1>GET A{' '}<br/><em>QUOTE.</em></h1><p>Tell us what you’d like made. It takes about a minute, and you can attach photos or files if you have them.</p><div className="enquiry-direct"><span>Prefer to talk?</span><a href="mailto:info@isculptures.com.au">info@isculptures.com.au ↗</a><a href="tel:+61437383684">0437 383 684</a></div></div><div className="enquiry-workspace"><EnquiryForm/><noscript><p>Please enable JavaScript to use the enquiry form, or email <a href="mailto:info@isculptures.com.au">info@isculptures.com.au</a>.</p></noscript></div></div></main>;
 }
