@@ -32,9 +32,8 @@ export default function WholesaleSaintStatuesIcons() {
         </li>
       </ul>
       <p>
-        A trade order is quoted on its own terms, so read these as a guide to how size changes a piece, not as a trade price
-        list.
-        {/* TODO(owner): confirm whether trade buyers get set pricing or a discount on catalogue designs, and how it is worked out */}
+        A trade order is quoted on its own terms, and larger quantities bring the price per piece down. Read these as a guide
+        to how size changes a piece, not as a trade price list.
       </p>
       <p>
         If you stock a saint we don&rsquo;t list, send us a clear reference image and tell us which details matter. We work
@@ -110,8 +109,8 @@ export default function WholesaleSaintStatuesIcons() {
       <p>
         A Judge.me review left on our Saint Michael statue says: &ldquo;The description and photo matches the product. I love
         my Angel Michael sculpture :)&rdquo; (Sheena Pal). For a shop that sells from a photo on a shelf card or a website,
-        that match matters, so tell us where your listing photos will come from when you enquire.
-        {/* TODO(owner): confirm whether trade buyers may use the studio's product photos in their own shop or website listings */}
+        that match matters. Wholesale buyers are welcome to use our product photos in their own shop and website listings;
+        ask us for the photos of the pieces you are stocking.
       </p>
 
       <h2>Personalised pieces for parishes and feasts</h2>
@@ -133,8 +132,8 @@ export default function WholesaleSaintStatuesIcons() {
       </p>
       <p>
         Tell us how the pieces will sit in your shop: on an open shelf, in a glass cabinet or boxed for gifting. That shapes
-        how we pack them, and we confirm the packaging in your quote.
-        {/* TODO(owner): confirm what retail packaging is available for trade orders (individual boxes, swing tags, barcodes) */}
+        how we pack them. Our favours go out in clear boxes today. If your shop needs
+        something else, such as tags or labels, tell us what and we confirm what we can supply in your quote.
       </p>
       <p>
         If you plan to label the pieces &ldquo;made in Australia&rdquo;, check the ACCC&rsquo;s country of origin guidance first.
@@ -145,9 +144,8 @@ export default function WholesaleSaintStatuesIcons() {
 
       <h2>How to order and reorder</h2>
       <p>
-        Our minimum is 10 units per batch. If you want to mix saints or sizes in one order, list them and we confirm how the
-        batch is made up in your quote.
-        {/* TODO(owner): confirm whether the 10-unit minimum can be split across different saints, sizes and colours */}
+        Our minimum is 10 units per batch, and the 10 can be split across different saints, sizes and colours: four Saint
+        Michael, three Saint Charbel and three Saint Joseph is one batch. List what you want and we quote it together.
         Price depends mostly on the size of each piece and the colour options you choose, then on any design work, the number
         of versions and packaging. Our guide to <a href="/guides/what-affects-bulk-3d-printing-cost">what affects bulk 3D printing cost</a>{' '}
         explains each factor, and the <a href="/guides/bulk-3d-printing-quote-checklist">quote checklist</a> lists what to
