@@ -59,6 +59,21 @@ const occasionGuides: Guide[] = [
 ];
 export const guides: Guide[] = [
   {
+    slug: 'personalised-christmas-place-settings', title: 'Personalised Christmas place settings for events',
+    summary: 'Name place settings for Christmas dinners, venues and events: choosing a piece, counting seats, checking names and planning the date.',
+    category: 'CHRISTMAS EVENTS', image: 'personalised-batch', project: 'personalised-boxed-keepsakes',
+    service: 'events-custom-gifts', serviceLabel: 'Corporate gifts & event favours', enquiryRoute: 'bulk',
+    published: '2026-11-22', updated: '2026-11-22', readMinutes: 6,
+    takeaways: [
+      'A named place setting works as the place card and the take-home gift in one.',
+      'Count one setting per seat, include hosts, staff and late additions, and order spare settings without names.',
+      'Send one checked name list in seating order; you approve every name before we print.',
+      'Plan from the date the settings must be on the tables; Express Post within NSW metro closes 23 December 2026.',
+    ],
+    products: ['personalised-christmas-tree', 'personalised-rose-sculpture'],
+    hero: { source: 'product', key: 'personalised-christmas-tree', index: 1 },
+  },
+  {
     slug: 'wholesale-saint-statues-icons-church-shops', title: 'Wholesale saint statues and icons for church shops',
     summary: 'Saint statues and relief icons printed in batches for church shops and religious stores: sizes, colours, feast-day timing and how to order.',
     category: 'TRADE', image: 'commemorative-icons', project: 'commemorative-religious-icons',
