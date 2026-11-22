@@ -294,3 +294,13 @@ main.service-page .service-work .portfolio-grid>*{scroll-snap-align:start;min-wi
 }
 /* Blog posts on phones: a title of four lines became three. */
 @media(max-width:600px){main.guide-page h1{font-size:31px}}
+/* QA polish 2: the last small targets and phone gaps from the 2026-11-21 sweep. */
+.service-band-head>a{display:inline-flex;align-items:center;min-height:44px}
+.service-glance dd a{display:inline-block;padding-block:11px;margin-block:-11px}
+@media(max-width:760px){
+.service-hero+.service-band{margin-top:12px}
+.study-gallery{margin-bottom:20px}
+.project-details{margin-top:20px;padding:24px 0}
+}
+/* Blog tables on phones fit the screen and wrap, so no column (a feast date, a price) starts off-screen. */
+@media(max-width:600px){.guide-table-wrap table{min-width:0;font-size:14px}.guide-table-wrap :is(th,td){padding:10px 8px}.guide-table-wrap :is(th,td):first-child{padding-left:0}}
