@@ -481,3 +481,6 @@ body:has(.mobile-cta){padding-bottom:calc(68px + env(safe-area-inset-bottom))}
 .enquiry-direct>a{display:inline-flex;align-items:center;min-height:44px}
 .enquiry-direct>a[href^="tel:"]{order:-1;font-weight:600}
 }
+/* Headings, legends and messages the code moves focus to (tabIndex -1) are not controls, so they don't
+   draw a focus ring: the quote form's "Start from an idea" heading showed a stray outline box. */
+[tabindex="-1"]:focus{outline:none}
