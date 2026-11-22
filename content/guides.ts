@@ -22,7 +22,7 @@ const occasionGuides: Guide[] = [
     summary: 'Baby shower favours and a keepsake for the parents: choosing a piece, working out quantities, wording before the name is final, and timing your order.',
     category: 'BABY SHOWERS', image: 'gift-boxes', project: 'personalised-gift-boxes',
     service: 'bonbonniere-custom', serviceLabel: 'Personalised keepsakes', enquiryRoute: 'bulk',
-    updated: '2026-11-08',
+    updated: '2026-11-22',
     readMinutes: 7,
     takeaways: [
       'Keep guest favours and a keepsake for the parents separate in your brief: different wording, and sometimes a different colour or box.',
@@ -61,6 +61,51 @@ const occasionGuides: Guide[] = [
   },
 ];
 export const guides: Guide[] = [
+  {
+    slug: 'personalised-christmas-place-settings', title: 'Personalised Christmas place settings for events',
+    summary: 'Name place settings for Christmas dinners, venues and events: choosing a piece, counting seats, checking names and planning the date.',
+    category: 'CHRISTMAS EVENTS', image: 'personalised-batch', project: 'personalised-boxed-keepsakes',
+    service: 'events-custom-gifts', serviceLabel: 'Corporate gifts & event favours', enquiryRoute: 'bulk',
+    published: '2026-11-22', updated: '2026-11-22', readMinutes: 6,
+    takeaways: [
+      'A named place setting works as the place card and the take-home gift in one.',
+      'Count one setting per seat, include hosts, staff and late additions, and order spare settings without names.',
+      'Send one checked name list in seating order; you approve every name before we print.',
+      'Plan from the date the settings must be on the tables; Express Post within NSW metro closes 23 December 2026.',
+    ],
+    products: ['personalised-christmas-tree', 'personalised-rose-sculpture'],
+    hero: { source: 'product', key: 'personalised-christmas-tree', index: 1 },
+  },
+  {
+    slug: 'wholesale-saint-statues-icons-church-shops', title: 'Wholesale saint statues and icons for church shops',
+    summary: 'Saint statues and relief icons printed in batches for church shops and religious stores: sizes, colours, feast-day timing and how to order.',
+    category: 'TRADE', image: 'commemorative-icons', project: 'commemorative-religious-icons',
+    service: 'wholesale', serviceLabel: 'Bulk & trade orders', enquiryRoute: 'supply',
+    published: '2026-11-22', updated: '2026-11-22', readMinutes: 6,
+    takeaways: [
+      'We print saint statues and relief icons in batches for church shops and religious stores, delivered Australia-wide from Sydney.',
+      'Feast dates differ by tradition: Saint Charbel is the third Sunday of July for Maronites and 24 July in the Latin calendar.',
+      'Allow at least two weeks, and up to a month for larger quantities, counting back from the day you need stock on the shelf.',
+      'Stock two or three sizes per saint and a short colour list; size and colour options move the price most.',
+    ],
+    products: ['saint-michael-statue', 'saint-charbel-statue', 'saint-joseph-icon'],
+    hero: { source: 'product', key: 'saint-michael-statue', index: 0 },
+  },
+  {
+    slug: 'corporate-christmas-gifts-3d-printed', title: 'Corporate Christmas gifts with your logo, 3D printed',
+    summary: 'Branded Christmas gifts for clients and staff, made as one matching batch: what you can personalise, how to brief us and how to plan the date.',
+    category: 'CORPORATE GIFTS', image: 'gift-boxes', project: 'personalised-gift-boxes',
+    service: 'events-custom-gifts', serviceLabel: 'Corporate gifts & event favours', enquiryRoute: 'supply',
+    published: '2026-11-21', updated: '2026-11-21', readMinutes: 6,
+    takeaways: [
+      'We make branded Christmas gifts as one matching batch, carrying a logo, names, wording and brand colours.',
+      'Split your list by recipient (clients, staff, dinner guests) and keep the number of designs small.',
+      'Allow at least two weeks, and up to a month for larger runs, counting back from the date you need the gifts in hand.',
+      'Price depends mostly on size and colour options; send your quantity, logo, date and budget for a quote.',
+    ],
+    products: ['personalised-christmas-tree', 'personalised-rose-sculpture'],
+    hero: { source: 'product', key: 'personalised-christmas-tree', index: 0 },
+  },
   {
     slug: 'bulk-3d-printing-quote-checklist', title: 'What to include in a bulk 3D printing quote request',
     summary: 'What to send us so we can quote your bulk order properly, even if you don’t have a 3D file yet.',

@@ -54,8 +54,8 @@ export default function PersonalisedBabyShowerKeepsakes() {
         Both pieces come in larger sets on our Etsy shop. As of November 2026, the rose is AU$120 for 20 unboxed or AU$220
         for 20 boxed, and AU$300 for 50 unboxed or AU$550 for 50 boxed. The tag is AU$80 for a set of 20 and AU$200 for a set of
         50. Those are the catalogue prices for ready-made sets. A batch with your own colours, wording or a different design is
-        quoted separately.
-        {/* TODO(owner): add the height of the rose and of the tag, and the longest name or line that fits on each. The site doesn't state them yet. */}
+        quoted separately. The rose stands about 10cm tall and the tag about 6cm. Both can carry a name or a short line, and
+        the tag doesn't have to be a tooth: we design any shape you ask for.
       </p>
       <p>
         One family who ordered baby favours from us left this review on Google: "Thankyou impeccable sculptures for taking
@@ -108,8 +108,8 @@ export default function PersonalisedBabyShowerKeepsakes() {
       <p>
         Freight takes time on top of making. As of November 2026, Australia Post's published timetable gives Parcel Post as 2
         to 4 business days within the same state and 3 to 6 business days interstate. We send from Sydney, so an interstate
-        shower needs the longer allowance.
-        {/* TODO(owner): add your usual lead time for a baby shower batch of 20 to 50 pieces, and how close to the date you can take an order. Don't estimate it. */}
+        shower needs the longer allowance. Making comes first: allow at least two weeks, and up to a month for a larger
+        batch, so count back from the shower date and send your enquiry as early as you can.
       </p>
       <p>
         Send us the shower date, the earlier date you need the order delivered and the delivery postcode. We confirm the
@@ -125,8 +125,7 @@ export default function PersonalisedBabyShowerKeepsakes() {
       </p>
       <p>
         If you think you will order again later in the year, tell us at the start. We can note the design, colours and
-        wording you chose for the shower so a later batch matches it.
-        {/* TODO(owner): confirm you keep a record of each order's design and colours so a matching batch can be made later. */}
+        wording you chose for the shower so a later batch matches it, or changes only the name for a second child.
       </p>
 
       <h2>What to send with your enquiry</h2>

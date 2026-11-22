@@ -5,7 +5,13 @@
 
 import type { ComponentType } from 'react';
 import PersonalisedBabyShowerKeepsakes from './personalised-baby-shower-keepsakes';
+import PersonalisedChristmasPlaceSettings from './personalised-christmas-place-settings';
+import CorporateChristmasGifts from './corporate-christmas-gifts-3d-printed';
+import WholesaleSaintStatuesIcons from './wholesale-saint-statues-icons-church-shops';
 
 export const guideBodies: Record<string, ComponentType> = {
   'personalised-baby-shower-keepsakes': PersonalisedBabyShowerKeepsakes,
+  'personalised-christmas-place-settings': PersonalisedChristmasPlaceSettings,
+  'corporate-christmas-gifts-3d-printed': CorporateChristmasGifts,
+  'wholesale-saint-statues-icons-church-shops': WholesaleSaintStatuesIcons,
 };

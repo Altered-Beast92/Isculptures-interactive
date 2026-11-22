@@ -3,7 +3,7 @@ import { products, getProduct, etsyUrl, etsyListingUrl, priceRange, aud } from '
 import { testimonials } from '../../../content/testimonials';
 import { SOURCE_LABELS } from '../../../content/types';
 import media from '../../../content/product-media.json';
-import { CONTACT, SITE_URL, pageMetadata, CONTENT_DATES } from '../../../lib/site';
+import { CONTACT, SITE_URL, pageMetadata } from '../../../lib/site';
 import { reviewSchema, productRating } from '../../../lib/reviews';
 import Breadcrumbs from '../../components/breadcrumbs';
 
@@ -26,7 +26,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const hasBoxing = product.sizes.some(size => size.label.includes('boxed'));
   const reviews = (product.reviews ?? []).flatMap(id => testimonials.filter(review => review.id === id));
   const rating = productRating(reviews);
-  const updated = product.updated ?? CONTENT_DATES.site.updated;
   const buy = etsyUrl(product);
   // Schema names the canonical listing; the visible links carry the campaign tags.
   const canonicalBuy = etsyListingUrl(product);
@@ -80,7 +79,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 <a className="secondary" href={enquiry}>Bulk order for an event or parish ↗</a>
               </>}
         </div>
-        <p className="product-note">Printed to order in our Sydney studio and delivered Australia-wide. For a parish, school or event order, tell us your numbers and we will quote the whole run.</p>
+        <p className="product-note">Printed to order in our Sydney studio and delivered Australia-wide.</p>
       </div>
       <figure className="product-hero-image">
         <img src={photos[0].src} srcSet={`${photos[0].src.replace('.webp', '-small.webp')} ${photos[0].smallWidth}w, ${photos[0].src} ${photos[0].width}w`} sizes="(max-width: 700px) 88vw, 40vw" alt={photos[0].alt} width={photos[0].width} height={photos[0].height}/>
@@ -136,6 +135,5 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       </div>
     </section>
 
-    <p className="product-updated"><time dateTime={updated}>Prices checked {updated}</time></p>
   </article><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }}/></main>;
 }
