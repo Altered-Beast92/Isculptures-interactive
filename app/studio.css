@@ -128,6 +128,34 @@ body:has(.enquiry-canvas) .site-header .nav-cta{background:#e6d4b1;color:#243128
 .enquiry-canvas .enquiry-step-actions .primary{margin:0 0 0 auto;background:#243128;color:#e6d4b1;border-radius:2px;font-size:13px;min-height:48px;width:auto;padding:14px 22px}
 .previous-step{background:none;border:0;color:#243128;padding:12px 0;font-size:14px}
 .enquiry-canvas .staged-enquiry [hidden]{display:none!important}
+/* The thank-you panel is dark like the Send button, so it doesn't glare against the sand page. */
+.enquiry-canvas .enquiry-success{display:flex;align-items:center;gap:clamp(24px,4vw,56px);background:#243128;color:#e6d4b1;border-radius:2px;padding:clamp(28px,4vw,48px)}
+.enquiry-success-text{flex:1;min-width:0}
+.enquiry-canvas .enquiry-success .section-tag{color:#c9b48a;font-size:12px;letter-spacing:.13em;margin:0}
+.enquiry-canvas .enquiry-success h2{color:#f1eee6;font:400 32px/1.15 var(--font-manrope),Arial,sans-serif;letter-spacing:-.035em;margin:12px 0 18px}
+.enquiry-canvas .enquiry-success p:not(.section-tag){font-size:15px;line-height:1.7;max-width:58ch}
+.enquiry-canvas .enquiry-success strong{color:#f1eee6}
+.enquiry-canvas .enquiry-success .primary{background:#e6d4b1;color:#243128;border-radius:2px;font-size:13px;min-height:48px;padding:14px 22px;margin-top:10px}
+.enquiry-canvas .enquiry-success .primary:hover{background:#f1eee6}
+/* A vase prints layer by layer: the head sweeps back and forth once per layer, stepping up after
+   each, then parks above the finished piece. 12 layers of 6 units, as drawn in print-complete.tsx.
+   Each moving part's resting style is its final frame, so with reduced motion (globals.css turns
+   animations off) the finished vase shows straight away. */
+.print-complete{flex:0 0 clamp(160px,17vw,230px);--layer:.3s;--start:.5s}
+.print-complete svg{display:block;width:100%;height:auto;overflow:visible}
+.print-bed{stroke:#e6d4b1;stroke-opacity:.45;stroke-width:2;stroke-linecap:round}
+.print-rail{stroke:#e6d4b1;stroke-opacity:.3;stroke-width:2;stroke-linecap:round}
+.print-layer{fill:#c9b48a;transform-box:fill-box;transform-origin:left center;animation:print-lay var(--layer) linear backwards;animation-delay:calc(var(--start) + var(--k) * var(--layer))}
+.print-layer.from-right{transform-origin:right center}
+.print-carriage,.print-nozzle{fill:#e6d4b1}.print-block{fill:#c9b48a}
+.print-glow{fill:#ffd98a;opacity:0;animation:print-glow calc(12 * var(--layer)) linear var(--start) backwards}
+.print-rise{transform:translateY(-72px);animation:print-rise calc(12 * var(--layer)) steps(12,end) var(--start) backwards}
+.print-sweep{animation:print-sweep var(--layer) linear var(--start) 12 alternate both}
+@keyframes print-lay{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes print-rise{from{transform:translateY(0)}to{transform:translateY(-72px)}}
+@keyframes print-sweep{from{transform:translateX(0)}to{transform:translateX(60px)}}
+@keyframes print-glow{0%,96%{opacity:1}100%{opacity:0}}
+@media(max-width:760px){.enquiry-canvas .enquiry-success{flex-direction:column-reverse;align-items:flex-start;gap:10px;padding:28px 22px}.print-complete{flex:none;width:150px;align-self:center}.enquiry-canvas .enquiry-success h2{font-size:27px}}
 /* The enquiry page carries the same footer, minus the call to action it already is. */
 .site-footer.story-footer.enquiry-page-footer{background:#1b1814;backdrop-filter:none;-webkit-backdrop-filter:none;padding-top:55px;border-top:1px solid #e6d4b133}
 .site-footer.story-footer.enquiry-page-footer>.footer-grid{margin-top:0;border-top:0;padding-top:0}
@@ -381,6 +409,32 @@ body .site-header .site-links .nav-cta:hover{
   .nav-group-panel small{display:none}
 }
 @media(prefers-reduced-motion:reduce){.nav-group-toggle,.nav-group-toggle>span{transition:none}}
+/* Menus print open: the whole panel, box and all, builds down from the header in thin lines (a
+   few px each). A bright print-head line rides the edge with a few fresh layer lines just behind
+   it, and it switches off once the panel is complete. CSS only and cheap: a stepped clip plus a
+   transform and an opacity change on one pseudo-element. Closing stays instant. The drop-down's
+   shadow fades in after the print, so the clip never cuts it off. With reduced motion (globals.css
+   turns animations off) the menus simply appear. */
+@keyframes print-in{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
+@keyframes print-in-head{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+@keyframes print-in-head-off{0%,80%{opacity:1}to{opacity:0}}
+@keyframes print-in-shadow{from{box-shadow:0 24px 60px #0000}}
+.site-header .nav-group-panel::after,.site-header .site-links::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;
+  background:linear-gradient(#f6dfab,#f6dfab) bottom/100% 2px no-repeat,repeating-linear-gradient(to top,#e6c88f38 0 1px,#0000 1px 4px) bottom/100% 18px no-repeat,linear-gradient(to top,#e6c88f30,#e6c88f00) bottom/100% 18px no-repeat}
+/* Speed: --print-time is how long a panel takes to print, --print-lines how many lines it's built
+   in (more lines = thinner lines). */
+@media(min-width:1181px){
+  .site-header .site-links::after{content:none}
+  .site-header .nav-group-panel{--print-time:900ms;--print-lines:70}
+  .site-header .nav-group-panel.is-open{animation:print-in var(--print-time) steps(var(--print-lines),jump-start),print-in-shadow 220ms ease-out var(--print-time) backwards}
+  .site-header .nav-group-panel.is-open::after{animation:print-in-head var(--print-time) steps(var(--print-lines),jump-start),print-in-head-off calc(var(--print-time) * 1.25) linear}
+}
+@media(max-width:1180px){
+  .site-header .nav-group-panel::after{content:none}
+  .site-header .site-links{--print-time:1200ms;--print-lines:120}
+  .site-header .site-links.is-open{animation:print-in var(--print-time) steps(var(--print-lines),jump-start)}
+  .site-header .site-links.is-open::after{animation:print-in-head var(--print-time) steps(var(--print-lines),jump-start),print-in-head-off calc(var(--print-time) * 1.25) linear}
+}
 
 /* From the blog: the three newest posts as photo cards on the ivory surface. */
 .latest-posts .guide-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:8px 0 0}
@@ -474,9 +528,14 @@ body:has(.mobile-cta){padding-bottom:calc(68px + env(safe-area-inset-bottom))}
 .sculpture-story .faq-list details:first-child{padding-top:0}
 .faq-list summary{padding-block:14px}
 .site-header .menu-toggle{min-height:44px}
-/* Quote page on phones: the phone number and email stay visible, since the call bar is off here. */
+/* Quote page on phones: the phone number and email stay on the page, since the call bar is off
+   here, but below the options rather than above them. The copy beside the heading is for larger
+   screens; the one after the form is for phones. */
+.enquiry-direct.enquiry-direct-after{display:none}
 @media(max-width:760px){
 .enquiry-direct{display:flex;flex-flow:row wrap;align-items:center;gap:0 20px;max-width:none;margin:10px 0 0;padding:0;border:0;font-size:15px}
+.enquiry-introduction .enquiry-direct{display:none}
+.enquiry-direct.enquiry-direct-after{display:flex;margin-top:28px;padding-top:16px;border-top:1px solid #24312835}
 .enquiry-direct>span{order:-2;width:100%;margin:0}
 .enquiry-direct>a{display:inline-flex;align-items:center;min-height:44px}
 .enquiry-direct>a[href^="tel:"]{order:-1;font-weight:600}

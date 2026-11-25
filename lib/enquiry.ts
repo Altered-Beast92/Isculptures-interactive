@@ -11,13 +11,29 @@ export const extensionOf = (name: string) => name.split('.').pop()?.toLowerCase(
 export const ROUTES = ['bulk', 'supply', 'design', 'file'] as const;
 export type EnquiryRoute = typeof ROUTES[number];
 export const CUSTOMER_TYPES = ['Business', 'Event planner / agency', 'Retailer / reseller', 'Parish / organisation', 'Private event', 'Other'];
+// Search ads and tagged links already show up as campaign tags; this catches the planners,
+// parishes, expos and word of mouth that leave no trace in the browser. Where a name is worth
+// knowing (to thank a planner, or to see what people searched) a follow-up box asks for it.
+// A personal referral deliberately asks for no one's name.
+export const HEARD_FROM: { option: string; detail?: string }[] = [
+  { option: 'Google search', detail: 'What did you search for?' },
+  { option: 'Google Maps or reviews' },
+  { option: 'Social media', detail: 'Which one?' },
+  { option: 'Etsy' },
+  { option: 'Event planner or venue', detail: 'Which planner or venue?' },
+  { option: 'Church or parish', detail: 'Which church or parish?' },
+  { option: 'Friend, family or colleague' },
+  { option: 'I’ve ordered before' },
+  { option: 'Expo, market or event', detail: 'Which one?' },
+  { option: 'Other', detail: 'Where did you hear about us?' },
+];
 export type Enquiry = {
   submissionId: string; route: EnquiryRoute; website: string; consent: boolean;
   contact: { name: string; email: string; company: string; phone: string; customerType: string };
   brief: string; quantity: number | null; annualQuantity: number | null; frequency: string;
   material: string; dimensions: string; finish: string; packaging: string; budget: string;
   requiredBy: string; deadlineFixed: boolean; postcode: string; destinations: string;
-  notes: string; sourcePath: string; referrerHost: string;
+  notes: string; sourcePath: string; referrerHost: string; heardFrom: string; heardFromDetail: string;
   campaign: { source: string; medium: string; campaign: string };
 };
 export type Validation = { data?: Enquiry; errors: Record<string, string> };
@@ -54,6 +70,7 @@ export function validateEnquiry(input: unknown): Validation {
     dimensions: clean(value.dimensions, 500), finish: clean(value.finish, 500), packaging: clean(value.packaging, 500), budget: clean(value.budget, 100),
     requiredBy, deadlineFixed: value.deadlineFixed === true, postcode: clean(value.postcode, 100), destinations: clean(value.destinations, 500),
     notes: clean(value.notes, 3000), sourcePath: clean(value.sourcePath, 200), referrerHost: clean(value.referrerHost, 200),
+    heardFrom: clean(value.heardFrom, 100), heardFromDetail: clean(value.heardFromDetail, 200),
     campaign: { source: clean(campaign.source, 100), medium: clean(campaign.medium, 100), campaign: clean(campaign.campaign, 100) }
   };
   return Object.keys(errors).length ? { errors } : { data, errors };
