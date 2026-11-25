@@ -7,9 +7,9 @@ type Event = 'enquiry_started' | 'enquiry_submitted' | 'enquiry_error' | 'contac
  *  etsy_click, which is what makes it possible to tell which pages send buyers. */
 export function track(event: Event, route?: string) {
   const detail = { event, ...(route ? { enquiry_type: route } : {}) };
-  const target = window as Window & { dataLayer?: Record<string, unknown>[]; clarity?: (...args: unknown[]) => void };
-  // Retained so a tag manager can be dropped in later without touching call sites.
-  target.dataLayer?.push(detail);
+  const target = window as Window & { gtag?: (...args: unknown[]) => void; clarity?: (...args: unknown[]) => void };
+  // The Google tag (production only) records these as Google Analytics events.
+  target.gtag?.('event', event, route ? { enquiry_type: route } : {});
   // Custom events are a paid Vercel Analytics feature; on Hobby this is a no-op and
   // page views still record, so Clarity below is what proves the funnel for now.
   vercelTrack(event, route ? { enquiry_type: route } : undefined);

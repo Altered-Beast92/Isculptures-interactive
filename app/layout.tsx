@@ -27,9 +27,13 @@ export const metadata: Metadata = {
 };
 // Inlined at build time, so an unset id drops the tag from the static export entirely.
 const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID;
+// Google tag (Google Analytics). Only production builds on Vercel carry it, so previews and
+// local development never add test visits to the studio's figures.
+const GOOGLE_TAG_ID = process.env.VERCEL_ENV === 'production' ? 'G-S74FNSJV33' : undefined;
+const googleTag = GOOGLE_TAG_ID && `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config',${JSON.stringify(GOOGLE_TAG_ID)});`;
 const clarityTag = CLARITY_ID && `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script",${JSON.stringify(CLARITY_ID)});`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const organisation = businessSchema();
-  return <html lang="en-AU" className={`${manrope.variable} ${playfair.variable} ${mono.variable}`}><body>{clarityTag && <script dangerouslySetInnerHTML={{ __html: clarityTag }}/>}<a className="skip-link" href="#main-content">Skip to content</a><SiteNav/>{children}<SiteFooter/><MobileCta/><SiteAnalytics/><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organisation).replace(/</g, '\\u003c') }}/></body></html>;
+  return <html lang="en-AU" className={`${manrope.variable} ${playfair.variable} ${mono.variable}`}><body>{googleTag && <><script async src={'https://www.googletagmanager.com/gtag/js?id=' + GOOGLE_TAG_ID}/><script dangerouslySetInnerHTML={{ __html: googleTag }}/></>}{clarityTag &&<script dangerouslySetInnerHTML={{ __html: clarityTag }}/>}<a className="skip-link" href="#main-content">Skip to content</a><SiteNav/>{children}<SiteFooter/><MobileCta/><SiteAnalytics/><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organisation).replace(/</g, '\\u003c') }}/></body></html>;
 }
