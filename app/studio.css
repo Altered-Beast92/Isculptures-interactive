@@ -412,28 +412,37 @@ body .site-header .site-links .nav-cta:hover{
 /* Menus print open: the whole panel, box and all, builds down from the header in thin lines (a
    few px each). A bright print-head line rides the edge with a few fresh layer lines just behind
    it, and it switches off once the panel is complete. CSS only and cheap: a stepped clip plus a
-   transform and an opacity change on one pseudo-element. Closing stays instant. The drop-down's
+   transform and an opacity change on two pseudo-elements. Closing stays instant. The drop-down's
    shadow fades in after the print, so the clip never cuts it off. With reduced motion (globals.css
-   turns animations off) the menus simply appear. */
+   turns animations off) the menus simply appear.
+   ::after is the print-head line. ::before carries a small nozzle drawn at its bottom-left: the
+   box drops with the edge (transform, in step with the lines) while `translate` sweeps it across
+   and back three times, so the nozzle tip rides the line. It comes in from under the header, its
+   top hidden for the first few lines, and switches off with the line. */
 @keyframes print-in{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
 @keyframes print-in-head{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 @keyframes print-in-head-off{0%,80%{opacity:1}to{opacity:0}}
 @keyframes print-in-shadow{from{box-shadow:0 24px 60px #0000}}
+@keyframes print-nozzle-sweep{from{translate:0 0}to{translate:calc(100% - 18px) 0}}
 .site-header .nav-group-panel::after,.site-header .site-links::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;
   background:linear-gradient(#f6dfab,#f6dfab) bottom/100% 2px no-repeat,repeating-linear-gradient(to top,#e6c88f38 0 1px,#0000 1px 4px) bottom/100% 18px no-repeat,linear-gradient(to top,#e6c88f30,#e6c88f00) bottom/100% 18px no-repeat}
+.site-header .nav-group-panel::before,.site-header .site-links::before{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 22'%3E%3Cg fill='%23b9a47c'%3E%3Crect x='3' width='12' height='2' rx='.5'/%3E%3Crect x='3' y='3' width='12' height='2' rx='.5'/%3E%3Crect x='3' y='6' width='12' height='2' rx='.5'/%3E%3Crect x='8' y='8' width='2' height='2'/%3E%3C/g%3E%3Crect x='2' y='10' width='14' height='6' rx='1' fill='%23e6d4b1'/%3E%3Cpath d='M6 16h6l-2 5H8z' fill='%23f6dfab'/%3E%3C/svg%3E") left bottom/18px 22px no-repeat}
 /* Speed: --print-time is how long a panel takes to print, --print-lines how many lines it's built
    in (more lines = thinner lines). */
 @media(min-width:1181px){
-  .site-header .site-links::after{content:none}
+  .site-header .site-links::after,.site-header .site-links::before{content:none}
   .site-header .nav-group-panel{--print-time:900ms;--print-lines:70}
   .site-header .nav-group-panel.is-open{animation:print-in var(--print-time) steps(var(--print-lines),jump-start),print-in-shadow 220ms ease-out var(--print-time) backwards}
   .site-header .nav-group-panel.is-open::after{animation:print-in-head var(--print-time) steps(var(--print-lines),jump-start),print-in-head-off calc(var(--print-time) * 1.25) linear}
+  .site-header .nav-group-panel.is-open::before{animation:print-in-head var(--print-time) steps(var(--print-lines),jump-start),print-nozzle-sweep calc(var(--print-time) / 3) linear 3 alternate,print-in-head-off calc(var(--print-time) * 1.25) linear}
 }
 @media(max-width:1180px){
-  .site-header .nav-group-panel::after{content:none}
+  .site-header .nav-group-panel::after,.site-header .nav-group-panel::before{content:none}
   .site-header .site-links{--print-time:1200ms;--print-lines:120}
   .site-header .site-links.is-open{animation:print-in var(--print-time) steps(var(--print-lines),jump-start)}
   .site-header .site-links.is-open::after{animation:print-in-head var(--print-time) steps(var(--print-lines),jump-start),print-in-head-off calc(var(--print-time) * 1.25) linear}
+  .site-header .site-links.is-open::before{animation:print-in-head var(--print-time) steps(var(--print-lines),jump-start),print-nozzle-sweep calc(var(--print-time) / 3) linear 3 alternate,print-in-head-off calc(var(--print-time) * 1.25) linear}
 }
 
 /* From the blog: the three newest posts as photo cards on the ivory surface. */
