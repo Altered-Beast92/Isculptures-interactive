@@ -15,6 +15,10 @@
    rather than fading out over the bright print bed. */
 .sculpture-story .block-glass{background:linear-gradient(110deg,#15110dc2,#15110d7a);border-block:1px solid #ffffff13}
 .sculpture-story .world:after{background:linear-gradient(90deg,#0f0b08c7,transparent 73%),linear-gradient(0deg,#120d095e,transparent 50%)}
+/* On phones the hero text runs the full width, so the shade does too: 80% on the left easing to
+   60% on the right, instead of fading to clear over the bright print bed. The printer stays visible
+   behind it. (The older phone rule in globals.css loses to the line above, so this one is more specific.) */
+@media(max-width:760px){.cinematic-home.sculpture-story .world:after{background:linear-gradient(90deg,#0f0b08cc,#0f0b0899)}}
 body:has(.sculpture-story) .site-header{font-family:var(--font-manrope),Arial,sans-serif}
 body:has(.sculpture-story) .site-header .logo{font-size:19px;letter-spacing:-.07em}
 body:has(.sculpture-story) .site-links{font-size:14px;gap:22px}
