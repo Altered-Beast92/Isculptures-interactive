@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { CUSTOMER_TYPES, EXTENSIONS, IMAGE_EXTENSIONS, MAX_FILES, MAX_SLOTS, extensionOf, validateEnquiry, validateFiles, type EnquiryRoute } from '../../lib/enquiry';
+import { CUSTOMER_TYPES, HEARD_FROM, EXTENSIONS, IMAGE_EXTENSIONS, MAX_FILES, MAX_SLOTS, extensionOf, validateEnquiry, validateFiles, type EnquiryRoute } from '../../lib/enquiry';
 import dynamic from 'next/dynamic';
 import RouteIcon from './route-icons';
+import PrintComplete from './print-complete';
 import { track } from '../../lib/analytics';
 const ModelPreview = dynamic(() => import('./model-preview'), { ssr: false });
 
@@ -65,6 +66,8 @@ function putFile(url: string, file: File, onProgress: (fraction: number) => void
 export default function EnquiryForm() {
   const [route, setRoute] = useState<EnquiryRoute>('bulk');
   const [hasSelected, setHasSelected] = useState(false);
+  const [heardFrom, setHeardFrom] = useState('');
+  const heardDetail = HEARD_FROM.find(item => item.option === heardFrom)?.detail;
   const selectedCategory = categories.find(category => category.route === route)!;
   const projectHeading = useRef<HTMLHeadingElement>(null);
   const categoryHeading = useRef<HTMLHeadingElement>(null);
@@ -203,7 +206,7 @@ export default function EnquiryForm() {
       brief: field('brief'), quantity: field('quantity'), annualQuantity: route === 'supply' ? field('annualQuantity') : '', frequency: route === 'supply' ? field('frequency') : '',
       material: field('material'), dimensions: field('dimensions'), finish: field('finish'), packaging: field('packaging'), budget: field('budget'),
       requiredBy: field('requiredBy'), deadlineFixed: values.get('deadlineFixed') === 'on', postcode: field('postcode'), destinations: field('destinations'),
-      notes: field('notes'), ...source.current
+      notes: field('notes'), heardFrom: field('heardFrom'), heardFromDetail: field('heardFromDetail'), ...source.current
     };
     const checked = validateEnquiry(payload);
     // An attachment that never arrived must not be quietly left out of the enquiry.
@@ -262,7 +265,7 @@ export default function EnquiryForm() {
       refuse(problem instanceof Error ? problem.message : 'We could not confirm receipt. Please try again.');
     }
   };
-  if (state === 'sent') return <div ref={feedback} tabIndex={-1} className="enquiry-success" role="status"><p className="section-tag">ENQUIRY RECEIVED</p><h2>Thanks, we’ve got your enquiry.</h2><p>Your reference is <strong>{reference}</strong></p><p>We’ll read through it and reply to the email address you gave us. Sending an enquiry doesn’t lock in an order or a production slot.</p><a className="primary" href="/">Back to home</a></div>;
+  if (state === 'sent') return <div ref={feedback} tabIndex={-1} className="enquiry-success" role="status"><div className="enquiry-success-text"><p className="section-tag">ENQUIRY RECEIVED</p><h2>Thanks, we’ve got your enquiry.</h2><p>Your reference is <strong>{reference}</strong></p><p>We’ll read through it and reply to the email address you gave us. Sending an enquiry doesn’t lock in an order or a production slot.</p><a className="primary" href="/">Back to home</a></div><PrintComplete/></div>;
   const hasErrors = Object.values(errors).some(Boolean);
   return <>
     <section className="route-picker" aria-labelledby="category-heading" hidden={hasSelected}>
@@ -292,6 +295,12 @@ export default function EnquiryForm() {
       <div className="enquiry-grid">
         <label>Phone <span>(optional)</span><input name="phone" type="tel" autoComplete="tel" maxLength={40}/></label>
         <label>Delivery suburb or postcode <span>(optional)</span><input name="postcode" maxLength={100} autoComplete="postal-code"/></label>
+      </div>
+      {/* Visible rather than folded into "Add more detail", or almost nobody would answer it. The
+          follow-up box is keyed to the answer so text typed for one choice never rides onto another. */}
+      <div className="enquiry-grid">
+        <label>How did you hear about us? <span>(optional)</span><select name="heardFrom" value={heardFrom} onChange={event => setHeardFrom(event.target.value)}><option value="">Please select</option>{HEARD_FROM.map(({ option }) => <option key={option}>{option}</option>)}</select></label>
+        {heardDetail && <label key={heardFrom}>{heardDetail} <span>(optional)</span><input name="heardFromDetail" maxLength={200}/></label>}
       </div>
       <div className="attachment-panel"><label htmlFor="files">Photos, sketches or 3D files <span>(optional)</span></label><p id="file-help">PNG, JPG, HEIC, PDF, STL, OBJ or 3MF. Up to {MAX_FILES} files, 50 MB each. They’re stored privately.</p>
         <input id="files" type="file" multiple accept={EXTENSIONS.map(value => '.' + value).join(',')} disabled={!config?.uploads || uploads.length >= MAX_FILES} aria-describedby="file-help" onChange={event => { const chosen = Array.from(event.target.files || []); event.target.value = ''; attach(chosen); }}/>

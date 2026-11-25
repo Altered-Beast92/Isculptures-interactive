@@ -198,18 +198,19 @@ test('the studio email carries only answered fields and a readable campaign', as
     const sparse = responses[at].text;
     for (const label of ['Company', 'Phone', 'Customer type', 'Quantity per order', 'Annual quantity', 'Frequency', 'Material',
       'Dimensions', 'Finish / branding', 'Packaging', 'Budget (AUD)', 'Required delivery', 'Fixed deadline', 'Postcode / suburb',
-      'Delivery notes', 'Other notes', 'Campaign', 'Referrer host'])
+      'Delivery notes', 'Other notes', 'Heard about us', 'Campaign', 'Referrer host'])
       assert.ok(!sparse.includes(label + ':'), label + ' is left out when it was not answered');
     assert.ok(!sparse.includes('\n\n\n'), 'a group that loses every line loses its separator too');
     assert.ok(sparse.includes('Brief: ' + blank.brief) && sparse.includes('part.stl'), 'answers and attachments still arrive');
 
-    const tagged = payload({ campaign: { source: 'google', medium: 'cpc', campaign: 'spring-2026' } });
+    const tagged = payload({ campaign: { source: 'google', medium: 'cpc', campaign: 'spring-2026' }, heardFrom: 'Church or parish', heardFromDetail: 'St Example' });
     const { body: second } = await claim(environment, tagged.submissionId);
     at = responses.length;
     assert.equal((await handleEnquiry(submit(tagged, second), environment)).status, 200);
     const complete = responses[at].text;
     assert.ok(complete.includes('Campaign: source=google · medium=cpc · campaign=spring-2026'), 'the campaign reads as text, not JSON');
     assert.ok(!complete.includes('{'), 'no raw JSON reaches the studio');
+    assert.ok(complete.includes('Heard about us: Church or parish — St Example'), 'how they heard reads as one line with its detail');
     assert.ok(complete.includes('Required delivery: ' + tagged.requiredBy + ' (fixed deadline)'), 'a fixed deadline rides on the date it fixes');
     assert.ok(!complete.includes('Private attachments'), 'an enquiry without files carries no attachment heading');
   } finally { globalThis.fetch = original; }

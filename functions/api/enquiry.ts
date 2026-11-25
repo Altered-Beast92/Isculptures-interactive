@@ -92,7 +92,8 @@ export async function notify(record: RecordData, env: Env, origin: string) {
       ['Frequency', record.frequency], ['Material', record.material], ['Dimensions', record.dimensions],
       ['Finish / branding', record.finish], ['Packaging', record.packaging], ['Budget (AUD)', record.budget]]),
     filled([['Required delivery', delivery], ['Postcode / suburb', record.postcode], ['Delivery notes', record.destinations], ['Other notes', record.notes]]),
-    filled([['Campaign', campaign], ['Referrer host', record.referrerHost]]),
+    // Records stored before this field existed have no heardFrom, so missing values drop out too.
+    filled([['Heard about us', [record.heardFrom, record.heardFromDetail].filter(Boolean).join(' — ')], ['Campaign', campaign], ['Referrer host', record.referrerHost]]),
     attachments.length ? ['Private attachments (links expire in 7 days):', ...attachments] : []
   ].filter(group => group.length).flatMap((group, index) => index ? ['', ...group] : group);
   if (record.notification !== 'sent') {
