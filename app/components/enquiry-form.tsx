@@ -254,6 +254,11 @@ export default function EnquiryForm() {
       }
       setReference(result.id); setState('sent');
       track('enquiry_submitted', route);
+      const googleTag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
+      googleTag?.('event', 'conversion', {
+        send_to: 'AW-16848127291/0_VsCI__nL8dELuK6OE-',
+        transaction_id: result.id
+      });
     } catch (problem) {
       track('enquiry_error', route);
       // A refused verification means the check has to be passed again, right above the button.
